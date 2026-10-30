@@ -3,6 +3,19 @@
 // Para actualizar precios el sábado, se edita solo este archivo.
 
 const DATOS = {
+  // Fotos que rotan en el hero
+  hero: [
+    { lugar: 'acatenango', foto: 0 },
+    { lugar: 'caye-caulker', foto: 0 },
+    { lugar: 'atitlan', foto: 1 },
+    { lugar: 'capillas-marmol', foto: 0 },
+    { lugar: 'villa-ohiggins', foto: 0 },
+    { lugar: 'carretera-austral', foto: 0 }
+  ],
+
+  // Fecha de despegue para la cuenta regresiva (noche del 13, hora de Chile)
+  despegue: '2026-12-14T03:48:00-03:00',
+
   // Dónde comprar cada aerolínea
   compra: {
     Copa: 'https://www.copaair.com/es-cl/',
@@ -22,6 +35,7 @@ const DATOS = {
   vuelosCA: [
     {
       id: 'copa-22',
+      noches: 8,
       recomendado: true,
       aerolinea: 'Copa',
       destino: 'GUA',
@@ -35,6 +49,7 @@ const DATOS = {
     },
     {
       id: 'copa-23',
+      noches: 9,
       aerolinea: 'Copa',
       destino: 'GUA',
       ida: { dia: 'noche dom 13', detalle: 'lun 14 · 03:48 → 11:51', escalas: '1 escala en Panamá' },
@@ -47,6 +62,7 @@ const DATOS = {
     },
     {
       id: 'avianca-13',
+      noches: 8,
       aerolinea: 'Avianca',
       destino: 'GUA',
       ida: { dia: 'dom 13', detalle: '16:15 → 00:55 (+1)', escalas: '1 escala en Bogotá' },
@@ -59,6 +75,7 @@ const DATOS = {
     },
     {
       id: 'avianca-14',
+      noches: 7,
       aerolinea: 'Avianca',
       destino: 'GUA',
       ida: { dia: 'lun 14', detalle: '16:15 → 00:55 (+1)', escalas: '1 escala en Bogotá' },
@@ -71,6 +88,7 @@ const DATOS = {
     },
     {
       id: 'copa-0131',
+      noches: 8,
       aerolinea: 'Copa',
       destino: 'GUA',
       ida: { dia: 'noche dom 13', detalle: 'lun 14 · 01:31 → 09:40', escalas: '1 escala en Panamá' },
@@ -139,10 +157,27 @@ const DATOS = {
     }
   ],
 
-  // Ideas para la Austral 2.0 (se decide en el kraft)
-  ideasAustral: {
-    mapaRuta: ['Aeropuerto Balmaceda', 'Parque Nacional Queulat', 'Coyhaique', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Caleta Tortel'],
-    lugares: ['carretera-austral', 'queulat', 'cerro-castillo', 'capillas-marmol', 'tortel']
+  // ---------- Austral 2.0: de Cerro Castillo hacia el sur ----------
+  // En 2025 hicimos Puerto Montt → Cerro Castillo. Esta vez, todo lo que viene después.
+  rutaAustral: {
+    nombre: 'Austral 2.0',
+    resumen: 'De donde quedamos en 2025 hasta el fin del camino. Base para recortar en el kraft.',
+    hecho2025: 'Puerto Montt → Cerro Castillo',
+    mapaRuta: ['Aeropuerto Balmaceda', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Puerto Bertrand', 'Cochrane', 'Caleta Tortel', "Villa O'Higgins"],
+    paradas: [
+      { dias: 'D1 · sáb 26 dic', lugar: 'cerro-castillo', titulo: 'Balmaceda → Cerro Castillo', detalle: 'Auto en el aeropuerto y 1,5 h al sur. Retomamos donde quedamos.' },
+      { dias: 'D2 · dom 27', lugar: 'general-carrera', titulo: 'Rumbo a Río Tranquilo', detalle: 'Primer tramo nuevo, bordeando el General Carrera.' },
+      { dias: 'D3 · lun 28', lugar: 'capillas-marmol', titulo: 'Capillas de Mármol', detalle: 'Lancha o kayak temprano, cuando el lago está quieto.' },
+      { dias: 'D4 · mar 29', lugar: 'exploradores', titulo: 'Glaciar Exploradores', detalle: 'Trekking sobre el hielo con guía.' },
+      { dias: 'D5 · mié 30', lugar: 'confluencia-baker', titulo: 'Puerto Bertrand y el Baker', detalle: 'La confluencia Baker y Neff, el agua más turquesa del viaje.' },
+      { dias: 'D6 a D7 · 31 dic y 1 ene', lugar: 'parque-patagonia', titulo: 'Parque Patagonia', detalle: 'Año Nuevo en el Valle Chacabuco, con guanacos de testigos.' },
+      { dias: 'D8 a D9 · 2 y 3 ene', lugar: 'tortel', titulo: 'Caleta Tortel', detalle: 'Pasarelas, ciprés y la Isla de los Muertos.' },
+      { dias: 'D10 a D11 · 4 y 5 ene', lugar: 'villa-ohiggins', titulo: "Villa O'Higgins", detalle: "Barcaza Yungay → Río Bravo y el fin de la Carretera. Glaciar O'Higgins si hay cupo." },
+      { dias: 'D12 a D14 · 6 al 8 ene', lugar: 'carretera-austral', titulo: 'De vuelta al norte', detalle: 'Cochrane, Puerto Guadal y la orilla sur del General Carrera, sin apuro.' },
+      { dias: 'D15 · 9 ene', lugar: null, titulo: 'Coyhaique', detalle: 'Último día cerca del aeropuerto.' },
+      { dias: 'D16 · 10 ene', lugar: null, titulo: 'Vuelta', detalle: 'Devolver el auto y vuelo a Santiago.' }
+    ],
+    extra: "Barcaza Puerto Yungay ↔ Río Bravo para llegar a O'Higgins: confirmar horarios y reserva con el operador. Bencineras escasas al sur de Cochrane: llenar siempre."
   },
 
   // ---------- Austral 2.0 (ida y vuelta por persona) ----------
@@ -167,7 +202,7 @@ const DATOS = {
     austral: [
       { id: 'au-auto', nombre: 'Arriendo de auto', unitario: 84000, cantidad: 15, unidad: 'días', tipo: 'mitad' },
       { id: 'au-bencina', nombre: 'Bencina', unitario: 230000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
-      { id: 'au-aloj', nombre: 'Alojamiento (camping u hostal)', unitario: 35000, cantidad: 14, unidad: 'noches', tipo: 'mitad' },
+      { id: 'au-aloj', nombre: 'Alojamiento (camping u hostal)', unitario: 35000, cantidad: 15, unidad: 'noches', tipo: 'mitad' },
       { id: 'au-comida', nombre: 'Comida', unitario: 15000, cantidad: 15, unidad: 'días', tipo: 'cada' },
       { id: 'au-barcazas', nombre: 'Barcazas y entradas', unitario: 60000, cantidad: 1, unidad: 'total', tipo: 'mitad' }
     ],

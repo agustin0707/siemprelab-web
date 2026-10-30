@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=3">
+  <link rel="stylesheet" href="prep.css?v=4">
 </head>
 <body>
 
@@ -19,6 +19,53 @@
     <span class="marca"><span class="punto"></span>/ agencia siemprelab · prep</span>
     <span class="estado">precios vistos el <span data-precio-visto></span></span>
   </header>
+
+  <!-- ---------- Hero: fotos a sangre + tablero de salidas ---------- -->
+  <section class="hero" id="hero" aria-label="Portada">
+    <div class="hero-fotos" id="hero-fotos" aria-hidden="true"></div>
+    <div class="hero-velo" aria-hidden="true"></div>
+
+    <div class="hero-contenido">
+      <div class="hero-texto">
+        <p class="hero-etiqueta"><span class="punto"></span>[ sesión con tu agente ] · sáb 31 oct</p>
+        <h1>Dos viajes.<br>Una tarde para <em>decidirlos</em>.</h1>
+        <p class="hero-bajada">Centroamérica antes de Navidad y la Austral 2.0 después. Hoy elegimos, sumamos y compramos.</p>
+        <div class="hero-botones">
+          <a class="boton acento" href="#vuelos">ver vuelos</a>
+          <a class="boton vidrio" href="#presupuesto">armar presupuesto</a>
+        </div>
+      </div>
+
+      <!-- Tablero de salidas: se actualiza con lo que se elige -->
+      <div class="tablero" aria-label="Tablero de salidas">
+        <div class="tablero-cabeza">
+          <span>salidas / departures</span>
+          <span id="cuenta-regresiva"></span>
+        </div>
+        <div class="tablero-columnas" aria-hidden="true">
+          <span>vuelo</span><span>destino</span><span>fecha</span><span>estado</span>
+        </div>
+        <div class="tablero-fila">
+          <span class="t-vuelo">SL 3110</span>
+          <span class="t-destino"><b>GUA</b> Guatemala</span>
+          <span class="t-fecha" id="t-fecha-ca"></span>
+          <span class="t-estado" id="t-estado-ca"></span>
+        </div>
+        <div class="tablero-fila">
+          <span class="t-vuelo">SL 2612</span>
+          <span class="t-destino"><b>BBA</b> Austral 2.0</span>
+          <span class="t-fecha">26 dic</span>
+          <span class="t-estado" id="t-estado-au"></span>
+        </div>
+        <div class="tablero-pie" id="tablero-pie"></div>
+      </div>
+    </div>
+
+    <div class="hero-pie">
+      <div class="hero-indicadores" id="hero-indicadores"></div>
+      <p class="hero-credito" id="hero-credito"></p>
+    </div>
+  </section>
 
   <!-- Navegación entre secciones -->
   <nav class="nav" aria-label="Secciones">
@@ -33,21 +80,13 @@
 
   <main>
 
-    <!-- ---------- Portada ---------- -->
-    <section class="portada">
-      <div class="portada-texto">
-        <p class="etiqueta">[ sesión con tu agente ]</p>
-        <h1>Todo lo que necesitamos para decidir y comprar hoy.</h1>
-        <p class="bajada">Elige vuelo, ruta y vuelo al sur. Abajo va armándose “tu viaje” con el total por persona.</p>
-      </div>
-      <div class="mosaico" id="mosaico" aria-hidden="true"></div>
-      <dl class="resumen">
-        <div><dt>centroamérica</dt><dd>noche 13 → 22 o 23 dic</dd></div>
-        <div><dt>austral 2.0</dt><dd>26 dic → ~10 ene</dd></div>
-        <div><dt>tope por persona</dt><dd>$1,5 a $2,5 M</dd></div>
-        <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
-      </dl>
-    </section>
+    <!-- ---------- Resumen rápido ---------- -->
+    <dl class="resumen">
+      <div><dt>centroamérica</dt><dd>noche 13 → 22 o 23 dic</dd></div>
+      <div><dt>austral 2.0</dt><dd>26 dic → 10 ene</dd></div>
+      <div><dt>tope por persona</dt><dd>$1,5 a $2,5 M</dd></div>
+      <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
+    </dl>
 
     <!-- ---------- 1. Vuelos Centroamérica ---------- -->
     <section id="vuelos" class="seccion">
@@ -105,7 +144,7 @@
       <div class="seccion-cabeza">
         <p class="etiqueta">04 / austral 2.0</p>
         <h2>Santiago ↔ Balmaceda + auto</h2>
-        <p class="bajada">Salida 26 dic, vuelta ~10 ene (antes de que la Jo vuelva al internado).</p>
+        <p class="bajada">Salida 26 dic, vuelta 10 ene (antes de que la Jo vuelva al internado). En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo.</p>
       </div>
       <div class="tarjetas" id="lista-austral"></div>
       <div class="avisos">
@@ -119,16 +158,27 @@
         </div>
         <div class="aviso">
           <span class="etiqueta">en el kraft</span>
-          <p>Qué repetimos, qué quedó pendiente de 2025 y qué es nuevo. Eso lo deciden los post-its amarillos.</p>
+          <p>Esta es una base. Los post-its amarillos deciden qué entra y qué se recorta.</p>
         </div>
       </div>
 
       <div class="sub-cabeza">
-        <span class="etiqueta">ideas para la bucket list</span>
-        <h3>Lo que podríamos sumar este año</h3>
+        <span class="etiqueta">la ruta</span>
+        <h3>De Cerro Castillo hacia el sur, sin repetir</h3>
       </div>
-      <div class="chips" id="chips-austral" role="tablist" aria-label="Lugares de la Austral"></div>
-      <div class="explorador solo-media" id="explorador-austral">
+
+      <!-- Tramo ya hecho en 2025 vs tramo nuevo -->
+      <div class="tramos-austral" aria-label="Tramos de la Carretera Austral">
+        <div class="tramo-a hecho"><span class="etiqueta">2025 ✓</span><strong data-hecho-2025></strong></div>
+        <div class="tramo-a nuevo"><span class="etiqueta">2026 · lo nuevo</span><strong>Cerro Castillo → Villa O'Higgins</strong></div>
+      </div>
+
+      <div class="explorador" id="explorador-austral">
+        <div class="explorador-lista">
+          <p class="resumen-ruta" data-ruta-resumen></p>
+          <ol class="paradas" data-paradas></ol>
+          <p class="extra" data-ruta-extra></p>
+        </div>
         <div class="explorador-media" data-media></div>
       </div>
       <p class="links-cotizar"><a data-link-austral target="_blank" rel="noopener">recotizar Balmaceda →</a></p>
@@ -268,8 +318,8 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=3"></script>
-  <script src="lugares.js?v=3"></script>
-  <script src="prep.js?v=3"></script>
+  <script src="datos.js?v=4"></script>
+  <script src="lugares.js?v=4"></script>
+  <script src="prep.js?v=4"></script>
 </body>
 </html>

@@ -50,17 +50,72 @@ $$('[data-precio-visto]').forEach((el) => { el.textContent = DATOS.precioVisto; 
 $$('[data-vuelo-flores]').forEach((el) => { el.textContent = CLP(DATOS.vueloFlores.precio); });
 $$('[data-link-austral]').forEach((el) => { el.href = DATOS.linkAustral; });
 
-// ---------- Portada: mosaico de fotos ----------
-function pintarMosaico() {
-  const fotos = [
-    { lugar: 'atitlan', i: 0 },
-    { lugar: 'caye-caulker', i: 1 },
-    { lugar: 'cerro-castillo', i: 0 }
-  ];
-  $('#mosaico').innerHTML = fotos.map((f, n) => {
-    const l = LUGARES[f.lugar];
-    return `<figure><img src="${l.fotos[f.i].src}" alt="" ${n ? 'loading="lazy"' : ''} decoding="async"><figcaption>${l.nombre}</figcaption></figure>`;
+// ---------- Hero: fotos que rotan + tablero de salidas ----------
+const DURACION_FOTO = 6500;
+let fotoHero = 0;
+let temporizadorHero = null;
+
+function pintarHero() {
+  const cont = $('#hero-fotos');
+  const ind = $('#hero-indicadores');
+  cont.innerHTML = DATOS.hero.map((h, i) => {
+    const f = LUGARES[h.lugar].fotos[h.foto];
+    // La primera carga altiro; el resto se carga después para no frenar la portada
+    return `<img ${i === 0 ? `src="${f.grande}" fetchpriority="high"` : `data-src="${f.grande}"`} alt="" decoding="async">`;
   }).join('');
+  ind.innerHTML = DATOS.hero.map((h, i) => `
+    <button type="button" aria-label="Ver ${LUGARES[h.lugar].nombre}" data-foto-hero="${i}">
+      <span class="linea-progreso"><i></i></span>
+      <span class="nombre-foto">${String(i + 1).padStart(2, '0')} ${LUGARES[h.lugar].nombre}</span>
+    </button>`).join('');
+  ind.style.setProperty('--duracion', DURACION_FOTO + 'ms');
+
+  const primera = $('img', cont);
+  const cargarResto = () => $$('img[data-src]', cont).forEach((img) => { img.src = img.dataset.src; });
+  if (primera.complete) cargarResto(); else primera.addEventListener('load', cargarResto, { once: true });
+
+  ind.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-foto-hero]');
+    if (b) mostrarFotoHero(Number(b.dataset.fotoHero));
+  });
+  mostrarFotoHero(0);
+}
+
+function mostrarFotoHero(i) {
+  fotoHero = (i + DATOS.hero.length) % DATOS.hero.length;
+  $$('#hero-fotos img').forEach((img, n) => img.classList.toggle('activa', n === fotoHero));
+  $$('#hero-indicadores button').forEach((b, n) => {
+    b.classList.toggle('activa', n === fotoHero);
+    b.classList.toggle('vista', n < fotoHero);
+    // Reinicia la animación de la barra de progreso
+    const barra = $('.linea-progreso i', b);
+    barra.style.animation = 'none'; void barra.offsetWidth; barra.style.animation = '';
+  });
+  const h = DATOS.hero[fotoHero];
+  const f = LUGARES[h.lugar].fotos[h.foto];
+  $('#hero-credito').innerHTML = `${LUGARES[h.lugar].nombre} · foto: <a href="${f.pagina}" target="_blank" rel="noopener">${f.credito}</a> · ${f.licencia}`;
+  clearTimeout(temporizadorHero);
+  if (!document.hidden) temporizadorHero = setTimeout(() => mostrarFotoHero(fotoHero + 1), DURACION_FOTO);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) mostrarFotoHero(fotoHero); });
+
+// Cuenta regresiva hasta el despegue
+function pintarCuentaRegresiva() {
+  const dias = Math.ceil((new Date(DATOS.despegue) - new Date()) / 86400000);
+  $('#cuenta-regresiva').textContent = dias > 1 ? `faltan ${dias} días` : dias === 1 ? 'despegamos mañana' : 'buen viaje';
+}
+
+// El tablero refleja lo elegido y si ya se compró (foto de confirmación marcada)
+function pintarTablero() {
+  const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
+  const ruta = DATOS.rutas.find((r) => r.id === opciones.ruta);
+  const comprado = !!guardado.leer('compra', {}).foto;
+  $('#t-fecha-ca').textContent = ca.ida.dia.includes('noche') ? '13 dic' : ca.ida.dia.replace(/^\w+ /, '') + ' dic';
+  [$('#t-estado-ca'), $('#t-estado-au')].forEach((el) => {
+    el.textContent = comprado ? 'confirmado' : 'por comprar';
+    el.classList.toggle('confirmado', comprado);
+  });
+  $('#tablero-pie').innerHTML = `vuelo elegido: <b>${ca.aerolinea} · vuelve ${ca.vuelta.dia}</b> · ruta: <b>${ruta ? ruta.nombre : 'por elegir'}</b>`;
 }
 
 // ---------- Componente: panel de fotos + mapa ----------
@@ -201,7 +256,7 @@ function pintarVuelos() {
           <span class="aerolinea">${v.aerolinea} · SCL ↔ ${v.destino}</span>
           <span class="etiqueta">por persona</span>
         </div>
-        ${precio}
+        <div class="precio-fila">${precio}<span class="noches${v.noches >= 9 ? ' mas' : ''}" title="noches en destino">${v.noches} noches allá</span></div>
         <div class="tramo-vuelo">
           <span class="etiqueta">ida</span>
           <div><strong>${v.ida.dia}</strong>${v.ida.detalle}<br><small>${v.ida.escalas}</small></div>
@@ -364,17 +419,33 @@ $('#lista-austral').addEventListener('click', (e) => {
   calcular();
 });
 
-const mediaAustral = crearMedia($('#explorador-austral [data-media]'));
-function pintarIdeasAustral(activo) {
-  const ideas = DATOS.ideasAustral;
-  $('#chips-austral').innerHTML = ideas.lugares.map((id) => `
-    <button type="button" role="tab" aria-selected="${id === activo}" data-idea="${id}">${LUGARES[id].nombre}</button>`).join('');
+const exploradorAustral = $('#explorador-austral');
+const mediaAustral = crearMedia($('[data-media]', exploradorAustral));
+
+function pintarRutaAustral() {
+  const r = DATOS.rutaAustral;
+  $('[data-hecho-2025]').textContent = r.hecho2025;
+  $('[data-ruta-resumen]', exploradorAustral).textContent = r.resumen;
+  $('[data-ruta-extra]', exploradorAustral).textContent = r.extra;
+  $('[data-paradas]', exploradorAustral).innerHTML = r.paradas.map((p, i) => `
+    <li class="parada">
+      <button type="button" data-parada="${i}" ${p.lugar ? '' : 'disabled'}>
+        <span class="dias">${p.dias}</span>
+        <strong>${p.titulo}</strong>
+        <p>${p.detalle}</p>
+      </button>
+    </li>`).join('');
+  mediaAustral.mostrarLugar(r.paradas[1].lugar, false);
+  mediaAustral.definirRuta(r.mapaRuta, 'ruta: austral 2.0', 'Ida hasta Villa O\'Higgins; la vuelta al norte es por el mismo camino.');
 }
-$('#chips-austral').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-idea]');
+
+$('[data-paradas]', exploradorAustral).addEventListener('click', (e) => {
+  const b = e.target.closest('[data-parada]');
   if (!b) return;
-  pintarIdeasAustral(b.dataset.idea);
-  mediaAustral.mostrarLugar(b.dataset.idea, true);
+  const i = Number(b.dataset.parada);
+  $$('[data-paradas] button', exploradorAustral).forEach((x, n) => x.setAttribute('aria-current', String(n === i)));
+  mediaAustral.mostrarLugar(DATOS.rutaAustral.paradas[i].lugar, true);
+  if (esAngosto()) $('[data-media]', exploradorAustral).scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 // ---------- 5. Calculadora ----------
@@ -464,6 +535,7 @@ function calcular() {
   $('#monto-transfer').textContent = CLP(pasajes);
 
   pintarTuViaje(persona, estado);
+  pintarTablero();
   pintarBotonesCompra();
 }
 
@@ -517,13 +589,17 @@ function pintarTuViaje(persona, estado) {
   $('#tv-punto').className = 'tv-punto ' + estado;
 }
 
-// Se esconde cuando el presupuesto está en pantalla (ahí ya está el total)
+// Se esconde en el hero (ahí está el tablero) y en el presupuesto (ahí está el total)
 function conectarTuViaje() {
   if (!('IntersectionObserver' in window)) return;
   const barra = $('#tu-viaje');
-  new IntersectionObserver((entradas) => {
-    entradas.forEach((en) => barra.classList.toggle('oculto', en.isIntersecting));
-  }, { threshold: 0.15 }).observe($('#presupuesto'));
+  const visibles = new Set();
+  const obs = new IntersectionObserver((entradas) => {
+    entradas.forEach((en) => { if (en.isIntersecting) visibles.add(en.target.id); else visibles.delete(en.target.id); });
+    barra.classList.toggle('oculto', visibles.size > 0);
+  }, { threshold: 0.15 });
+  obs.observe($('#presupuesto'));
+  obs.observe($('#hero'));
 }
 
 // ---------- 7. Compra: checklist + links ----------
@@ -553,6 +629,7 @@ function conectarChecklist() {
       marcados[c.dataset.check] = c.checked;
       guardado.escribir('compra', marcados);
       progreso();
+      pintarTablero();
     });
   });
   progreso();
@@ -578,15 +655,14 @@ function conectarNav() {
 }
 
 // ---------- Inicio ----------
-pintarMosaico();
+pintarHero();
+pintarCuentaRegresiva();
 pintarVuelos();
 pintarPestanas();
 pintarRuta();
 pintarComparacion();
 pintarAustral();
-pintarIdeasAustral(DATOS.ideasAustral.lugares[0]);
-mediaAustral.mostrarLugar(DATOS.ideasAustral.lugares[0], false);
-mediaAustral.definirRuta(DATOS.ideasAustral.mapaRuta, 'una ruta posible', 'Idea para el kraft: de Balmaceda al norte (Queulat) y después al sur hasta Tortel.');
+pintarRutaAustral();
 conectarCalculadora();
 conectarChecklist();
 conectarNav();
