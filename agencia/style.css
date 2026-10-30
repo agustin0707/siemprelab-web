@@ -1,0 +1,257 @@
+/* ---------- Sistema SiempreLab ---------- */
+:root {
+  --negro: #202020;
+  --gris: #dddddd;
+  --fondo: #f2f2f2;
+  --acento: #c4552d;   /* terracota, único acento */
+  --suave: #8a8a8a;
+  --borde: #d6d6d6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--fondo);
+  color: var(--negro);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+/* ---------- Animación de entrada blurFadeUp ---------- */
+@keyframes blurFadeUp {
+  from { opacity: 0; transform: translateY(14px); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.aparece { opacity: 0; }
+.aparece.visible { animation: blurFadeUp 0.8s cubic-bezier(.2,.7,.2,1) forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aparece, .aparece.visible { opacity: 1; animation: none; }
+}
+
+/* ---------- Barra superior ---------- */
+.banda {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--negro);
+  color: var(--fondo);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  padding-top: calc(12px + env(safe-area-inset-top));
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+}
+.marca { display: flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.punto {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--acento); display: inline-block; flex-shrink: 0;
+}
+.estado {
+  border: 1px solid rgba(242,242,242,.35);
+  border-radius: 99px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+.estado.en-curso { background: var(--acento); border-color: var(--acento); color: #fff; }
+
+/* ---------- Etiquetas tipo código ---------- */
+.etiqueta {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--suave);
+}
+
+/* ---------- Portada ---------- */
+.portada { padding: 40px 0 32px; border-bottom: 1px solid var(--borde); }
+
+.saludo {
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  margin-top: 12px;
+}
+
+.ruta {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 12px;
+  margin-top: 36px;
+}
+.ciudad { display: flex; flex-direction: column; }
+.ciudad .codigo {
+  font-size: 46px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+}
+.ciudad .nombre {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--suave);
+  margin-top: 8px;
+  max-width: 120px;
+}
+.ciudad.destino { text-align: right; align-items: flex-end; }
+.ciudad.destino .codigo { color: var(--acento); }
+
+.trayecto { position: relative; height: 40px; margin-bottom: 26px; color: var(--negro); }
+.trayecto svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.acento-fill { fill: var(--acento); }
+.vuelo-num {
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  transform: translateX(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--borde);
+}
+.datos dt {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--suave);
+}
+.datos dd { font-size: 17px; font-weight: 500; letter-spacing: -0.01em; margin-top: 2px; white-space: nowrap; }
+.acento { color: var(--acento); }
+
+/* ---------- Itinerario ---------- */
+.itinerario { padding: 32px 0 8px; }
+
+.tramos { list-style: none; margin-top: 18px; position: relative; }
+
+/* Línea vertical punteada que une las escalas */
+.tramos::before {
+  content: '';
+  position: absolute;
+  left: 66px;
+  top: 10px;
+  bottom: 10px;
+  border-left: 1px dashed #b9b9b9;
+}
+
+.tramo {
+  position: relative;
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 24px;
+  padding: 14px 0;
+}
+
+/* Punto en la línea */
+.tramo::before {
+  content: '';
+  position: absolute;
+  left: 62px;
+  top: 21px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fondo);
+  border: 1.5px solid var(--negro);
+}
+
+.tramo .hora {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  padding-top: 1px;
+  white-space: nowrap;
+}
+.tramo .codigo-tramo {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--suave);
+}
+.tramo h2 {
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+.tramo p.detalle {
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+  max-width: 34ch;
+}
+
+/* Tramo ya pasado */
+.tramo.pasado { opacity: 0.45; }
+.tramo.pasado::before { background: var(--negro); }
+
+/* Tramo en curso: se destaca en terracota */
+.tramo.ahora::before {
+  background: var(--acento);
+  border-color: var(--acento);
+  box-shadow: 0 0 0 5px rgba(196, 85, 45, 0.18);
+}
+.tramo.ahora .hora,
+.tramo.ahora .codigo-tramo { color: var(--acento); }
+.tramo.ahora .codigo-tramo::after { content: ' · en curso'; }
+
+/* ---------- Cierre ---------- */
+.cierre {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--borde);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+.letra-chica {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--suave);
+  line-height: 1.6;
+}
+.firma {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- Microtexto de seguridad ---------- */
+.microtexto {
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #b4b4b4;
+  background: #e9e9e9;
+  padding: 6px 20px calc(6px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Pantallas muy angostas ---------- */
+@media (max-width: 360px) {
+  .saludo { font-size: 26px; }
+  .ciudad .codigo { font-size: 38px; }
+  .datos { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 14px; }
+}
