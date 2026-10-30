@@ -3,6 +3,13 @@
 // Para actualizar precios el sábado, se edita solo este archivo.
 
 const DATOS = {
+  // Dónde comprar cada aerolínea
+  compra: {
+    Copa: 'https://www.copaair.com/es-cl/',
+    Avianca: 'https://www.avianca.com/es/',
+    LATAM: 'https://www.latamairlines.com/cl/es'
+  },
+
   // Fecha en que se vieron los precios
   precioVisto: '30 oct',
 
@@ -76,7 +83,7 @@ const DATOS = {
     }
   ],
 
-  // Vuelo interno para volver desde Flores (Tikal) a Ciudad de Guatemala
+  // Vuelo interno Guatemala ↔ Flores (Tikal), precio por tramo
   vueloFlores: {
     precio: 89363,
     detalle: 'Avianca · 07:40, 19:55 o 23:10 · 45 min. TAG: 99.640 (07:20, 18:05).',
@@ -92,40 +99,51 @@ const DATOS = {
   ],
 
   // ---------- Rutas de 10 días ----------
+  // lugar: id en lugares.js (fotos + mapa) · mapaRuta: paradas para el mapa de la ruta completa
   rutas: [
     {
       id: 'guatemala',
       nombre: 'Solo Guatemala',
       resumen: 'Volcanes, lago y Tikal. Cero fronteras.',
+      mapaRuta: ['Antigua Guatemala', 'Volcán de Acatenango', 'Lago de Atitlán', 'Flores, Petén', 'Parque Nacional Tikal'],
       paradas: [
-        { dias: 'D1 · 14 dic', lugar: 'Antigua', detalle: 'Llegamos 11:51 y shuttle a Antigua (1 h). Primera noche colonial.' },
-        { dias: 'D2', lugar: 'Antigua', detalle: 'Cerro de la Cruz, mercados, rooftops con el Volcán de Agua.' },
-        { dias: 'D3 a D4', lugar: 'Acatenango', detalle: 'Trekking con noche frente al Volcán de Fuego en erupción.' },
-        { dias: 'D5 a D6', lugar: 'Lago Atitlán', detalle: 'San Pedro, San Marcos, kayak entre pueblos.' },
-        { dias: 'D7', lugar: 'Vuelo a Flores', detalle: 'Volver a Ciudad de Guatemala y volar a Flores.' },
-        { dias: 'D8', lugar: 'Tikal', detalle: 'Amanecer en el Templo IV con monos aulladores.' },
-        { dias: 'D9', lugar: 'Flores → Guatemala', detalle: 'Mañana libre en la isla y vuelo de vuelta a la capital.' },
-        { dias: 'D10 · 22 o 23 dic', lugar: 'Vuelta', detalle: 'Copa 10:38, llegamos a Santiago 23:35.' }
+        { dias: 'D1 · lun 14', lugar: 'antigua', titulo: 'Antigua', detalle: 'Llegamos 11:51 y shuttle a Antigua (1 h). Primera noche colonial.' },
+        { dias: 'D2 · mar 15', lugar: 'antigua', titulo: 'Antigua', detalle: 'Cerro de la Cruz, mercados, rooftops con el Volcán de Agua.' },
+        { dias: 'D3 a D4 · mié 16 y jue 17', lugar: 'acatenango', titulo: 'Acatenango', detalle: 'Trekking con noche frente al Volcán de Fuego en erupción.' },
+        { dias: 'D5 a D6 · vie 18 y sáb 19', lugar: 'atitlan', titulo: 'Lago Atitlán', detalle: 'San Pedro, San Marcos, kayak entre pueblos.' },
+        { dias: 'D7 · dom 20', lugar: 'flores', titulo: 'Vuelo a Flores', detalle: 'Volver a Ciudad de Guatemala y volar a Flores (45 min).' },
+        { dias: 'D8 · lun 21', lugar: 'tikal', titulo: 'Tikal', detalle: 'Amanecer en el Templo IV con monos aulladores.' },
+        { dias: 'D9 · mar 22', lugar: 'flores', titulo: 'Flores → Guatemala', detalle: 'Mañana en la isla y vuelo a la capital. Con vuelta el 23, día extra acá.' },
+        { dias: 'D10 · mié 23', lugar: null, titulo: 'Vuelta', detalle: 'Copa 10:38, llegamos a Santiago 23:35. Si volvemos el 22, se corre todo un día.' }
       ],
-      extra: 'Vuelos internos Guatemala ↔ Flores: ~89 mil cada tramo.'
+      extra: 'Dos vuelos internos (Guatemala → Flores y vuelta): ~89 mil cada tramo.',
+      internos: 2
     },
     {
       id: 'belice',
       nombre: 'Guatemala + Belice',
       resumen: 'Lo mismo, cambiando el volcán por el Caribe.',
+      mapaRuta: ['Antigua Guatemala', 'Lago de Atitlán', 'Flores, Petén', 'Parque Nacional Tikal', 'Caye Caulker, Belize'],
       paradas: [
-        { dias: 'D1 a D2', lugar: 'Antigua', detalle: 'Llegada, ciudad colonial y Cerro de la Cruz.' },
-        { dias: 'D3 a D4', lugar: 'Lago Atitlán', detalle: 'Pueblos mayas y kayak.' },
-        { dias: 'D5', lugar: 'Vuelo a Flores', detalle: 'Guatemala → Flores, 45 min.' },
-        { dias: 'D6', lugar: 'Tikal', detalle: 'Ruinas al amanecer.' },
-        { dias: 'D7', lugar: 'Caye Caulker', detalle: 'Shuttle a Belice + lancha (5 a 6 h). Vibe "go slow".' },
-        { dias: 'D8', lugar: 'Caye Caulker', detalle: 'Snorkel en el arrecife: tiburones nodriza y mantarrayas.' },
-        { dias: 'D9', lugar: 'Vuelta a Flores', detalle: 'Lancha + shuttle y vuelo Flores → Guatemala 19:55.' },
-        { dias: 'D10 · 22 o 23 dic', lugar: 'Vuelta', detalle: 'Copa 10:38, llegamos a Santiago 23:35.' }
+        { dias: 'D1 a D2 · lun 14 y mar 15', lugar: 'antigua', titulo: 'Antigua', detalle: 'Llegada, ciudad colonial y Cerro de la Cruz.' },
+        { dias: 'D3 a D4 · mié 16 y jue 17', lugar: 'atitlan', titulo: 'Lago Atitlán', detalle: 'Pueblos mayas y kayak.' },
+        { dias: 'D5 · vie 18', lugar: 'flores', titulo: 'Vuelo a Flores', detalle: 'Guatemala → Flores, 45 min.' },
+        { dias: 'D6 · sáb 19', lugar: 'tikal', titulo: 'Tikal', detalle: 'Ruinas al amanecer.' },
+        { dias: 'D7 · dom 20', lugar: 'caye-caulker', titulo: 'Caye Caulker', detalle: 'Shuttle a Belice + lancha (5 a 6 h). Vibe "go slow".' },
+        { dias: 'D8 · lun 21', lugar: 'caye-caulker', titulo: 'Caye Caulker', detalle: 'Snorkel en el arrecife: tiburones nodriza y mantarrayas.' },
+        { dias: 'D9 · mar 22', lugar: 'flores', titulo: 'Vuelta a Flores', detalle: 'Lancha + shuttle y vuelo Flores → Guatemala 19:55.' },
+        { dias: 'D10 · mié 23', lugar: null, titulo: 'Vuelta', detalle: 'Copa 10:38, llegamos a Santiago 23:35.' }
       ],
-      extra: 'No entra el Acatenango. Salida de Belice por tierra: BZ$40 (≈ USD 20) en efectivo.'
+      extra: 'No entra el Acatenango. Dos vuelos internos (~89 mil c/u). Salida de Belice por tierra: BZ$40 (≈ USD 20) en efectivo.',
+      internos: 2
     }
   ],
+
+  // Ideas para la Austral 2.0 (se decide en el kraft)
+  ideasAustral: {
+    mapaRuta: ['Aeropuerto Balmaceda', 'Parque Nacional Queulat', 'Coyhaique', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Caleta Tortel'],
+    lugares: ['carretera-austral', 'queulat', 'cerro-castillo', 'capillas-marmol', 'tortel']
+  },
 
   // ---------- Austral 2.0 (ida y vuelta por persona) ----------
   vuelosAustral: [
