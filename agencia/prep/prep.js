@@ -560,6 +560,7 @@ function conectarChecklist() {
 
 // ---------- Navegación: marca la sección visible ----------
 function conectarNav() {
+  const nav = $('.nav');
   const links = $$('.nav a');
   if (!('IntersectionObserver' in window)) return;
   const obs = new IntersectionObserver((entradas) => {
@@ -568,7 +569,8 @@ function conectarNav() {
       links.forEach((a) => {
         const activo = a.getAttribute('href') === '#' + en.target.id;
         a.classList.toggle('activo', activo);
-        if (activo) a.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        // Solo desliza la barra de navegación (no la página, para no cortar otros scrolls)
+        if (activo) nav.scrollTo({ left: a.offsetLeft - 20, behavior: 'smooth' });
       });
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
