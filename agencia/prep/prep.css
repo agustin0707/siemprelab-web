@@ -631,7 +631,7 @@ img { max-width: 100%; display: block; }
 .check { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--texto-2); cursor: pointer; align-self: end; }
 .check input { margin-top: 3px; accent-color: var(--negro); }
 
-.linea { display: grid; grid-template-columns: 1fr 100px 64px; gap: 4px 6px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--gris); }
+.linea { display: grid; grid-template-columns: minmax(0, 1fr) 96px 92px; gap: 4px 6px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--gris); }
 .linea:last-child { border-bottom: 0; padding-bottom: 0; }
 .linea .nombre-linea { grid-column: 1 / -1; font-size: 13px; color: var(--negro); display: flex; justify-content: space-between; gap: 8px; }
 .linea .nombre-linea small { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); white-space: nowrap; }
@@ -639,7 +639,7 @@ img { max-width: 100%; display: block; }
 .linea .subtotal { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--negro); }
 .linea .x { position: relative; }
 .linea .unidad { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: 'Space Mono', monospace; font-size: 9px; color: var(--suave); pointer-events: none; }
-.linea .x input { padding-right: 34px; }
+.linea .x input { padding-right: 46px; }
 
 .resultado {
   background: var(--negro);
@@ -756,3 +756,129 @@ img { max-width: 100%; display: block; }
   .tv-etiqueta { display: none; }
   .tv-items { font-size: 12px; }
 }
+
+/* ---------- Austral: km por tramo ---------- */
+.parada .manejo { display: inline-block; margin-top: 6px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--texto-2); background: #ececec; border-radius: 99px; padding: 2px 8px; }
+
+/* ---------- Tabla de alojamiento ---------- */
+.tabla-marco { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; }
+.tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tabla th { text-align: left; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 400; color: var(--suave); padding: 10px 14px; border-bottom: 1px solid var(--borde); }
+.tabla td { padding: 12px 14px; border-bottom: 1px solid var(--gris); vertical-align: top; }
+.tabla tr:last-child td { border-bottom: 0; }
+.tabla td small { display: block; color: var(--suave); font-size: 12px; margin-top: 2px; }
+.tabla .mono { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--texto-2); white-space: nowrap; }
+.tabla .opcion { display: block; }
+.tabla .opcion + .opcion { margin-top: 3px; }
+.tabla .opcion b { font-weight: 500; white-space: nowrap; }
+.tabla td[data-col="camping"] { white-space: nowrap; }
+.tabla td[data-col="camping"] small { white-space: normal; }
+.tabla .suave { color: var(--suave); }
+.tabla .link { font-family: 'Space Mono', monospace; font-size: 11px; white-space: nowrap; }
+@media (max-width: 760px) {
+  .tabla thead { display: none; }
+  .tabla, .tabla tbody, .tabla tr, .tabla td { display: block; }
+  .tabla tr { padding: 12px 14px; border-bottom: 1px solid var(--gris); }
+  .tabla tr:last-child { border-bottom: 0; }
+  .tabla td { padding: 4px 0; border: 0; display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; }
+  .tabla td::before { content: attr(data-col); font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); padding-top: 3px; }
+  .tabla td > * { grid-column: 2; }
+}
+
+/* ---------- Tours y entradas ---------- */
+.actividades { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+.actividad { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: var(--texto-2); display: flex; flex-direction: column; gap: 4px; }
+.actividad strong { color: var(--negro); font-weight: 500; }
+.actividad-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.actividad-precio { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--negro); }
+.sello-mini { font-family: 'Space Mono', monospace; font-size: 10px; padding: 1px 8px; border-radius: 99px; background: var(--acento-suave); color: #8c3a1d; white-space: nowrap; }
+
+/* ---------- Botones bajo las rutas ---------- */
+.botones-ruta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+/* ---------- Armador de ruta ---------- */
+.armador { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (min-width: 1000px) {
+  .armador { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 0.9fr); }
+  .armador-total { position: sticky; top: 110px; }
+}
+.armador-lugares > .etiqueta, .armador-cabeza .etiqueta { display: block; margin-bottom: 10px; }
+.lugares-grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 8px; }
+@media (min-width: 1000px) { .lugares-grilla { grid-template-columns: minmax(0, 1fr); } }
+.lugar-chip {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 6px 10px 6px 6px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.lugar-chip:hover { border-color: var(--negro); }
+.lugar-chip img, .lugar-chip .sin-foto { width: 52px; height: 52px; border-radius: 7px; object-fit: cover; background: #e0e0e0; }
+.lugar-chip .sin-foto { display: grid; place-items: center; background: #e0e0e0; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); }
+.lugar-texto { display: flex; flex-direction: column; min-width: 0; }
+.lugar-texto strong { font-size: 14px; font-weight: 500; }
+.lugar-texto small { font-size: 11px; color: var(--suave); line-height: 1.4; }
+.lugar-chip .mas { font-family: 'Space Mono', monospace; font-size: 18px; color: var(--acento); }
+
+.armador-ruta { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 14px; }
+.armador-cabeza { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.noches-estado { font-family: 'Space Mono', monospace; font-size: 11px; border-radius: 99px; padding: 2px 9px; background: #ececec; }
+.noches-estado.ok { background: #e1efe4; color: var(--ok); }
+.noches-estado.mal { background: var(--acento-suave); color: #8c3a1d; }
+
+.etapas { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.etapas .vacio { padding: 24px 0; text-align: center; color: var(--suave); font-size: 14px; }
+.etapa { border: 1px solid var(--borde); border-radius: 10px; padding: 10px 12px; background: #fff; }
+.etapa-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.etapa-cabeza strong { font-weight: 500; }
+.etapa-mover { display: flex; gap: 4px; }
+.etapa-mover button, .pasos button {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--borde);
+  background: transparent;
+  font: 14px/1 'Space Mono', monospace;
+  color: var(--negro);
+  cursor: pointer;
+}
+.etapa-mover button:hover:not(:disabled), .pasos button:hover:not(:disabled) { border-color: var(--negro); }
+.etapa-mover button:disabled, .pasos button:disabled { opacity: 0.3; cursor: default; }
+.etapa-controles { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.pasos { display: flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 12px; }
+.pasos span { min-width: 64px; text-align: center; }
+.etapa-controles select {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  font: 13px 'Inter', sans-serif;
+  padding: 6px 8px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--blanco);
+  color: var(--negro);
+}
+.etapa-controles .suave { font-size: 13px; color: var(--suave); }
+.etapa-nota { font-size: 12px; color: var(--texto-2); margin-top: 8px; line-height: 1.5; }
+.etapa-nota .link { font-family: 'Space Mono', monospace; font-size: 11px; white-space: nowrap; }
+
+.traslado { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 6px; align-items: baseline; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--suave); padding: 2px 4px 2px 10px; }
+.traslado b { font-weight: 400; color: var(--texto-2); white-space: nowrap; }
+.traslado.es-vuelo { color: var(--texto-2); }
+.traslado.es-vuelo .traslado-icono, .traslado.falta { color: var(--acento); }
+.armador-acciones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.armador-acciones .boton { text-decoration: none; }
+
+.armador-total { background: var(--negro); color: var(--fondo); border-radius: 14px; padding: 20px; }
+.armador-total .etiqueta { color: #a9a9a9; }
+.armador-total .desglose { margin-top: 14px; }
+.armador-total .boton.acento { margin-top: 18px; width: 100%; }
+.armador-aviso { font-family: 'Space Mono', monospace; font-size: 11px; color: #a9a9a9; margin-top: 10px; line-height: 1.5; }

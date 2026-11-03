@@ -182,6 +182,43 @@ const LUGARES = {
       }
     ]
   },
+  "rio-dulce": {
+    "nombre": "Río Dulce y Livingston",
+    "pais": "Guatemala",
+    "mapa": "Río Dulce, Izabal, Guatemala",
+    "zoom": 11,
+    "descripcion": "El Caribe guatemalteco: lancha por un cañón de selva hasta Livingston, pueblo garífuna con tapado (sopa de mariscos) y el Castillo de San Felipe a la entrada del lago Izabal.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Green_R%C3%ADo_Dulce_%28Unsplash%29.jpg/1280px-Green_R%C3%ADo_Dulce_%28Unsplash%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Green_R%C3%ADo_Dulce_%28Unsplash%29.jpg/1920px-Green_R%C3%ADo_Dulce_%28Unsplash%29.jpg",
+        "credito": "Lara Natalia Haenny",
+        "licencia": "CC0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Green_R%C3%ADo_Dulce_(Unsplash).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Rio_Dulce_-_Guatemala_3.jpg/1280px-Rio_Dulce_-_Guatemala_3.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Rio_Dulce_-_Guatemala_3.jpg/1920px-Rio_Dulce_-_Guatemala_3.jpg",
+        "credito": "Jake Brown",
+        "licencia": "CC BY 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Rio_Dulce_-_Guatemala_3.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/El_Castillo_de_San_Felipe_-_Near_Rio_Dulce_-_Izabal_-_Guatemala_%2815714176090%29.jpg/1280px-El_Castillo_de_San_Felipe_-_Near_Rio_Dulce_-_Izabal_-_Guatemala_%2815714176090%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/El_Castillo_de_San_Felipe_-_Near_Rio_Dulce_-_Izabal_-_Guatemala_%2815714176090%29.jpg/1920px-El_Castillo_de_San_Felipe_-_Near_Rio_Dulce_-_Izabal_-_Guatemala_%2815714176090%29.jpg",
+        "credito": "Adam Jones",
+        "licencia": "CC BY-SA 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:El_Castillo_de_San_Felipe_-_Near_Rio_Dulce_-_Izabal_-_Guatemala_(15714176090).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Panorama_of_Harbor_-_Livingston_-_Izabal_-_Guatemala_%2815713939658%29.jpg/1280px-Panorama_of_Harbor_-_Livingston_-_Izabal_-_Guatemala_%2815713939658%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Panorama_of_Harbor_-_Livingston_-_Izabal_-_Guatemala_%2815713939658%29.jpg/1920px-Panorama_of_Harbor_-_Livingston_-_Izabal_-_Guatemala_%2815713939658%29.jpg",
+        "credito": "Adam Jones",
+        "licencia": "CC BY-SA 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Panorama_of_Harbor_-_Livingston_-_Izabal_-_Guatemala_(15713939658).jpg"
+      }
+    ]
+  },
   "flores": {
     "nombre": "Flores",
     "pais": "Guatemala",

@@ -1,6 +1,7 @@
 // Web prep · Agencia de Viajes SiempreLab
-// Pinta vuelos, rutas (con fotos y mapa), comparación y Austral desde datos.js y lugares.js.
-// Lo que se elige (vuelo, ruta, vuelo al sur) alimenta la calculadora y la barra "tu viaje".
+// Pinta la Austral (vuelos, auto, ruta, alojamiento), Guatemala (vuelos, rutas y armador)
+// y el presupuesto desde datos.js y lugares.js.
+// Lo que se elige (vuelos, auto, ruta, armador) alimenta la calculadora y la barra "tu viaje".
 
 // ---------- Utilidades ----------
 const CLP = (n) => '$' + Math.round(n).toLocaleString('es-CL');
@@ -43,6 +44,7 @@ const P = DATOS.presupuesto;
 const OPCIONES_INICIALES = {
   vueloCA: DATOS.vuelosCA.find((v) => v.recomendado).id,
   vueloAU: DATOS.vuelosAustral[0].id,
+  auto: DATOS.autos.opciones.find((a) => a.recomendado).id,
   ruta: null,       // id de ruta elegida (null = sin elegir)
   internos: 2,      // tramos Guatemala ↔ Flores
   seguro: false
@@ -52,6 +54,7 @@ let opciones = Object.assign({}, OPCIONES_INICIALES, guardado.leer('opciones', {
 // Por si quedó guardado un vuelo que ya no existe
 if (!DATOS.vuelosCA.some((v) => v.id === opciones.vueloCA)) opciones.vueloCA = OPCIONES_INICIALES.vueloCA;
 if (!DATOS.vuelosAustral.some((v) => v.id === opciones.vueloAU)) opciones.vueloAU = OPCIONES_INICIALES.vueloAU;
+if (!DATOS.autos.opciones.some((a) => a.id === opciones.auto)) opciones.auto = OPCIONES_INICIALES.auto;
 if (opciones.ruta && !DATOS.rutas.some((r) => r.id === opciones.ruta)) opciones.ruta = null;
 const guardarOpciones = () => guardado.escribir('opciones', opciones);
 
@@ -59,6 +62,7 @@ const guardarOpciones = () => guardado.escribir('opciones', opciones);
 $$('[data-precio-visto]').forEach((el) => { el.textContent = DATOS.precioVisto; });
 $$('[data-vuelo-flores]').forEach((el) => { el.textContent = CLP(DATOS.vueloFlores.precio); });
 $$('[data-link-austral]').forEach((el) => { el.href = DATOS.linkAustral; });
+$$('[data-link-autos]').forEach((el) => { el.href = DATOS.autos.link; });
 
 // ---------- Hero: fotos que rotan + tablero de salidas ----------
 const DURACION_FOTO = 6500;
@@ -109,10 +113,24 @@ function mostrarFotoHero(i) {
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) mostrarFotoHero(fotoHero); });
 
-// Cuenta regresiva hasta el despegue
+// Cuenta regresiva: primero hasta la junta, después hasta el despegue (en días de calendario)
+function diasHasta(fecha) {
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const dia = new Date(fecha); dia.setHours(0, 0, 0, 0);
+  return Math.round((dia - hoy) / 86400000);
+}
 function pintarCuentaRegresiva() {
-  const dias = Math.ceil((new Date(DATOS.despegue) - new Date()) / 86400000);
-  $('#cuenta-regresiva').textContent = dias > 1 ? `faltan ${dias} días` : dias === 1 ? 'despegamos mañana' : 'buen viaje';
+  const junta = diasHasta(DATOS.junta);
+  const vuelo = diasHasta(DATOS.despegue);
+  let texto;
+  if (junta > 1) texto = `junta en ${junta} días`;
+  else if (junta === 1) texto = 'junta mañana';
+  else if (junta === 0) texto = 'junta hoy';
+  else if (vuelo > 1) texto = `faltan ${vuelo} días`;
+  else if (vuelo === 1) texto = 'despegamos mañana';
+  else if (vuelo === 0) texto = 'despegamos hoy';
+  else texto = 'buen viaje';
+  $('#cuenta-regresiva').textContent = texto;
 }
 
 // El tablero refleja lo elegido y si ya se compró (foto de confirmación marcada)
@@ -292,6 +310,7 @@ $('#lista-vuelos').addEventListener('click', (e) => {
   opciones.vueloCA = b.dataset.elegirVuelo;
   guardarOpciones();
   pintarVuelos();
+  pintarArmador();
   sincronizarSelects();
   calcular();
 });
@@ -370,6 +389,10 @@ $('[data-paradas]', exploradorRutas).addEventListener('click', (e) => {
   const b = e.target.closest('[data-parada]');
   if (b) seleccionarParada(Number(b.dataset.parada), true);
 });
+$('[data-cargar-ruta]', exploradorRutas).addEventListener('click', () => {
+  cargarEnArmador(DATOS.rutas.find((r) => r.id === rutaVista));
+  $('#armar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 $('[data-elegir-ruta]', exploradorRutas).addEventListener('click', () => {
   const ruta = DATOS.rutas.find((r) => r.id === rutaVista);
   opciones.ruta = ruta.id;
@@ -380,19 +403,6 @@ $('[data-elegir-ruta]', exploradorRutas).addEventListener('click', () => {
   sincronizarSelects();
   calcular();
 });
-
-// ---------- 3. Comparación ----------
-function pintarComparacion() {
-  const max = Math.max(...DATOS.comparacion.map((c) => c.precio));
-  $('#lista-comparar').innerHTML = DATOS.comparacion.map((c, i) => `
-    <div class="barra-fila${c.malo ? ' malo' : ''}${i === 0 ? ' elegido' : ''}">
-      <div class="nombre">${c.destino}<small>${c.nota}</small></div>
-      <div class="barra-pista">
-        <div class="barra-relleno" style="width:${Math.max(20, (c.precio / max) * 100)}%">${CLP(c.precio)}</div>
-      </div>
-    </div>
-  `).join('');
-}
 
 // ---------- 1. Austral (primer viaje): vuelos + ruta con fotos y mapa ----------
 function pintarAustral() {
@@ -449,6 +459,7 @@ function pintarRutaAustral() {
         <span class="dias">${p.dias}</span>
         <strong>${p.titulo}</strong>
         <p>${p.detalle}</p>
+        ${p.manejo ? `<span class="manejo">${p.manejo}</span>` : ''}
       </button>
     </li>`).join('');
   mediaAustral.mostrarLugar(r.paradas[1].lugar, false);
@@ -462,6 +473,249 @@ $('[data-paradas]', exploradorAustral).addEventListener('click', (e) => {
   $$('[data-paradas] button', exploradorAustral).forEach((x, n) => x.setAttribute('aria-current', String(n === i)));
   mediaAustral.mostrarLugar(DATOS.rutaAustral.paradas[i].lugar, true);
   if (esAngosto()) $('[data-media]', exploradorAustral).scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+// ---------- Austral: auto ----------
+function pintarAutos() {
+  $('#lista-autos').innerHTML = DATOS.autos.opciones.map((a) => {
+    const elegido = opciones.auto === a.id;
+    const sellos = [
+      a.sello ? `<span class="sello">${a.sello}</span>` : '',
+      elegido ? '<span class="sello acento">elegido</span>' : ''
+    ].join('');
+    return `
+      <article class="vuelo${a.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
+        ${sellos ? `<div class="sellos">${sellos}</div>` : ''}
+        <div class="vuelo-cabeza">
+          <span class="aerolinea">${a.agencia} · ${a.recogida}</span>
+          <span class="etiqueta">10 días</span>
+        </div>
+        <div class="precio-fila"><p class="precio">${CLP(a.total)}</p><span class="noches" title="a la mitad">${CLP(a.total / 2)} c/u</span></div>
+        <div class="tramo-vuelo">
+          <span class="etiqueta">auto</span>
+          <div><strong>${a.modelo}</strong><small>${a.tipo}</small></div>
+        </div>
+        <p class="nota-vuelo">${a.nota}</p>
+        <div class="acciones">
+          <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-auto="${a.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
+          <a class="link" href="${DATOS.autos.link}" target="_blank" rel="noopener">reservar ↗</a>
+        </div>
+      </article>`;
+  }).join('');
+}
+$('#lista-autos').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-elegir-auto]');
+  if (!b) return;
+  const auto = DATOS.autos.opciones.find((a) => a.id === b.dataset.elegirAuto);
+  opciones.auto = auto.id;
+  guardarOpciones();
+  // El arriendo del presupuesto pasa a ser el de este auto
+  valores['au-auto'] = { unitario: Math.round(auto.total / 10), cantidad: 10 };
+  guardado.escribir('valores', valores);
+  pintarAutos();
+  pintarLineas('calc-au', P.austral);
+  calcular();
+});
+
+// ---------- Austral: dónde dormir, actividades y barcaza ----------
+const busquedaHoteles = (q) => `https://www.google.com/travel/search?q=${encodeURIComponent(q)}&hl=es&gl=CL&curr=CLP`;
+
+function pintarDormir() {
+  $('#tabla-dormir tbody').innerHTML = DATOS.dormirAustral.map((d) => `
+    <tr>
+      <td class="mono" data-col="noche">${d.noche}</td>
+      <td data-col="dónde"><strong>${d.donde}</strong>${d.extra ? `<small>${d.extra}</small>` : ''}</td>
+      <td data-col="camping">${CLP(d.camping)} p/p${d.campingNota ? `<small>${d.campingNota}</small>` : ''}</td>
+      <td data-col="con techo">${d.techo.length
+        ? d.techo.map((t) => `<span class="opcion">${t.n} <span class="mono">★ ${t.r}</span> <b>${CLP(t.p)}</b></span>`).join('')
+        : '<span class="suave">sin precio en línea</span>'}</td>
+      <td data-col=""><a class="link" href="${busquedaHoteles(d.busca)}" target="_blank" rel="noopener">ver más ↗</a></td>
+    </tr>`).join('');
+}
+
+function pintarActividadesAustral() {
+  $('#lista-actividades-au').innerHTML = DATOS.actividadesAustral.map((a) => `
+    <div class="actividad">
+      <div class="actividad-cabeza"><span class="etiqueta">${a.donde}</span>${a.reservar ? '<span class="sello-mini">reservar</span>' : ''}</div>
+      <strong>${a.nombre}</strong>
+      <p class="actividad-precio">${a.precio}</p>
+      <p>${a.nota}</p>
+    </div>`).join('');
+  const b = DATOS.barcaza;
+  $('[data-barcaza]').innerHTML = `Desde Yungay: <strong>${b.ida.join(' · ')}</strong>. Desde Río Bravo: <strong>${b.vuelta.join(' · ')}</strong>. ${b.nota}`;
+}
+
+// ---------- 4. Armador de ruta (Guatemala) ----------
+const A = DATOS.armador;
+const lugarArmador = (id) => A.lugares.find((l) => l.id === id);
+const etapasDeRuta = (r) => r.etapas.map(([lugar, noches]) => ({ lugar, noches, aloj: lugarArmador(lugar).base }));
+let etapas = (guardado.leer('armador', null) || etapasDeRuta(DATOS.rutas[0]))
+  .filter((e) => lugarArmador(e.lugar)); // por si cambió algún lugar
+const guardarEtapas = () => guardado.escribir('armador', etapas);
+
+// Traslado entre dos puntos: busca a>b y si no, b>a. Mismo lugar: no hay traslado.
+function traslado(a, b) {
+  if (a === b) return null;
+  return A.traslados[`${a}>${b}`] || A.traslados[`${b}>${a}`] ||
+    { h: '?', modo: 'sin dato directo: conviene pasar por Antigua o Flores', p: 0, falta: true };
+}
+
+const nombrePunto = (id) => (id === 'gua' ? 'aeropuerto' : lugarArmador(id).nombre);
+const fotoLugar = (id) => (LUGARES[id] ? LUGARES[id].fotos[0].src : '');
+
+function pintarLugaresArmador() {
+  $('#armador-lugares').innerHTML = A.lugares.map((l) => {
+    const desde = Math.min(...l.aloj.map((o) => o.p));
+    const foto = fotoLugar(l.id);
+    return `
+      <button type="button" class="lugar-chip" data-sumar="${l.id}">
+        ${foto ? `<img src="${foto}" alt="" loading="lazy" decoding="async">` : '<span class="sin-foto">GUA</span>'}
+        <span class="lugar-texto">
+          <strong>${l.nombre}</strong>
+          <small>${l.sugeridas}</small>
+          <small>${desde ? 'desde ' + CLP(desde) + ' la noche' : 'alojamiento incluido'}</small>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>`;
+  }).join('');
+}
+
+// Cálculo del armador (por persona)
+function calcularArmador() {
+  const puntos = ['gua', ...etapas.map((e) => e.lugar), 'gua'];
+  const tramos = [];
+  for (let i = 0; i < puntos.length - 1; i++) tramos.push(traslado(puntos[i], puntos[i + 1]));
+  const noches = etapas.reduce((s, e) => s + e.noches, 0);
+  const alojNoches = etapas.reduce((s, e) => s + e.noches * lugarArmador(e.lugar).aloj[e.aloj].p, 0); // para los dos
+  const unicos = [...new Set(etapas.map((e) => e.lugar))];
+  const activ = unicos.reduce((s, id) => s + lugarArmador(id).activ, 0);
+  const vuelos = tramos.filter((t) => t && t.vuelo).length;
+  const traslados = tramos.reduce((s, t) => s + (t ? t.p : 0), 0);
+  const trasladosTierra = traslados - vuelos * DATOS.vueloFlores.precio;
+  const comidaDia = Number(valores['ca-comida'].unitario) || 15000;
+  const comida = (noches + 1) * comidaDia;
+  const persona = alojNoches / 2 + activ + traslados + comida;
+  const falta = tramos.some((t) => t && t.falta);
+  return { tramos, noches, alojNoches, activ, vuelos, traslados, trasladosTierra, comida, persona, falta };
+}
+
+function filaTraslado(t, desde, hasta) {
+  if (!t) return '';
+  return `
+    <li class="traslado${t.vuelo ? ' es-vuelo' : ''}${t.falta ? ' falta' : ''}">
+      <span class="traslado-icono" aria-hidden="true">${t.vuelo ? '✈' : '↓'}</span>
+      <span>${nombrePunto(desde)} → ${nombrePunto(hasta)} · ${t.h} · ${t.modo}${t.nota ? ` · ${t.nota}` : ''}</span>
+      <b>${t.p ? (t.est ? '≈ ' : '') + CLP(t.p) : ''}</b>
+    </li>`;
+}
+
+function pintarArmador() {
+  const r = calcularArmador();
+  const puntos = ['gua', ...etapas.map((e) => e.lugar), 'gua'];
+  const filas = [];
+  etapas.forEach((e, i) => {
+    const l = lugarArmador(e.lugar);
+    filas.push(filaTraslado(r.tramos[i], puntos[i], puntos[i + 1]));
+    filas.push(`
+      <li class="etapa" data-i="${i}">
+        <div class="etapa-cabeza">
+          <strong>${l.nombre}</strong>
+          <div class="etapa-mover">
+            <button type="button" data-accion="subir" aria-label="Subir" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button type="button" data-accion="bajar" aria-label="Bajar" ${i === etapas.length - 1 ? 'disabled' : ''}>↓</button>
+            <button type="button" data-accion="quitar" aria-label="Quitar">×</button>
+          </div>
+        </div>
+        <div class="etapa-controles">
+          <div class="pasos" role="group" aria-label="Noches en ${l.nombre}">
+            <button type="button" data-accion="menos" aria-label="Una noche menos" ${e.noches <= 1 ? 'disabled' : ''}>−</button>
+            <span>${e.noches} ${e.noches === 1 ? 'noche' : 'noches'}</span>
+            <button type="button" data-accion="mas" aria-label="Una noche más">+</button>
+          </div>
+          ${l.aloj.length > 1 ? `
+          <select data-accion="aloj" aria-label="Dónde dormir en ${l.nombre}">
+            ${l.aloj.map((o, n) => `<option value="${n}" ${n === e.aloj ? 'selected' : ''}>${o.n} · ★ ${o.r} · ${CLP(o.p)}</option>`).join('')}
+          </select>` : `<span class="suave">${l.aloj[0].n}</span>`}
+        </div>
+        <p class="etapa-nota">${l.activNota}. ${l.nota}${l.busca ? ` <a class="link" href="${busquedaHoteles(l.busca)}" target="_blank" rel="noopener">más alojamiento ↗</a>` : ''}</p>
+      </li>`);
+  });
+  if (etapas.length) filas.push(filaTraslado(r.tramos[etapas.length], puntos[etapas.length], 'gua'));
+  $('#armador-etapas').innerHTML = etapas.length ? filas.join('') : '<li class="vacio">Toca un lugar para empezar.</li>';
+
+  // Noches contra las del vuelo elegido
+  const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
+  const disp = ca.noches;
+  const estado = $('#armador-noches');
+  estado.textContent = r.noches === disp ? `${r.noches} de ${disp} noches ✓` :
+    r.noches < disp ? `${r.noches} de ${disp} noches · faltan ${disp - r.noches}` : `${r.noches} de ${disp} noches · sobran ${r.noches - disp}`;
+  estado.className = 'noches-estado ' + (r.noches === disp ? 'ok' : 'mal');
+
+  $('#armador-persona').textContent = CLP(r.persona);
+  $('#armador-desglose').innerHTML = `
+    <div><dt>alojamiento</dt><dd>${CLP(r.alojNoches / 2)}</dd></div>
+    <div><dt>tours y entradas</dt><dd>${CLP(r.activ)}</dd></div>
+    <div><dt>traslados${r.vuelos ? ` (${r.vuelos} ${r.vuelos === 1 ? 'vuelo' : 'vuelos'})` : ''}</dt><dd>${CLP(r.traslados)}</dd></div>
+    <div><dt>comida</dt><dd>${CLP(r.comida)}</dd></div>`;
+  $('#armador-aviso').textContent = r.falta ? 'Hay un tramo sin dato directo: conviene ordenar la ruta pasando por Antigua o Flores.' : 'Sin contar el vuelo Santiago ↔ Guatemala.';
+
+  // Link al mapa con la ruta completa
+  const paradas = ['Aeropuerto La Aurora, Guatemala', ...etapas.map((e) => (LUGARES[e.lugar] ? LUGARES[e.lugar].mapa : lugarArmador(e.lugar).nombre)), 'Aeropuerto La Aurora, Guatemala'];
+  $('#armador-mapa').href = 'https://www.google.com/maps/dir/' + paradas.map(encodeURIComponent).join('/');
+}
+
+function cargarEnArmador(ruta) {
+  etapas = etapasDeRuta(ruta);
+  guardarEtapas();
+  pintarArmador();
+}
+
+$('#armador-lugares').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-sumar]');
+  if (!b) return;
+  const l = lugarArmador(b.dataset.sumar);
+  etapas.push({ lugar: l.id, noches: ['acatenango', 'ciudad'].includes(l.id) ? 1 : 2, aloj: l.base });
+  guardarEtapas();
+  pintarArmador();
+});
+
+$('#armador-etapas').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-accion]');
+  if (!b) return;
+  const i = Number(b.closest('.etapa').dataset.i);
+  const accion = b.dataset.accion;
+  if (accion === 'mas') etapas[i].noches++;
+  if (accion === 'menos') etapas[i].noches = Math.max(1, etapas[i].noches - 1);
+  if (accion === 'quitar') etapas.splice(i, 1);
+  if (accion === 'subir' && i > 0) [etapas[i - 1], etapas[i]] = [etapas[i], etapas[i - 1]];
+  if (accion === 'bajar' && i < etapas.length - 1) [etapas[i + 1], etapas[i]] = [etapas[i], etapas[i + 1]];
+  guardarEtapas();
+  pintarArmador();
+});
+$('#armador-etapas').addEventListener('change', (e) => {
+  if (e.target.dataset.accion !== 'aloj') return;
+  etapas[Number(e.target.closest('.etapa').dataset.i)].aloj = Number(e.target.value);
+  guardarEtapas();
+  pintarArmador();
+});
+$('#armador-vaciar').addEventListener('click', () => { etapas = []; guardarEtapas(); pintarArmador(); });
+
+// Lleva los números del armador a la calculadora
+$('#armador-pasar').addEventListener('click', () => {
+  const r = calcularArmador();
+  if (!r.noches) return;
+  valores['ca-aloj'] = { unitario: Math.round(r.alojNoches / r.noches / 100) * 100, cantidad: r.noches };
+  valores['ca-comida'] = { unitario: Number(valores['ca-comida'].unitario) || 15000, cantidad: r.noches + 1 };
+  valores['ca-transp'] = { unitario: Math.round(r.trasladosTierra / 100) * 100, cantidad: 1 };
+  valores['ca-activ'] = { unitario: r.activ, cantidad: 1 };
+  guardado.escribir('valores', valores);
+  opciones.internos = Math.min(r.vuelos, 4);
+  guardarOpciones();
+  pintarLineas('calc-ca', P.centroamerica);
+  sincronizarSelects();
+  calcular();
+  $('#armador-aviso').textContent = 'Listo: quedó en el presupuesto.';
+  $('#presupuesto').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 // ---------- 5. Calculadora ----------
@@ -537,13 +791,13 @@ function calcular() {
   let veredicto;
   if (persona <= 2000000) { estado = 'ok'; veredicto = `<strong>Bien.</strong> Dentro del tope con espacio (${CLP(P.tope.max - persona)} de margen).`; }
   else if (persona <= P.tope.max) { estado = 'justo'; veredicto = `<strong>Justo.</strong> Dentro del tope, con ${CLP(P.tope.max - persona)} de margen.`; }
-  else { estado = 'pasado'; veredicto = `<strong>Nos pasamos por ${CLP(persona - P.tope.max)}.</strong> Lo primero que se puede bajar: días de auto o camping en vez de hostal.`; }
+  else { estado = 'pasado'; veredicto = `<strong>Nos pasamos por ${CLP(persona - P.tope.max)}.</strong> Lo primero que se puede bajar: más camping en la Austral, hostales en Guatemala o un tour menos.`; }
   $('#res-veredicto').innerHTML = veredicto;
 
   $('#res-desglose').innerHTML = `
     <div><dt>pasajes</dt><dd>${CLP(pasajes)}</dd></div>
-    <div><dt>en centroamérica</dt><dd>${CLP(enCA)}</dd></div>
     <div><dt>en la austral</dt><dd>${CLP(enAU)}</dd></div>
+    <div><dt>en guatemala</dt><dd>${CLP(enCA)}</dd></div>
     ${seguro ? `<div><dt>seguro</dt><dd>${CLP(seguro)}</dd></div>` : ''}
   `;
 
@@ -560,7 +814,7 @@ function conectarCalculadora() {
   pintarLineas('calc-ca', P.centroamerica);
   pintarLineas('calc-au', P.austral);
 
-  $('#calc-vuelo-ca').addEventListener('change', (e) => { opciones.vueloCA = e.target.value; guardarOpciones(); pintarVuelos(); calcular(); });
+  $('#calc-vuelo-ca').addEventListener('change', (e) => { opciones.vueloCA = e.target.value; guardarOpciones(); pintarVuelos(); pintarArmador(); calcular(); });
   $('#calc-vuelo-au').addEventListener('change', (e) => { opciones.vueloAU = e.target.value; guardarOpciones(); pintarAustral(); calcular(); });
   $('#calc-equipaje').addEventListener('change', (e) => cambiarEquipaje(e.target.value));
   $('#calc-internos').addEventListener('change', (e) => { opciones.internos = Number(e.target.value); guardarOpciones(); calcular(); });
@@ -579,6 +833,8 @@ function conectarCalculadora() {
     guardado.borrar('opciones');
     valores = valoresIniciales();
     opciones = Object.assign({}, OPCIONES_INICIALES);
+    pintarAutos();
+    pintarArmador();
     pintarLineas('calc-ca', P.centroamerica);
     pintarLineas('calc-au', P.austral);
     sincronizarSelects();
@@ -676,9 +932,13 @@ pintarCuentaRegresiva();
 pintarVuelos();
 pintarPestanas();
 pintarRuta();
-pintarComparacion();
 pintarAustral();
+pintarAutos();
 pintarRutaAustral();
+pintarDormir();
+pintarActividadesAustral();
+pintarLugaresArmador();
+pintarArmador();
 conectarCalculadora();
 conectarChecklist();
 conectarNav();

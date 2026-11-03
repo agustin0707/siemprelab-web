@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=6">
+  <link rel="stylesheet" href="prep.css?v=7">
 </head>
 <body>
 
@@ -27,12 +27,12 @@
 
     <div class="hero-contenido">
       <div class="hero-texto">
-        <p class="hero-etiqueta"><span class="punto"></span>[ sesión con tu agente ] · sáb 31 oct</p>
-        <h1>Dos viajes.<br>Una tarde para <em>decidirlos</em>.</h1>
-        <p class="hero-bajada">La Austral 2.0 antes de Navidad y Guatemala para el Año Nuevo. Hoy elegimos, sumamos y compramos.</p>
+        <p class="hero-etiqueta"><span class="punto"></span>[ agencia siemprelab ] · junta sáb 7 nov</p>
+        <h1>Dos viajes.<br>Un sábado para <em>cerrarlos</em>.</h1>
+        <p class="hero-bajada">La Austral la arma Agus y Guatemala la arma la Jo. El sábado 7 nos presentamos las propuestas y compramos todo.</p>
         <div class="hero-botones">
-          <a class="boton acento" href="#austral">ver vuelos</a>
-          <a class="boton vidrio" href="#presupuesto">armar presupuesto</a>
+          <a class="boton acento" href="#austral">ver la austral</a>
+          <a class="boton vidrio" href="#armar">armar guatemala</a>
         </div>
       </div>
 
@@ -72,44 +72,39 @@
     <a href="#austral">austral</a>
     <a href="#vuelos">guatemala</a>
     <a href="#rutas">rutas</a>
-    <a href="#comparar">comparar</a>
+    <a href="#armar">armar</a>
     <a href="#presupuesto">presupuesto</a>
-    <a href="#papeles">papeles</a>
-    <a href="#compra">compra</a>
+    <a href="#datos">datos</a>
+    <a href="#compra">junta</a>
   </nav>
 
   <main>
 
     <!-- ---------- Resumen rápido ---------- -->
     <dl class="resumen">
-      <div><dt>austral 2.0</dt><dd>dom 13 → mié 23 dic</dd></div>
-      <div><dt>centroamérica</dt><dd>noche 25 dic → 9 ene</dd></div>
-      <div><dt>tope por persona</dt><dd>$1,5 a $2,5 M</dd></div>
+      <div><dt>austral 2.0 · arma agus</dt><dd>dom 13 → mié 23 dic</dd></div>
+      <div><dt>guatemala · arma la jo</dt><dd>noche 25 dic → 9 ene</dd></div>
+      <div><dt>junta y compra</dt><dd>sábado 7 de noviembre</dd></div>
       <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
     </dl>
 
     <!-- ---------- 1. Austral 2.0 (primer viaje) ---------- -->
     <section id="austral" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">01 / austral 2.0</p>
+        <p class="etiqueta">01 / austral 2.0 · propuesta de agus</p>
         <h2>Santiago ↔ Balmaceda + auto</h2>
-        <p class="bajada">Primer viaje: salida el domingo 13 después del matrimonio y vuelta el miércoles 23, antes de Navidad. En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo.</p>
+        <p class="bajada">Primer viaje: salida el domingo 13 después del matrimonio y vuelta el miércoles 23, antes de Navidad. En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo, hasta el fin del camino.</p>
       </div>
       <div class="tarjetas" id="lista-austral"></div>
-      <div class="avisos">
-        <div class="aviso">
-          <span class="etiqueta">auto</span>
-          <p>En diciembre el arriendo en Balmaceda promedia <strong>~USD 74 por día</strong> (en enero sube a 98). Son ~370 mil por persona por 10 días. <strong>Igual se agotan: reservar apenas compremos.</strong></p>
-        </div>
-        <div class="aviso">
-          <span class="etiqueta">otras aerolíneas</span>
-          <p>JetSMART y Sky no salen en Google Vuelos. Vale la pena mirarlas en sus webs antes de pagar LATAM.</p>
-        </div>
-        <div class="aviso">
-          <span class="etiqueta">en el kraft</span>
-          <p>Esta es una base. Los post-its amarillos deciden qué entra y qué se recorta.</p>
-        </div>
+      <p class="links-cotizar"><a data-link-austral target="_blank" rel="noopener">recotizar Balmaceda ↗</a> · JetSMART y Sky no salen en Google Vuelos: mirar sus webs antes de pagar.</p>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">el auto · 10 días, retiro y devolución en el aeropuerto</span>
+        <h3>Arriendo en Balmaceda</h3>
+        <p class="bajada">Precio total por los 10 días, con cancelación gratis. Se divide a la mitad. El que se elige pasa al presupuesto.</p>
       </div>
+      <div class="tarjetas" id="lista-autos"></div>
+      <p class="nota">Kayak, 3 nov. Antes de pagar, confirmar: que el seguro cubra ripio y barcazas, el deducible, y si cobran conductor adicional. <a data-link-autos target="_blank" rel="noopener">ver todas las opciones ↗</a></p>
 
       <div class="sub-cabeza">
         <span class="etiqueta">la ruta</span>
@@ -130,15 +125,47 @@
         </div>
         <div class="explorador-media" data-media></div>
       </div>
-      <p class="links-cotizar"><a data-link-austral target="_blank" rel="noopener">recotizar Balmaceda →</a></p>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">dónde dormir · mitad camping, mitad techo</span>
+        <h3>Noche por noche</h3>
+        <p class="bajada">Pieza doble por noche para los dos, con disponibilidad vista para esas fechas. Camping por persona, se paga en el lugar.</p>
+      </div>
+      <div class="tabla-marco">
+        <table class="tabla" id="tabla-dormir">
+          <thead><tr><th>noche</th><th>dónde</th><th>camping</th><th>con techo</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">qué hacer · por persona</span>
+        <h3>Tours y entradas</h3>
+      </div>
+      <div class="actividades" id="lista-actividades-au"></div>
+
+      <div class="avisos">
+        <div class="aviso">
+          <span class="etiqueta">barcaza yungay ↔ río bravo</span>
+          <p data-barcaza></p>
+        </div>
+        <div class="aviso">
+          <span class="etiqueta">bencina</span>
+          <p>Hay en Río Tranquilo, Cochrane y Villa O'Higgins. <strong>En Tortel no hay.</strong> Llenar siempre que se pueda y llevar un bidón de 20 litros.</p>
+        </div>
+        <div class="aviso">
+          <span class="etiqueta">señal y plata</span>
+          <p>Entre pueblos no hay señal: <strong>bajar los mapas offline</strong>. Llevar efectivo: en Tortel y O'Higgins casi nadie tiene máquina.</p>
+        </div>
+      </div>
     </section>
 
     <!-- ---------- 2. Vuelos Centroamérica (segundo viaje) ---------- -->
     <section id="vuelos" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">02 / vuelos centroamérica</p>
+        <p class="etiqueta">02 / guatemala · propuesta de la jo</p>
         <h2>Santiago ↔ Guatemala</h2>
-        <p class="bajada">Ida y vuelta por persona. Segundo viaje: salimos después de la cena de Navidad y volvemos el 9 de enero, antes del internado. Toca “elegir” en el que más nos tinque.</p>
+        <p class="bajada">Ida y vuelta por persona. Segundo viaje: salimos después de la cena de Navidad y volvemos el 9 de enero, antes del internado. Las noches allá definen cuántas caben en la ruta.</p>
       </div>
 
       <!-- Selector de equipaje: cambia el precio que se muestra en todas las tarjetas -->
@@ -156,9 +183,9 @@
     <!-- ---------- 3. Rutas 14 días ---------- -->
     <section id="rutas" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">03 / rutas de 14 días</p>
-        <h2>Dos versiones para recortar en el kraft</h2>
-        <p class="bajada">Toca una parada para ver fotos y mapa. El veto y el comodín mandan.</p>
+        <p class="etiqueta">03 / rutas de 14 días · ideas para partir</p>
+        <h2>Cuatro formas de hacer Guatemala</h2>
+        <p class="bajada">Toca una parada para ver fotos y mapa. Cualquiera se puede cargar en el armador para cambiarla a gusto.</p>
       </div>
 
       <div class="pestanas" role="tablist" aria-label="Rutas" id="pestanas-rutas"></div>
@@ -168,20 +195,50 @@
           <p class="resumen-ruta" data-ruta-resumen></p>
           <ol class="paradas" data-paradas></ol>
           <p class="extra" data-ruta-extra></p>
-          <button type="button" class="boton" data-elegir-ruta>elegir esta ruta</button>
+          <div class="botones-ruta">
+            <button type="button" class="boton" data-elegir-ruta>elegir esta ruta</button>
+            <button type="button" class="boton claro" data-cargar-ruta>cambiarla en el armador ↓</button>
+          </div>
         </div>
         <div class="explorador-media" data-media></div>
       </div>
     </section>
 
-    <!-- ---------- 4. Comparación ---------- -->
-    <section id="comparar" class="seccion">
+    <!-- ---------- 4. Armador de ruta ---------- -->
+    <section id="armar" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">04 / comparar</p>
-        <h2>¿Y si fuera otro destino?</h2>
-        <p class="bajada">Mismo rango de fechas, ida y vuelta por persona. En terracota, lo que estamos cotizando.</p>
+        <p class="etiqueta">04 / arma tu ruta</p>
+        <h2>El armador de Guatemala</h2>
+        <p class="bajada">Suma lugares, ajusta las noches y elige dónde dormir. Calcula los traslados, los vuelos internos y lo que cuesta por persona. Queda guardado en este navegador.</p>
       </div>
-      <div class="barras" id="lista-comparar"></div>
+
+      <div class="armador">
+        <div class="armador-lugares">
+          <span class="etiqueta">lugares · toca para sumar</span>
+          <div class="lugares-grilla" id="armador-lugares"></div>
+        </div>
+
+        <div class="armador-ruta">
+          <div class="armador-cabeza">
+            <span class="etiqueta">tu ruta · sale y vuelve al aeropuerto</span>
+            <span class="noches-estado" id="armador-noches"></span>
+          </div>
+          <ol class="etapas" id="armador-etapas"></ol>
+          <div class="armador-acciones">
+            <a class="boton claro" id="armador-mapa" target="_blank" rel="noopener">ver la ruta en maps ↗</a>
+            <button type="button" class="boton claro" id="armador-vaciar">empezar de cero</button>
+          </div>
+        </div>
+
+        <div class="armador-total" aria-live="polite">
+          <span class="etiqueta">por persona</span>
+          <p class="monto" id="armador-persona">$0</p>
+          <dl class="desglose" id="armador-desglose"></dl>
+          <button type="button" class="boton acento" id="armador-pasar">pasar al presupuesto</button>
+          <p class="armador-aviso" id="armador-aviso"></p>
+        </div>
+      </div>
+      <p class="nota">Alojamiento: pieza doble por noche vista en Google Hoteles el 3 nov para esas fechas, dividida en dos. Traslados en shuttle turístico; ≈ estimado.</p>
     </section>
 
     <!-- ---------- 5. Presupuesto ---------- -->
@@ -202,11 +259,11 @@
               <select id="calc-vuelo-au"></select>
             </label>
             <label class="campo">
-              <span>Vuelo Centroamérica</span>
+              <span>Vuelo Guatemala</span>
               <select id="calc-vuelo-ca"></select>
             </label>
             <label class="campo">
-              <span>Equipaje</span>
+              <span>Equipaje a Guatemala</span>
               <select id="calc-equipaje">
                 <option value="sin">sin equipaje</option>
                 <option value="mano" selected>mochila de mano</option>
@@ -219,6 +276,8 @@
                 <option value="0">ninguno</option>
                 <option value="1">1 tramo</option>
                 <option value="2">2 tramos (ida y vuelta)</option>
+                <option value="3">3 tramos</option>
+                <option value="4">4 tramos</option>
               </select>
             </label>
             <label class="check">
@@ -233,9 +292,9 @@
             <div id="calc-au"></div>
           </div>
 
-          <!-- Gastos Centroamérica -->
+          <!-- Gastos Guatemala -->
           <div class="calc-bloque">
-            <h3>En Centroamérica</h3>
+            <h3>En Guatemala <span class="etiqueta">el armador puede llenar esto</span></h3>
             <div id="calc-ca"></div>
           </div>
         </div>
@@ -264,40 +323,46 @@
       </div>
     </section>
 
-    <!-- ---------- 6. Papeles ---------- -->
-    <section id="papeles" class="seccion">
+    <!-- ---------- 6. Papeles y datos útiles ---------- -->
+    <section id="datos" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">06 / papeles</p>
-        <h2>Antes de pagar, esto</h2>
+        <p class="etiqueta">06 / papeles y datos útiles</p>
+        <h2>Antes de pagar, y antes de salir</h2>
       </div>
       <div class="papeles">
-        <div class="papel"><span class="etiqueta">pasaportes</span><p><strong>6 meses de vigencia</strong> desde la entrada. Revisar el de los dos.</p></div>
-        <div class="papel"><span class="etiqueta">guatemala</span><p>Chilenos entran <strong>sin visa</strong>, hasta 90 días (compartidos con El Salvador, Honduras y Nicaragua).</p></div>
-        <div class="papel"><span class="etiqueta">belice</span><p><strong>Sin visa</strong> para chilenos, hasta 90 días. Fuentes no oficiales: confirmar en Minrel.</p></div>
-        <div class="papel"><span class="etiqueta">salida de belice</span><p>Por tierra: <strong>BZ$40 (≈ USD 20)</strong> por persona, en efectivo.</p></div>
-        <div class="papel"><span class="etiqueta">plata</span><p><strong>Quetzales</strong> en Guatemala. En Belice aceptan dólares (1 USD = 2 BZ$).</p></div>
+        <div class="papel"><span class="etiqueta">pasaportes</span><p><strong>6 meses de vigencia</strong> desde la entrada a Guatemala. Revisar el de los dos.</p></div>
+        <div class="papel"><span class="etiqueta">entrada a guatemala</span><p>Chilenos <strong>sin visa</strong>, hasta 90 días (compartidos con El Salvador, Honduras y Nicaragua). Llenar el <strong>formulario digital de ingreso</strong> antes de volar: pide la dirección del primer alojamiento.</p></div>
+        <div class="papel"><span class="etiqueta">belice</span><p><strong>Sin visa</strong> para chilenos. La salida por tierra cuesta <strong>USD 20 (BZ$40)</strong> en efectivo. Confirmar en Minrel.</p></div>
+        <div class="papel"><span class="etiqueta">plata</span><p><strong>Quetzales:</strong> 1 USD ≈ 7,7 Q, o sea 1 Q ≈ $130. Sacar en cajeros dentro de bancos. En Lanquín no hay cajeros. En Belice, dólares.</p></div>
+        <div class="papel"><span class="etiqueta">seguridad</span><p>Moverse en <strong>shuttles turísticos</strong>, no viajar de noche por carretera y en Ciudad de Guatemala andar en Uber. Volcanes siempre con guía.</p></div>
+        <div class="papel"><span class="etiqueta">clima</span><p>Enero es temporada seca. Antigua y el lago: calor de día y <strong>5 a 10 °C en la noche</strong>. Petén y el Caribe: 30 °C y húmedo.</p></div>
+        <div class="papel"><span class="etiqueta">salud</span><p>Agua embotellada siempre, <strong>repelente</strong> para Petén y Río Dulce, protector solar por la altura.</p></div>
+        <div class="papel"><span class="etiqueta">año nuevo</span><p>El 1 de enero varios shuttles no corren y todo se llena. <strong>Reservar alojamiento y traslados de esos días primero.</strong></p></div>
+        <div class="papel"><span class="etiqueta">chip</span><p>Tigo o Claro en el aeropuerto, o una eSIM antes de salir. En la Austral, Entel es lo que mejor funciona.</p></div>
         <div class="papel"><span class="etiqueta">seguro</span><p>Revisar si la <strong>World Member Santander</strong> lo da al pagar los pasajes con ella.</p></div>
       </div>
     </section>
 
-    <!-- ---------- 7. Compra ---------- -->
+    <!-- ---------- 7. Junta y compra ---------- -->
     <section id="compra" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">07 / compra</p>
-        <h2>Checklist del momento de pagar</h2>
-        <p class="bajada">Se marca acá mismo y queda guardado en este computador.</p>
+        <p class="etiqueta">07 / la junta del sábado 7</p>
+        <h2>Presentar, decidir y pagar</h2>
+        <p class="bajada">Primero cada uno presenta su viaje. Después, este checklist. Se marca acá mismo y queda guardado en este computador.</p>
       </div>
       <div class="progreso" aria-hidden="true"><div class="progreso-barra" id="progreso-compra"></div></div>
       <ul class="lista-check marcable" id="lista-compra">
+        <li><label><input type="checkbox" data-check="propuestas"> Agus presenta la Austral y la Jo presenta Guatemala</label></li>
+        <li><label><input type="checkbox" data-check="presupuesto"> Revisar el presupuesto con las dos propuestas juntas</label></li>
         <li><label><input type="checkbox" data-check="datos"> Datos del pasaporte de los dos: nombre exacto, número, vencimiento y fecha de nacimiento</label></li>
         <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (~$725 mil LATAM + ~$1,5 M Copa para dos)</label></li>
         <li><label><input type="checkbox" data-check="latam"> Comprar Balmaceda en latam.com (acumula LATAM Pass)</label></li>
-        <li><label><input type="checkbox" data-check="copa"> Comprar Centroamérica en la web de la aerolínea, no en agencias</label></li>
-        <li><label><input type="checkbox" data-check="tarifa"> Confirmar que la tarifa diga mochila de mano incluida</label></li>
-        <li><label><input type="checkbox" data-check="internos"> Vuelos internos Guatemala ↔ Flores (se pueden comprar después)</label></li>
-        <li><label><input type="checkbox" data-check="cuenta"> Cuenta regresiva: 3, 2, 1, pagar</label></li>
+        <li><label><input type="checkbox" data-check="auto"> Reservar el auto en Balmaceda (con cancelación gratis)</label></li>
+        <li><label><input type="checkbox" data-check="copa"> Comprar Guatemala en la web de la aerolínea, con mochila de mano incluida</label></li>
+        <li><label><input type="checkbox" data-check="internos"> Vuelos internos Guatemala ↔ Flores, si la ruta los usa</label></li>
+        <li><label><input type="checkbox" data-check="reservas"> Reservar lo que se llena: Acatenango, Año Nuevo, Exploradores y Villa O'Higgins</label></li>
+        <li><label><input type="checkbox" data-check="seguro"> Seguro de viaje (o confirmar que la tarjeta lo da)</label></li>
         <li><label><input type="checkbox" data-check="foto"> Foto con la pantalla de confirmación</label></li>
-        <li><label><input type="checkbox" data-check="auto"> Reservar el auto en Balmaceda</label></li>
         <li><label><input type="checkbox" data-check="transfer"> Transferencia de los pasajes de la Jo: <strong id="monto-transfer"></strong></label></li>
       </ul>
       <div class="botones-compra" id="botones-compra"></div>
@@ -306,9 +371,9 @@
   </main>
 
   <footer class="pie">
-    <p>atte. tu agente, agus</p>
-    <p class="creditos">Fotos: Wikimedia Commons, licencias CC (crédito en cada foto). Mapas: Google Maps.</p>
-    <p class="microtexto" aria-hidden="true">siemprelab · sl3110 · prep · siemprelab · sl3110 · prep · siemprelab · sl3110 · prep · siemprelab · sl3110 · prep</p>
+    <p>atte. tus agentes: agus (sur) y jo (guatemala)</p>
+    <p class="creditos">Fotos: Wikimedia Commons, licencias CC (crédito en cada foto). Mapas: Google Maps. Precios: Google Vuelos, Google Hoteles y Kayak.</p>
+    <p class="microtexto" aria-hidden="true">siemprelab · sl1312 · sl2612 · prep · siemprelab · sl1312 · sl2612 · prep · siemprelab · sl1312 · sl2612 · prep</p>
   </footer>
 
   <!-- Resumen flotante: "tu viaje" con lo elegido y el total -->
@@ -318,8 +383,8 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=6"></script>
-  <script src="lugares.js?v=6"></script>
-  <script src="prep.js?v=6"></script>
+  <script src="datos.js?v=7"></script>
+  <script src="lugares.js?v=7"></script>
+  <script src="prep.js?v=7"></script>
 </body>
 </html>
