@@ -145,6 +145,43 @@ const LUGARES = {
       }
     ]
   },
+  "semuc-champey": {
+    "nombre": "Semuc Champey",
+    "pais": "Guatemala",
+    "mapa": "Semuc Champey, Lanquín, Guatemala",
+    "zoom": 14,
+    "descripcion": "Pozas turquesa escalonadas sobre un puente de piedra natural del río Cahabón, en plena selva. Mirador arriba, chapuzón abajo y cueva con velas en Lanquín.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Semuc_Champey%2C_Guatemala.jpg/1280px-Semuc_Champey%2C_Guatemala.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Semuc_Champey%2C_Guatemala.jpg/1920px-Semuc_Champey%2C_Guatemala.jpg",
+        "credito": "Christopher Crouzet",
+        "licencia": "CC BY-SA 3.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Semuc_Champey,_Guatemala.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Semuc_Champey_1.jpg/1280px-Semuc_Champey_1.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Semuc_Champey_1.jpg/1920px-Semuc_Champey_1.jpg",
+        "credito": "Betipá",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Semuc_Champey_1.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Semuc_Champey%2C_AV_Guatemala.jpg/1280px-Semuc_Champey%2C_AV_Guatemala.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Semuc_Champey%2C_AV_Guatemala.jpg/1920px-Semuc_Champey%2C_AV_Guatemala.jpg",
+        "credito": "Mario Bollini",
+        "licencia": "CC BY 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Semuc_Champey,_AV_Guatemala.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Semuc_Champey_4.jpg/1280px-Semuc_Champey_4.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Semuc_Champey_4.jpg/1920px-Semuc_Champey_4.jpg",
+        "credito": "Betipá",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Semuc_Champey_4.jpg"
+      }
+    ]
+  },
   "flores": {
     "nombre": "Flores",
     "pais": "Guatemala",

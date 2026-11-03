@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=5">
+  <link rel="stylesheet" href="prep.css?v=6">
 </head>
 <body>
 
@@ -29,9 +29,9 @@
       <div class="hero-texto">
         <p class="hero-etiqueta"><span class="punto"></span>[ sesión con tu agente ] · sáb 31 oct</p>
         <h1>Dos viajes.<br>Una tarde para <em>decidirlos</em>.</h1>
-        <p class="hero-bajada">Centroamérica antes de Navidad y la Austral 2.0 después. Hoy elegimos, sumamos y compramos.</p>
+        <p class="hero-bajada">La Austral 2.0 antes de Navidad y Guatemala para el Año Nuevo. Hoy elegimos, sumamos y compramos.</p>
         <div class="hero-botones">
-          <a class="boton acento" href="#vuelos">ver vuelos</a>
+          <a class="boton acento" href="#austral">ver vuelos</a>
           <a class="boton vidrio" href="#presupuesto">armar presupuesto</a>
         </div>
       </div>
@@ -46,16 +46,16 @@
           <span>vuelo</span><span>destino</span><span>fecha</span><span>estado</span>
         </div>
         <div class="tablero-fila">
-          <span class="t-vuelo">SL 3110</span>
-          <span class="t-destino"><b>GUA</b> <span class="t-nombre">Guatemala</span></span>
-          <span class="t-fecha" id="t-fecha-ca"></span>
-          <span class="t-estado" id="t-estado-ca"></span>
+          <span class="t-vuelo">SL 1312</span>
+          <span class="t-destino"><b>BBA</b> <span class="t-nombre">Austral 2.0</span></span>
+          <span class="t-fecha">13 dic</span>
+          <span class="t-estado" id="t-estado-au"></span>
         </div>
         <div class="tablero-fila">
           <span class="t-vuelo">SL 2612</span>
-          <span class="t-destino"><b>BBA</b> <span class="t-nombre">Austral 2.0</span></span>
-          <span class="t-fecha">26 dic</span>
-          <span class="t-estado" id="t-estado-au"></span>
+          <span class="t-destino"><b>GUA</b> <span class="t-nombre">Guatemala</span></span>
+          <span class="t-fecha" id="t-fecha-ca"></span>
+          <span class="t-estado" id="t-estado-ca"></span>
         </div>
         <div class="tablero-pie" id="tablero-pie"></div>
       </div>
@@ -69,10 +69,10 @@
 
   <!-- Navegación entre secciones -->
   <nav class="nav" aria-label="Secciones">
-    <a href="#vuelos">vuelos</a>
+    <a href="#austral">austral</a>
+    <a href="#vuelos">guatemala</a>
     <a href="#rutas">rutas</a>
     <a href="#comparar">comparar</a>
-    <a href="#austral">austral</a>
     <a href="#presupuesto">presupuesto</a>
     <a href="#papeles">papeles</a>
     <a href="#compra">compra</a>
@@ -82,75 +82,24 @@
 
     <!-- ---------- Resumen rápido ---------- -->
     <dl class="resumen">
-      <div><dt>centroamérica</dt><dd>noche 13 → 22 o 23 dic</dd></div>
-      <div><dt>austral 2.0</dt><dd>26 dic → 10 ene</dd></div>
+      <div><dt>austral 2.0</dt><dd>dom 13 → mié 23 dic</dd></div>
+      <div><dt>centroamérica</dt><dd>noche 25 dic → 9 ene</dd></div>
       <div><dt>tope por persona</dt><dd>$1,5 a $2,5 M</dd></div>
       <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
     </dl>
 
-    <!-- ---------- 1. Vuelos Centroamérica ---------- -->
-    <section id="vuelos" class="seccion">
-      <div class="seccion-cabeza">
-        <p class="etiqueta">01 / vuelos centroamérica</p>
-        <h2>Santiago ↔ Guatemala</h2>
-        <p class="bajada">Ida y vuelta por persona. Salida desde la noche del 13 (después del matrimonio) y llegada a Santiago hasta el 23. Toca “elegir” en el que más nos tinque.</p>
-      </div>
-
-      <!-- Selector de equipaje: cambia el precio que se muestra en todas las tarjetas -->
-      <div class="selector" role="group" aria-label="Equipaje">
-        <button type="button" data-equipaje="sin" aria-pressed="false">sin equipaje</button>
-        <button type="button" data-equipaje="mano" aria-pressed="true">de mano</button>
-        <button type="button" data-equipaje="bodega" aria-pressed="false">en bodega</button>
-      </div>
-
-      <div class="tarjetas" id="lista-vuelos"></div>
-
-      <p class="nota">≈ estimado: Copa cobra la maleta en bodega según la tarifa (referencia USD 40 a 70 por tramo, más barata prepagada en el web check-in). Confirmar al comprar.</p>
-    </section>
-
-    <!-- ---------- 2. Rutas 10 días ---------- -->
-    <section id="rutas" class="seccion">
-      <div class="seccion-cabeza">
-        <p class="etiqueta">02 / rutas de 10 días</p>
-        <h2>Dos versiones para recortar en el kraft</h2>
-        <p class="bajada">Toca una parada para ver fotos y mapa. El veto y el comodín mandan.</p>
-      </div>
-
-      <div class="pestanas" role="tablist" aria-label="Rutas" id="pestanas-rutas"></div>
-
-      <div class="explorador" id="explorador-rutas">
-        <div class="explorador-lista">
-          <p class="resumen-ruta" data-ruta-resumen></p>
-          <ol class="paradas" data-paradas></ol>
-          <p class="extra" data-ruta-extra></p>
-          <button type="button" class="boton" data-elegir-ruta>elegir esta ruta</button>
-        </div>
-        <div class="explorador-media" data-media></div>
-      </div>
-    </section>
-
-    <!-- ---------- 3. Comparación ---------- -->
-    <section id="comparar" class="seccion">
-      <div class="seccion-cabeza">
-        <p class="etiqueta">03 / comparar</p>
-        <h2>¿Y si fuera otro destino?</h2>
-        <p class="bajada">Mismo rango de fechas, ida y vuelta por persona. En terracota, lo que estamos cotizando.</p>
-      </div>
-      <div class="barras" id="lista-comparar"></div>
-    </section>
-
-    <!-- ---------- 4. Austral 2.0 ---------- -->
+    <!-- ---------- 1. Austral 2.0 (primer viaje) ---------- -->
     <section id="austral" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">04 / austral 2.0</p>
+        <p class="etiqueta">01 / austral 2.0</p>
         <h2>Santiago ↔ Balmaceda + auto</h2>
-        <p class="bajada">Salida 26 dic, vuelta 10 ene (antes de que la Jo vuelva al internado). En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo.</p>
+        <p class="bajada">Primer viaje: salida el domingo 13 después del matrimonio y vuelta el miércoles 23, antes de Navidad. En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo.</p>
       </div>
       <div class="tarjetas" id="lista-austral"></div>
       <div class="avisos">
         <div class="aviso">
           <span class="etiqueta">auto</span>
-          <p>En enero el arriendo en Balmaceda promedia <strong>USD 74 a 98 por día</strong>. Son ~550 a 750 mil por persona por 15 días. <strong>Se agotan: reservar apenas compremos.</strong></p>
+          <p>En diciembre el arriendo en Balmaceda promedia <strong>~USD 74 por día</strong> (en enero sube a 98). Son ~370 mil por persona por 10 días. <strong>Igual se agotan: reservar apenas compremos.</strong></p>
         </div>
         <div class="aviso">
           <span class="etiqueta">otras aerolíneas</span>
@@ -184,6 +133,57 @@
       <p class="links-cotizar"><a data-link-austral target="_blank" rel="noopener">recotizar Balmaceda →</a></p>
     </section>
 
+    <!-- ---------- 2. Vuelos Centroamérica (segundo viaje) ---------- -->
+    <section id="vuelos" class="seccion">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">02 / vuelos centroamérica</p>
+        <h2>Santiago ↔ Guatemala</h2>
+        <p class="bajada">Ida y vuelta por persona. Segundo viaje: salimos después de la cena de Navidad y volvemos el 9 de enero, antes del internado. Toca “elegir” en el que más nos tinque.</p>
+      </div>
+
+      <!-- Selector de equipaje: cambia el precio que se muestra en todas las tarjetas -->
+      <div class="selector" role="group" aria-label="Equipaje">
+        <button type="button" data-equipaje="sin" aria-pressed="false">sin equipaje</button>
+        <button type="button" data-equipaje="mano" aria-pressed="true">de mano</button>
+        <button type="button" data-equipaje="bodega" aria-pressed="false">en bodega</button>
+      </div>
+
+      <div class="tarjetas" id="lista-vuelos"></div>
+
+      <p class="nota">≈ estimado: Copa cobra la maleta en bodega según la tarifa (referencia USD 40 a 70 por tramo, más barata prepagada en el web check-in). Confirmar al comprar.</p>
+    </section>
+
+    <!-- ---------- 3. Rutas 14 días ---------- -->
+    <section id="rutas" class="seccion">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">03 / rutas de 14 días</p>
+        <h2>Dos versiones para recortar en el kraft</h2>
+        <p class="bajada">Toca una parada para ver fotos y mapa. El veto y el comodín mandan.</p>
+      </div>
+
+      <div class="pestanas" role="tablist" aria-label="Rutas" id="pestanas-rutas"></div>
+
+      <div class="explorador" id="explorador-rutas">
+        <div class="explorador-lista">
+          <p class="resumen-ruta" data-ruta-resumen></p>
+          <ol class="paradas" data-paradas></ol>
+          <p class="extra" data-ruta-extra></p>
+          <button type="button" class="boton" data-elegir-ruta>elegir esta ruta</button>
+        </div>
+        <div class="explorador-media" data-media></div>
+      </div>
+    </section>
+
+    <!-- ---------- 4. Comparación ---------- -->
+    <section id="comparar" class="seccion">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">04 / comparar</p>
+        <h2>¿Y si fuera otro destino?</h2>
+        <p class="bajada">Mismo rango de fechas, ida y vuelta por persona. En terracota, lo que estamos cotizando.</p>
+      </div>
+      <div class="barras" id="lista-comparar"></div>
+    </section>
+
     <!-- ---------- 5. Presupuesto ---------- -->
     <section id="presupuesto" class="seccion">
       <div class="seccion-cabeza">
@@ -197,6 +197,10 @@
           <!-- Pasajes -->
           <div class="calc-bloque">
             <h3>Pasajes <span class="etiqueta">cada uno el suyo</span></h3>
+            <label class="campo">
+              <span>Vuelo Austral</span>
+              <select id="calc-vuelo-au"></select>
+            </label>
             <label class="campo">
               <span>Vuelo Centroamérica</span>
               <select id="calc-vuelo-ca"></select>
@@ -217,26 +221,22 @@
                 <option value="2">2 tramos (ida y vuelta)</option>
               </select>
             </label>
-            <label class="campo">
-              <span>Vuelo Austral</span>
-              <select id="calc-vuelo-au"></select>
-            </label>
             <label class="check">
               <input type="checkbox" id="calc-seguro">
               <span>Seguro de viaje (~USD 40), si la tarjeta no lo cubre</span>
             </label>
           </div>
 
-          <!-- Gastos Centroamérica -->
-          <div class="calc-bloque">
-            <h3>En Centroamérica</h3>
-            <div id="calc-ca"></div>
-          </div>
-
           <!-- Gastos Austral -->
           <div class="calc-bloque">
             <h3>En la Austral</h3>
             <div id="calc-au"></div>
+          </div>
+
+          <!-- Gastos Centroamérica -->
+          <div class="calc-bloque">
+            <h3>En Centroamérica</h3>
+            <div id="calc-ca"></div>
           </div>
         </div>
 
@@ -290,10 +290,10 @@
       <div class="progreso" aria-hidden="true"><div class="progreso-barra" id="progreso-compra"></div></div>
       <ul class="lista-check marcable" id="lista-compra">
         <li><label><input type="checkbox" data-check="datos"> Datos del pasaporte de los dos: nombre exacto, número, vencimiento y fecha de nacimiento</label></li>
-        <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (~$1,3 M Copa + ~$440 mil LATAM para dos)</label></li>
+        <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (~$725 mil LATAM + ~$1,5 M Copa para dos)</label></li>
+        <li><label><input type="checkbox" data-check="latam"> Comprar Balmaceda en latam.com (acumula LATAM Pass)</label></li>
         <li><label><input type="checkbox" data-check="copa"> Comprar Centroamérica en la web de la aerolínea, no en agencias</label></li>
         <li><label><input type="checkbox" data-check="tarifa"> Confirmar que la tarifa diga mochila de mano incluida</label></li>
-        <li><label><input type="checkbox" data-check="latam"> Comprar Balmaceda en latam.com (acumula LATAM Pass)</label></li>
         <li><label><input type="checkbox" data-check="internos"> Vuelos internos Guatemala ↔ Flores (se pueden comprar después)</label></li>
         <li><label><input type="checkbox" data-check="cuenta"> Cuenta regresiva: 3, 2, 1, pagar</label></li>
         <li><label><input type="checkbox" data-check="foto"> Foto con la pantalla de confirmación</label></li>
@@ -318,8 +318,8 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=5"></script>
-  <script src="lugares.js?v=5"></script>
-  <script src="prep.js?v=5"></script>
+  <script src="datos.js?v=6"></script>
+  <script src="lugares.js?v=6"></script>
+  <script src="prep.js?v=6"></script>
 </body>
 </html>

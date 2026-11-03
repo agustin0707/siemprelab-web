@@ -33,6 +33,12 @@ const guardado = {
 };
 
 // ---------- Estado: lo que se ha elegido ----------
+// Si los datos cambiaron de estructura (otra versión), lo guardado ya no sirve
+if (guardado.leer('version', null) !== DATOS.version) {
+  guardado.borrar('opciones');
+  guardado.borrar('valores');
+  guardado.escribir('version', DATOS.version);
+}
 const P = DATOS.presupuesto;
 const OPCIONES_INICIALES = {
   vueloCA: DATOS.vuelosCA.find((v) => v.recomendado).id,
@@ -43,6 +49,10 @@ const OPCIONES_INICIALES = {
 };
 let equipaje = guardado.leer('equipaje', 'mano');
 let opciones = Object.assign({}, OPCIONES_INICIALES, guardado.leer('opciones', {}));
+// Por si quedó guardado un vuelo que ya no existe
+if (!DATOS.vuelosCA.some((v) => v.id === opciones.vueloCA)) opciones.vueloCA = OPCIONES_INICIALES.vueloCA;
+if (!DATOS.vuelosAustral.some((v) => v.id === opciones.vueloAU)) opciones.vueloAU = OPCIONES_INICIALES.vueloAU;
+if (opciones.ruta && !DATOS.rutas.some((r) => r.id === opciones.ruta)) opciones.ruta = null;
 const guardarOpciones = () => guardado.escribir('opciones', opciones);
 
 // ---------- Textos sueltos ----------
@@ -110,7 +120,9 @@ function pintarTablero() {
   const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
   const ruta = DATOS.rutas.find((r) => r.id === opciones.ruta);
   const comprado = !!guardado.leer('compra', {}).foto;
-  $('#t-fecha-ca').textContent = ca.ida.dia.includes('noche') ? '13 dic' : ca.ida.dia.replace(/^\w+ /, '') + ' dic';
+  // El día real de salida: del detalle ("sáb 26 · 01:07") o del día ("dom 27")
+  const dia = (ca.ida.detalle.match(/^\S+ (\d+) ·/) || ca.ida.dia.match(/(\d+)$/) || [])[1];
+  $('#t-fecha-ca').textContent = dia ? dia + ' dic' : '';
   [$('#t-estado-ca'), $('#t-estado-au')].forEach((el) => {
     el.textContent = comprado ? 'confirmado' : 'por comprar';
     el.classList.toggle('confirmado', comprado);
@@ -237,7 +249,7 @@ function crearMedia(contenedor) {
   };
 }
 
-// ---------- 1. Vuelos Centroamérica ----------
+// ---------- 2. Vuelos Centroamérica (segundo viaje) ----------
 function pintarVuelos() {
   $('#lista-vuelos').innerHTML = DATOS.vuelosCA.map((v) => {
     const p = leerPrecio(v[equipaje]);
@@ -382,12 +394,12 @@ function pintarComparacion() {
   `).join('');
 }
 
-// ---------- 4. Austral: vuelos + ideas con fotos y mapa ----------
+// ---------- 1. Austral (primer viaje): vuelos + ruta con fotos y mapa ----------
 function pintarAustral() {
   $('#lista-austral').innerHTML = DATOS.vuelosAustral.map((v) => {
     const elegido = opciones.vueloAU === v.id;
     const sellos = [
-      v.recomendado ? '<span class="sello">más barato</span>' : '',
+      v.sello ? `<span class="sello">${v.sello}</span>` : '',
       elegido ? '<span class="sello acento">elegido</span>' : ''
     ].join('');
     return `
@@ -400,7 +412,11 @@ function pintarAustral() {
         <p class="precio">${CLP(v.precio)}</p>
         <div class="tramo-vuelo">
           <span class="etiqueta">ida</span>
-          <div><strong>${v.ida}</strong><small>${v.escalas} · vuelta 10 ene</small></div>
+          <div><strong>${v.ida}</strong><small>${v.escalas}</small></div>
+        </div>
+        <div class="tramo-vuelo">
+          <span class="etiqueta">vuelta</span>
+          <div><strong>${v.vuelta}</strong></div>
         </div>
         <div class="acciones">
           <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-austral="${v.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
@@ -581,9 +597,9 @@ function pintarTuViaje(persona, estado) {
   const ruta = DATOS.rutas.find((r) => r.id === opciones.ruta);
   const sep = '<span class="sep">·</span>';
   $('#tv-items').innerHTML = [
+    `<b>${au.aerolinea}</b> sur 13 → 23 dic`,
     `<b>${ca.aerolinea}</b> ${ca.ida.dia.replace('noche ', '')} → ${ca.vuelta.dia}`,
-    ruta ? `<b>${ruta.nombre}</b>` : 'ruta por elegir',
-    `<b>${au.aerolinea}</b> sur`
+    ruta ? `<b>${ruta.nombre}</b>` : 'ruta por elegir'
   ].join(sep);
   $('#tv-total').textContent = millones(persona);
   $('#tv-punto').className = 'tv-punto ' + estado;
@@ -607,8 +623,8 @@ function pintarBotonesCompra() {
   const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
   const au = DATOS.vuelosAustral.find((v) => v.id === opciones.vueloAU);
   const links = [
-    `<a class="boton" href="${DATOS.compra[ca.aerolinea]}" target="_blank" rel="noopener">comprar ${ca.aerolinea} ↗</a>`,
-    `<a class="boton" href="${DATOS.compra[au.aerolinea]}" target="_blank" rel="noopener">comprar ${au.aerolinea} ↗</a>`
+    `<a class="boton" href="${DATOS.compra[au.aerolinea]}" target="_blank" rel="noopener">comprar ${au.aerolinea} ↗</a>`,
+    `<a class="boton" href="${DATOS.compra[ca.aerolinea]}" target="_blank" rel="noopener">comprar ${ca.aerolinea} ↗</a>`
   ];
   if (opciones.internos > 0) {
     links.push(`<a class="boton claro" href="${DATOS.vueloFlores.link}" target="_blank" rel="noopener">vuelos Guatemala ↔ Flores ↗</a>`);
