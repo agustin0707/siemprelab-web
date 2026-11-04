@@ -405,9 +405,10 @@ const DATOS = {
   // ---------- Austral 2.0: vuelos por tramo (por persona, CLP) ----------
   // Se compran por separado: se elige una ida y una vuelta (el 23 o el 24).
   // manual: true = SKY no publica precio en Google Vuelos; se revisó a mano en skyairline.com.
-  // maleta: lo que sube la tarifa por tramo con una maleta de 23 kg (SKY Standard vs Basic: real; LATAM: estimado).
+  // maleta: lo que sube la tarifa por tramo con una maleta de 23 kg (SKY Standard vs Basic: real).
+  // LATAM: gratis, los dos tenemos WorldMember Santander (1 maleta de 23 kg al titular, vigente hasta el 31 dic 2026).
   vuelosAustral: {
-    maleta: { LATAM: { monto: 40000, estimado: true }, SKY: { monto: 40000 } },
+    maleta: { LATAM: { monto: 0 }, SKY: { monto: 40000 } },
     idas: [
       { id: 'au-ida-1430', aerolinea: 'LATAM', dia: 'dom 13 dic', sale: '14:30', llega: '16:49', dur: '2 h 19 min', escalas: 'directo', precio: 190972, recomendado: true, sello: 'después de almuerzo' },
       { id: 'au-ida-1257', aerolinea: 'LATAM', dia: 'dom 13 dic', sale: '12:57', llega: '15:15', dur: '2 h 18 min', escalas: 'directo', precio: 182116, nota: 'Almuerzo al paso, pero llegamos con más luz.' },
@@ -416,7 +417,7 @@ const DATOS = {
     vueltas: [
       { id: 'au-v24-1500', fecha: 24, aerolinea: 'LATAM', dia: 'jue 24 dic', sale: '15:00', llega: '18:30', dur: '3 h 30 min', escalas: '1 escala', precio: 122059, recomendado: true, sello: 'volver el 24', nota: 'Llegamos a la cena de Nochebuena y el 23 no es un día de 290 km apurados.' },
       { id: 'au-v24-1418', fecha: 24, aerolinea: 'LATAM', dia: 'jue 24 dic', sale: '14:18', llega: '16:38', dur: '2 h 20 min', escalas: 'directo', precio: 152239 },
-      { id: 'au-v24-sky', fecha: 24, aerolinea: 'SKY', dia: 'jue 24 dic', sale: '13:31', llega: '20:00', dur: '6 h 29 min', escalas: '1 escala', precio: 86181, manual: true, sello: 'más barato', nota: 'Escala larga: llegamos justo a la cena.' },
+      { id: 'au-v24-sky', fecha: 24, aerolinea: 'SKY', dia: 'jue 24 dic', sale: '13:31', llega: '20:00', dur: '6 h 29 min', escalas: '1 escala', precio: 86181, manual: true, nota: 'Escala larga: llegamos justo a la cena. Más barato sin maleta, pero con la mochila en bodega sale más caro que LATAM.' },
       { id: 'au-v23-1500', fecha: 23, aerolinea: 'LATAM', dia: 'mié 23 dic', sale: '15:00', llega: '18:41', dur: '3 h 41 min', escalas: '1 escala', precio: 162059 },
       { id: 'au-v23-1525', fecha: 23, aerolinea: 'LATAM', dia: 'mié 23 dic', sale: '15:25', llega: '17:45', dur: '2 h 20 min', escalas: 'directo', precio: 220059 },
       { id: 'au-v23-sky', fecha: 23, aerolinea: 'SKY', dia: 'mié 23 dic', sale: '12:59', llega: '16:31', dur: '3 h 32 min', escalas: '1 escala', precio: 178059, manual: true }
