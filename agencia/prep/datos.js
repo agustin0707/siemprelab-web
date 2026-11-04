@@ -49,9 +49,23 @@ const DATOS = {
   // Los que tienen id en precios.json se actualizan solos.
   vuelosCA: [
     {
-      id: 'copa-26',
+      id: 'avianca-25',
       noches: 14,
       recomendado: true,
+      aerolinea: 'Avianca',
+      destino: 'GUA',
+      ida: { dia: 'vie 25', detalle: '16:15 → 00:55 (+1)', dur: '11 h 40 min', escalas: '1 escala en Bogotá' },
+      vuelta: { dia: 'sáb 9 ene', detalle: '09:20 → 01:05 (+1)', dur: '12 h 45 min', escalas: '1 escala en Bogotá' },
+      precio: 555419,
+      // Basic solo trae un bolso chico. Con mochila en bodega hay que tomar Classic (mano 10 kg + bodega 23 kg): diferencia estimada
+      extraMano: { monto: 60000, estimado: true },
+      extraBodega: { monto: 130000, estimado: true },
+      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Sale unos $265 mil menos que Copa y Google lo marca como precio normal. Con la mochila en bodega va la tarifa Classic: lo que suma es estimado, confirmarlo en avianca.com.',
+      link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-25%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
+    },
+    {
+      id: 'copa-26',
+      noches: 14,
       aerolinea: 'Copa',
       destino: 'GUA',
       ida: { dia: 'noche vie 25', detalle: 'sáb 26 · 01:07 → 09:40', dur: '11 h 33 min', escalas: '1 escala en Panamá (2 h 16 min)' },
@@ -99,8 +113,8 @@ const DATOS = {
       vuelta: { dia: 'sáb 9 ene', detalle: '09:20 → 01:05 (+1)', dur: '12 h 45 min', escalas: '1 escala en Bogotá' },
       precio: 883308,
       extraMano: { monto: 60000, estimado: true },
-      extraBodega: null,
-      nota: 'Sale de día, pero llega de madrugada y la tarifa básica no incluye mochila de mano.',
+      extraBodega: { monto: 130000, estimado: true },
+      nota: 'El mismo vuelo que el del 25, pero un día después cuesta $330 mil más.',
       link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-26%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     }
   ],

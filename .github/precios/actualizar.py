@@ -25,6 +25,7 @@ VUELOS = [
     {'id': 'au-v24-1500', 'tipo': 'ida', 'o': 'BBA', 'd': 'SCL', 'fecha': '2026-12-24', 'aerolinea': 'LATAM', 'sale': '15:00', 'llega': '18:30'},
     {'id': 'au-v24-1418', 'tipo': 'ida', 'o': 'BBA', 'd': 'SCL', 'fecha': '2026-12-24', 'aerolinea': 'LATAM', 'sale': '14:18'},
     # Guatemala: ida y vuelta (el precio es con la vuelta más barata del 9 ene)
+    {'id': 'avianca-25', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-25', 'vuelta': '2027-01-09', 'aerolinea': 'Avianca', 'sale': '16:15'},
     {'id': 'copa-26', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-26', 'vuelta': '2027-01-09', 'aerolinea': 'COPA', 'sale': '01:07', 'llega': '09:40'},
     {'id': 'copa-26-0845', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-26', 'vuelta': '2027-01-09', 'aerolinea': 'COPA', 'sale': '01:07', 'llega': '08:45'},
     {'id': 'copa-27', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-27', 'vuelta': '2027-01-09', 'aerolinea': 'COPA', 'sale': '01:31'},
