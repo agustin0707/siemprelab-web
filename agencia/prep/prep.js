@@ -60,6 +60,15 @@ if (!DATOS.vuelosCA.some((v) => v.id === opciones.vueloCA)) opciones.vueloCA = O
 if (!AU.idas.some((v) => v.id === opciones.idaAU)) opciones.idaAU = OPCIONES_INICIALES.idaAU;
 if (!AU.vueltas.some((v) => v.id === opciones.vueltaAU)) opciones.vueltaAU = OPCIONES_INICIALES.vueltaAU;
 if (!DATOS.autos.opciones.some((a) => a.id === opciones.auto)) opciones.auto = OPCIONES_INICIALES.auto;
+// Una sola vez (4 nov): quien abrió la página antes quedó con Copa y equipaje de mano, que eran los de antes.
+// Se pasan a Avianca del 25 y mochila en bodega; después se respeta lo que cada uno elija.
+if (!guardado.leer('migracion-4nov', false)) {
+  if (opciones.vueloCA === 'copa-26') opciones.vueloCA = 'avianca-25';
+  equipaje = 'bodega';
+  guardado.escribir('equipaje', equipaje);
+  guardado.escribir('opciones', opciones);
+  guardado.escribir('migracion-4nov', true);
+}
 if (opciones.ruta && !DATOS.rutas.some((r) => r.id === opciones.ruta)) opciones.ruta = null;
 const guardarOpciones = () => guardado.escribir('opciones', opciones);
 
