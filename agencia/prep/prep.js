@@ -41,28 +41,106 @@ if (guardado.leer('version', null) !== DATOS.version) {
   guardado.escribir('version', DATOS.version);
 }
 const P = DATOS.presupuesto;
+const AU = DATOS.vuelosAustral;
 const OPCIONES_INICIALES = {
   vueloCA: DATOS.vuelosCA.find((v) => v.recomendado).id,
-  vueloAU: DATOS.vuelosAustral[0].id,
+  idaAU: AU.idas.find((v) => v.recomendado).id,
+  vueltaAU: AU.vueltas.find((v) => v.recomendado).id,
   auto: DATOS.autos.opciones.find((a) => a.recomendado).id,
   ruta: null,       // id de ruta elegida (null = sin elegir)
   internos: 2,      // tramos Guatemala ↔ Flores
   seguro: false
 };
-let equipaje = guardado.leer('equipaje', 'mano');
+// Equipaje para los dos viajes: con mochila scout va en bodega
+let equipaje = guardado.leer('equipaje', 'bodega');
+if (!['mano', 'bodega'].includes(equipaje)) equipaje = 'bodega';
 let opciones = Object.assign({}, OPCIONES_INICIALES, guardado.leer('opciones', {}));
 // Por si quedó guardado un vuelo que ya no existe
 if (!DATOS.vuelosCA.some((v) => v.id === opciones.vueloCA)) opciones.vueloCA = OPCIONES_INICIALES.vueloCA;
-if (!DATOS.vuelosAustral.some((v) => v.id === opciones.vueloAU)) opciones.vueloAU = OPCIONES_INICIALES.vueloAU;
+if (!AU.idas.some((v) => v.id === opciones.idaAU)) opciones.idaAU = OPCIONES_INICIALES.idaAU;
+if (!AU.vueltas.some((v) => v.id === opciones.vueltaAU)) opciones.vueltaAU = OPCIONES_INICIALES.vueltaAU;
 if (!DATOS.autos.opciones.some((a) => a.id === opciones.auto)) opciones.auto = OPCIONES_INICIALES.auto;
 if (opciones.ruta && !DATOS.rutas.some((r) => r.id === opciones.ruta)) opciones.ruta = null;
 const guardarOpciones = () => guardado.escribir('opciones', opciones);
 
+// Lo elegido para la Austral: el día de vuelta (23 o 24) cambia días de auto, noches y ruta
+const idaAU = () => AU.idas.find((v) => v.id === opciones.idaAU);
+const vueltaAU = () => AU.vueltas.find((v) => v.id === opciones.vueltaAU);
+const diaVuelta = () => vueltaAU().fecha;
+const diasAuto = () => (diaVuelta() === 24 ? 11 : 10);
+const autoElegido = () => DATOS.autos.opciones.find((a) => a.id === opciones.auto);
+const totalAuto = (a) => leerPrecio(diaVuelta() === 24 ? a.total24 : a.total);
+
+// ---------- Precios con equipaje ----------
+// Guatemala: tarifa + lo que suma el equipaje (null si no hay dato para esa combinación)
+function precioCA(v, eq = equipaje) {
+  const extra = leerPrecio(eq === 'bodega' ? v.extraBodega : v.extraMano);
+  if (eq === 'bodega' && !extra) return null;
+  return { monto: v.precio + (extra ? extra.monto : 0), estimado: !!(extra && extra.estimado && extra.monto) };
+}
+// Austral: cada tramo + la maleta de esa aerolínea si va en bodega
+function precioTramoAU(t) {
+  const m = equipaje === 'bodega' ? leerPrecio(AU.maleta[t.aerolinea]) : null;
+  return { monto: t.precio + (m ? m.monto : 0), estimado: !!(m && m.estimado) };
+}
+function precioAU() {
+  const a = precioTramoAU(idaAU());
+  const b = precioTramoAU(vueltaAU());
+  return { monto: a.monto + b.monto, estimado: a.estimado || b.estimado };
+}
+const conAprox = (p) => (p.estimado ? '<span class="aprox" title="estimado">≈</span>' : '') + CLP(p.monto);
+
+// Logos de aerolíneas y arrendadoras
+const logo = (nombre, clase = 'logo') => (DATOS.logos[nombre]
+  ? `<img class="${clase}" src="${DATOS.logos[nombre]}" alt="" loading="lazy" decoding="async">` : '');
+
+// ---------- Precios al día (precios.json lo escribe GitHub Actions dos veces al día) ----------
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'];
+const fechaCorta = (iso) => { const [, m, d] = iso.split('-'); return `${Number(d)} ${MESES[Number(m) - 1]}`; };
+let preciosVivos = null;
+
+function aplicarPreciosVivos(pv) {
+  [...DATOS.vuelosCA, ...AU.idas, ...AU.vueltas, DATOS.vueloFlores].forEach((v) => {
+    const x = pv.vuelos && pv.vuelos[v.id];
+    if (!x || !x.precio) return;
+    v.precio = x.precio;
+    v.vivo = x;
+    if (x.dur) { if (v.ida) v.ida.dur = x.dur; else v.dur = x.dur; }
+  });
+}
+
+// "↑ $98.000 desde el 3 nov": contra lo que se vio la primera vez
+function tendencia(v) {
+  const h = v.vivo && v.vivo.historial;
+  const base = v.antes || (h && h.length > 1 ? { monto: h[0][1], fecha: fechaCorta(h[0][0]) } : null);
+  if (!base) return '';
+  const d = v.precio - base.monto;
+  if (Math.abs(d) < 1000) return '';
+  return `<span class="tendencia ${d > 0 ? 'sube' : 'baja'}">${d > 0 ? '↑' : '↓'} ${CLP(Math.abs(d))} desde el ${base.fecha}</span>`;
+}
+
+function pintarPreciosVivos() {
+  const el = $$('[data-precios-vivos]');
+  if (!preciosVivos) {
+    el.forEach((e) => { e.textContent = `Precios vistos el ${DATOS.precioVisto}.`; });
+    return;
+  }
+  const horas = Math.max(0, Math.round((Date.now() - new Date(preciosVivos.actualizado)) / 3600000));
+  const hace = horas < 1 ? 'hace menos de una hora' : horas === 1 ? 'hace 1 hora' : horas < 48 ? `hace ${horas} horas` : `hace ${Math.round(horas / 24)} días`;
+  el.forEach((e) => { e.innerHTML = `<span class="vivo-punto"></span>Vuelos al día: ${hace}, en ${preciosVivos.fuente}. Se actualizan solos dos veces al día.`; });
+  $$('[data-precio-banda]').forEach((e) => { e.textContent = `vuelos al día · ${hace}`; });
+}
+
 // ---------- Textos sueltos ----------
 $$('[data-precio-visto]').forEach((el) => { el.textContent = DATOS.precioVisto; });
 $$('[data-vuelo-flores]').forEach((el) => { el.textContent = CLP(DATOS.vueloFlores.precio); });
-$$('[data-link-austral]').forEach((el) => { el.href = DATOS.linkAustral; });
-$$('[data-link-autos]').forEach((el) => { el.href = DATOS.autos.link; });
+function pintarLinksAustral() {
+  $$('[data-link-austral]').forEach((el) => { el.href = DATOS.linkAustral[diaVuelta()]; });
+  $$('[data-link-sky]').forEach((el) => { el.href = DATOS.linkAustral.sky; });
+  $$('[data-link-autos]').forEach((el) => { el.href = DATOS.autos.link[diaVuelta()]; });
+  $$('[data-dia-vuelta]').forEach((el) => { el.textContent = diaVuelta() === 24 ? 'jue 24' : 'mié 23'; });
+  $$('[data-dias-auto]').forEach((el) => { el.textContent = diasAuto(); });
+}
 
 // ---------- Hero: fotos que rotan + tablero de salidas ----------
 const DURACION_FOTO = 6500;
@@ -145,7 +223,8 @@ function pintarTablero() {
     el.textContent = comprado ? 'confirmado' : 'por comprar';
     el.classList.toggle('confirmado', comprado);
   });
-  $('#tablero-pie').innerHTML = `vuelo elegido: <b>${ca.aerolinea} · vuelve ${ca.vuelta.dia}</b> · ruta: <b>${ruta ? ruta.nombre : 'por elegir'}</b>`;
+  $('#tablero-pie').innerHTML = `sur: <b>vuelve el ${diaVuelta()} dic</b> · guatemala: <b>${ca.aerolinea} · vuelve ${ca.vuelta.dia}</b> · ruta: <b>${ruta ? ruta.nombre : 'por elegir'}</b>`;
+  $('#resumen-au').textContent = `dom 13 → ${diaVuelta() === 24 ? 'jue 24' : 'mié 23'} dic`;
 }
 
 // ---------- Componente: panel de fotos + mapa ----------
@@ -270,10 +349,10 @@ function crearMedia(contenedor) {
 // ---------- 2. Vuelos Centroamérica (segundo viaje) ----------
 function pintarVuelos() {
   $('#lista-vuelos').innerHTML = DATOS.vuelosCA.map((v) => {
-    const p = leerPrecio(v[equipaje]);
+    const p = precioCA(v);
     const elegido = opciones.vueloCA === v.id;
     const precio = p
-      ? `<p class="precio">${p.estimado ? '<span class="aprox" title="estimado">≈</span>' : ''}${CLP(p.monto)}</p>`
+      ? `<p class="precio">${conAprox(p)}</p>`
       : `<p class="precio no-disponible">bodega: consultar en ${v.aerolinea}</p>`;
     const sellos = [
       v.recomendado ? '<span class="sello">recomendado</span>' : '',
@@ -283,22 +362,23 @@ function pintarVuelos() {
       <article class="vuelo${v.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
         ${sellos ? `<div class="sellos">${sellos}</div>` : ''}
         <div class="vuelo-cabeza">
-          <span class="aerolinea">${v.aerolinea} · SCL ↔ ${v.destino}</span>
+          <span class="aerolinea">${logo(v.aerolinea)}${v.aerolinea} · SCL ↔ ${v.destino}</span>
           <span class="etiqueta">por persona</span>
         </div>
-        <div class="precio-fila">${precio}<span class="noches${v.noches >= 9 ? ' mas' : ''}" title="noches en destino">${v.noches} noches allá</span></div>
+        <div class="precio-fila">${precio}<span class="noches${v.noches >= 14 ? ' mas' : ''}" title="noches en destino">${v.noches} noches allá</span></div>
+        ${tendencia(v)}
         <div class="tramo-vuelo">
           <span class="etiqueta">ida</span>
-          <div><strong>${v.ida.dia}</strong>${v.ida.detalle}<br><small>${v.ida.escalas}</small></div>
+          <div><strong>${v.ida.dia}</strong>${v.ida.detalle}<br><small>${v.ida.dur} · ${v.ida.escalas}</small></div>
         </div>
         <div class="tramo-vuelo">
           <span class="etiqueta">vuelta</span>
-          <div><strong>${v.vuelta.dia}</strong>${v.vuelta.detalle}${v.vuelta.escalas ? `<br><small>${v.vuelta.escalas}</small>` : ''}</div>
+          <div><strong>${v.vuelta.dia}</strong>${v.vuelta.detalle}<br><small>${v.vuelta.dur} · ${v.vuelta.escalas}</small></div>
         </div>
         <p class="nota-vuelo">${v.nota}</p>
         <div class="acciones">
           <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-vuelo="${v.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
-          <a class="link" href="${v.link}" target="_blank" rel="noopener">recotizar en vivo ↗</a>
+          <a class="link" href="${v.link}" target="_blank" rel="noopener">ver en vivo ↗</a>
         </div>
       </article>`;
   }).join('');
@@ -325,6 +405,7 @@ function cambiarEquipaje(valor) {
   guardado.escribir('equipaje', equipaje);
   marcarSelector();
   pintarVuelos();
+  pintarAustral();
   calcular();
 }
 $$('.selector button').forEach((b) => b.addEventListener('click', () => cambiarEquipaje(b.dataset.equipaje)));
@@ -405,55 +486,98 @@ $('[data-elegir-ruta]', exploradorRutas).addEventListener('click', () => {
 });
 
 // ---------- 1. Austral (primer viaje): vuelos + ruta con fotos y mapa ----------
-function pintarAustral() {
-  $('#lista-austral').innerHTML = DATOS.vuelosAustral.map((v) => {
-    const elegido = opciones.vueloAU === v.id;
-    const sellos = [
-      v.sello ? `<span class="sello">${v.sello}</span>` : '',
-      elegido ? '<span class="sello acento">elegido</span>' : ''
-    ].join('');
-    return `
-      <article class="vuelo${v.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
-        ${sellos ? `<div class="sellos">${sellos}</div>` : ''}
-        <div class="vuelo-cabeza">
-          <span class="aerolinea">${v.aerolinea} · SCL ↔ BBA</span>
-          <span class="etiqueta">por persona</span>
-        </div>
-        <p class="precio">${CLP(v.precio)}</p>
-        <div class="tramo-vuelo">
-          <span class="etiqueta">ida</span>
-          <div><strong>${v.ida}</strong><small>${v.escalas}</small></div>
-        </div>
-        <div class="tramo-vuelo">
-          <span class="etiqueta">vuelta</span>
-          <div><strong>${v.vuelta}</strong></div>
-        </div>
-        <div class="acciones">
-          <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-austral="${v.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
-          <a class="link" href="${DATOS.linkAustral}" target="_blank" rel="noopener">recotizar ↗</a>
-        </div>
-      </article>`;
-  }).join('');
+function tarjetaTramo(t, tipo, elegido) {
+  const p = precioTramoAU(t);
+  const sellos = [
+    t.sello ? `<span class="sello">${t.sello}</span>` : '',
+    elegido ? '<span class="sello acento">elegido</span>' : ''
+  ].join('');
+  const link = t.manual ? DATOS.linkAustral.sky : DATOS.linkAustral[t.fecha || diaVuelta()];
+  return `
+    <article class="tramo${t.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
+      ${sellos ? `<div class="sellos">${sellos}</div>` : ''}
+      <div class="tramo-fila">
+        <span class="aerolinea">${logo(t.aerolinea)}${t.aerolinea}</span>
+        <p class="tramo-precio">${conAprox(p)}</p>
+      </div>
+      <div class="tramo-horas"><strong>${t.sale} → ${t.llega}</strong><span>${t.dur} · ${t.escalas}</span></div>
+      ${tendencia(t)}
+      ${t.nota ? `<p class="nota-vuelo">${t.nota}</p>` : ''}
+      <div class="acciones">
+        <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-${tipo}="${t.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir'}</button>
+        <a class="link" href="${link}" target="_blank" rel="noopener">${t.manual ? 'ver en sky ↗' : 'ver en vivo ↗'}</a>
+      </div>
+    </article>`;
 }
-$('#lista-austral').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-elegir-austral]');
-  if (!b) return;
-  opciones.vueloAU = b.dataset.elegirAustral;
+
+function pintarAustral() {
+  $('#lista-idas').innerHTML = AU.idas.map((t) => tarjetaTramo(t, 'ida', opciones.idaAU === t.id)).join('');
+  $('#lista-vueltas').innerHTML = [24, 23].map((dia) => `
+    <p class="tramos-dia">${dia === 24 ? 'jue 24 dic' : 'mié 23 dic'}</p>
+    ${AU.vueltas.filter((t) => t.fecha === dia).map((t) => tarjetaTramo(t, 'vuelta', opciones.vueltaAU === t.id)).join('')}`).join('');
+
+  // Total de los pasajes al sur y cuánto cambia volver el 24
+  const total = precioAU();
+  const ida = precioTramoAU(idaAU()).monto;
+  // Se compara LATAM con LATAM (SKY no se actualiza solo y su vuelta del 24 es otra cosa: 6 h con escala)
+  const masBarata = (dia) => Math.min(...AU.vueltas.filter((t) => t.fecha === dia && !t.manual).map((t) => precioTramoAU(t).monto));
+  const a = autoElegido();
+  const autoExtra = (leerPrecio(a.total24).monto - leerPrecio(a.total).monto) / 2;
+  const dif = {
+    pasajes: masBarata(24) - masBarata(23),
+    auto: autoExtra,
+    noche: (Number(valores['au-aloj'].unitario) || 0) / 2 + (Number(valores['au-comida'].unitario) || 0)
+  };
+  const neto = dif.pasajes + dif.auto + dif.noche;
+  const signo = (n) => (n > 0 ? '+' : '−') + CLP(Math.abs(n));
+  $('#compara-vuelta').innerHTML = `
+    <div class="compara-total">
+      <span class="etiqueta">ida + vuelta elegidas, por persona${equipaje === 'bodega' ? ', con mochila en bodega' : ''}</span>
+      <p class="monto chico">${conAprox(total)}</p>
+      <small>${idaAU().aerolinea} ${idaAU().sale} · ${vueltaAU().aerolinea} ${vueltaAU().dia} ${vueltaAU().sale}. Ida ${CLP(ida)}.</small>
+    </div>
+    <div class="compara-dif">
+      <span class="etiqueta">volver el 24 en vez del 23, por persona</span>
+      <dl>
+        <div><dt>pasaje LATAM más barato</dt><dd>${signo(dif.pasajes)}</dd></div>
+        <div><dt>un día más de ${a.modelo.replace(' o similar', '')}</dt><dd>${signo(dif.auto)}</dd></div>
+        <div><dt>una noche y un día más</dt><dd>${signo(dif.noche)}</dd></div>
+        <div class="neto"><dt>en total</dt><dd>${signo(neto)}</dd></div>
+      </dl>
+      <small>${neto <= 0 ? 'Sale lo mismo o más barato y ganamos un día sin apuro.' : 'Sale un poco más, pero ganamos un día sin apuro.'} Llegamos a Santiago el 24 en la tarde, a tiempo para Nochebuena.</small>
+    </div>`;
+}
+
+function elegirTramoAU(tipo, id) {
+  const antes = diaVuelta();
+  if (tipo === 'ida') opciones.idaAU = id; else opciones.vueltaAU = id;
   guardarOpciones();
+  // Si cambió el día de vuelta, cambian los días de auto, noches y el final de la ruta
+  if (diaVuelta() !== antes) { aplicarAutoAlPresupuesto(); pintarLinksAustral(); pintarAutos(); pintarRutaAustral(); pintarDormir(); }
   pintarAustral();
   sincronizarSelects();
   calcular();
+}
+$('#lista-idas').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-elegir-ida]');
+  if (b) elegirTramoAU('ida', b.dataset.elegirIda);
+});
+$('#lista-vueltas').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-elegir-vuelta]');
+  if (b) elegirTramoAU('vuelta', b.dataset.elegirVuelta);
 });
 
 const exploradorAustral = $('#explorador-austral');
 const mediaAustral = crearMedia($('[data-media]', exploradorAustral));
 
+let paradasAustral = [];
 function pintarRutaAustral() {
   const r = DATOS.rutaAustral;
   $('[data-hecho-2025]').textContent = r.hecho2025;
   $('[data-ruta-resumen]', exploradorAustral).textContent = r.resumen;
   $('[data-ruta-extra]', exploradorAustral).textContent = r.extra;
-  $('[data-paradas]', exploradorAustral).innerHTML = r.paradas.map((p, i) => `
+  paradasAustral = [...r.paradas, ...r.finales[diaVuelta()]];
+  $('[data-paradas]', exploradorAustral).innerHTML = paradasAustral.map((p, i) => `
     <li class="parada">
       <button type="button" data-parada="${i}" ${p.lugar ? '' : 'disabled'}>
         <span class="dias">${p.dias}</span>
@@ -471,49 +595,75 @@ $('[data-paradas]', exploradorAustral).addEventListener('click', (e) => {
   if (!b) return;
   const i = Number(b.dataset.parada);
   $$('[data-paradas] button', exploradorAustral).forEach((x, n) => x.setAttribute('aria-current', String(n === i)));
-  mediaAustral.mostrarLugar(DATOS.rutaAustral.paradas[i].lugar, true);
+  mediaAustral.mostrarLugar(paradasAustral[i].lugar, true);
   if (esAngosto()) $('[data-media]', exploradorAustral).scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 // ---------- Austral: auto ----------
+// Bencina estimada para el recorrido con el consumo del auto
+const bencina = (a) => Math.round((DATOS.autos.km / a.consumo) * DATOS.autos.litro[a.combustible] / 1000) * 1000;
+
 function pintarAutos() {
+  const dias = diasAuto();
   $('#lista-autos').innerHTML = DATOS.autos.opciones.map((a) => {
     const elegido = opciones.auto === a.id;
+    const total = totalAuto(a);
     const sellos = [
       a.sello ? `<span class="sello">${a.sello}</span>` : '',
       elegido ? '<span class="sello acento">elegido</span>' : ''
     ].join('');
     return `
-      <article class="vuelo${a.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
+      <article class="vuelo auto${a.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
         ${sellos ? `<div class="sellos">${sellos}</div>` : ''}
+        <figure class="auto-foto">
+          <img src="${a.foto.src}" alt="${a.modelo}" loading="lazy" decoding="async">
+          <figcaption>${a.foto.credito}</figcaption>
+        </figure>
         <div class="vuelo-cabeza">
-          <span class="aerolinea">${a.agencia} · ${a.recogida}</span>
-          <span class="etiqueta">10 días</span>
+          <span class="aerolinea">${logo(a.agencia, 'logo-ancho')}<span class="visually-hidden">${a.agencia}</span>${a.recogida}</span>
+          <span class="etiqueta">${dias} días</span>
         </div>
-        <div class="precio-fila"><p class="precio">${CLP(a.total)}</p><span class="noches" title="a la mitad">${CLP(a.total / 2)} c/u</span></div>
+        <div class="precio-fila"><p class="precio">${conAprox(total)}</p><span class="noches" title="a la mitad">${CLP(total.monto / 2)} c/u</span></div>
         <div class="tramo-vuelo">
           <span class="etiqueta">auto</span>
           <div><strong>${a.modelo}</strong><small>${a.tipo}</small></div>
         </div>
+        <ul class="ficha">
+          <li><b>${a.traccion}</b> tracción</li>
+          <li><b>${a.despeje / 10} cm</b> despeje</li>
+          <li><b>${a.maletero ? a.maletero + ' L' : 'pickup'}</b> maletero</li>
+          <li><b>≈ ${CLP(bencina(a))}</b> ${a.combustible === 'diesel' ? 'diésel' : 'bencina'}</li>
+        </ul>
         <p class="nota-vuelo">${a.nota}</p>
         <div class="acciones">
           <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-auto="${a.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
-          <a class="link" href="${DATOS.autos.link}" target="_blank" rel="noopener">reservar ↗</a>
+          <a class="link" href="${DATOS.autos.link[diaVuelta()]}" target="_blank" rel="noopener">reservar ↗</a>
         </div>
       </article>`;
   }).join('');
+  $('[data-ojo-autos]').textContent = DATOS.autos.ojo;
 }
+
+// El auto y el día de vuelta mandan en arriendo, bencina, noches y días de comida
+function aplicarAutoAlPresupuesto() {
+  const a = autoElegido();
+  const dias = diasAuto();
+  valores['au-auto'] = { unitario: Math.round(totalAuto(a).monto / dias), cantidad: dias };
+  valores['au-bencina'] = { unitario: bencina(a), cantidad: 1 };
+  valores['au-aloj'].cantidad = dias;
+  valores['au-comida'].cantidad = dias + 1;
+  guardado.escribir('valores', valores);
+  pintarLineas('calc-au', P.austral);
+}
+
 $('#lista-autos').addEventListener('click', (e) => {
   const b = e.target.closest('[data-elegir-auto]');
   if (!b) return;
-  const auto = DATOS.autos.opciones.find((a) => a.id === b.dataset.elegirAuto);
-  opciones.auto = auto.id;
+  opciones.auto = b.dataset.elegirAuto;
   guardarOpciones();
-  // El arriendo del presupuesto pasa a ser el de este auto
-  valores['au-auto'] = { unitario: Math.round(auto.total / 10), cantidad: 10 };
-  guardado.escribir('valores', valores);
+  aplicarAutoAlPresupuesto();
   pintarAutos();
-  pintarLineas('calc-au', P.austral);
+  pintarAustral();
   calcular();
 });
 
@@ -521,7 +671,7 @@ $('#lista-autos').addEventListener('click', (e) => {
 const busquedaHoteles = (q) => `https://www.google.com/travel/search?q=${encodeURIComponent(q)}&hl=es&gl=CL&curr=CLP`;
 
 function pintarDormir() {
-  $('#tabla-dormir tbody').innerHTML = DATOS.dormirAustral.map((d) => `
+  $('#tabla-dormir tbody').innerHTML = DATOS.dormirAustral.filter((d) => !d.soloSi || d.soloSi === diaVuelta()).map((d) => `
     <tr>
       <td class="mono" data-col="noche">${d.noche}</td>
       <td data-col="dónde"><strong>${d.donde}</strong>${d.extra ? `<small>${d.extra}</small>` : ''}</td>
@@ -533,16 +683,32 @@ function pintarDormir() {
     </tr>`).join('');
 }
 
-function pintarActividadesAustral() {
-  $('#lista-actividades-au').innerHTML = DATOS.actividadesAustral.map((a) => `
-    <div class="actividad">
-      <div class="actividad-cabeza"><span class="etiqueta">${a.donde}</span>${a.reservar ? '<span class="sello-mini">reservar</span>' : ''}</div>
+const ETIQUETA_DISPO = { ok: 'sale siempre', ojo: 'reservar o confirmar', agotado: 'agotado en esas fechas' };
+const insigniaDispo = (d) => (d ? `<span class="dispo ${d.estado}">${ETIQUETA_DISPO[d.estado]}</span>` : '');
+
+function tarjetasActividades(lista) {
+  return lista.map((a) => `
+    <div class="actividad${a.dispo && a.dispo.estado === 'agotado' ? ' agotada' : ''}">
+      <div class="actividad-cabeza"><span class="etiqueta">${a.donde}</span>${insigniaDispo(a.dispo)}</div>
       <strong>${a.nombre}</strong>
       <p class="actividad-precio">${a.precio}</p>
       <p>${a.nota}</p>
+      ${a.dispo ? `<p class="dispo-texto">${a.dispo.texto}</p>` : ''}
+      ${a.link ? `<a class="link" href="${a.link}" target="_blank" rel="noopener">ver cupos ↗</a>` : ''}
     </div>`).join('');
+}
+
+function pintarActividadesAustral() {
+  $('#lista-actividades-au').innerHTML = tarjetasActividades(DATOS.actividadesAustral);
+  $('#lista-actividades-ca').innerHTML = tarjetasActividades(DATOS.actividadesCA);
+  const aca = DATOS.actividadesCA.find((a) => a.dispo && a.dispo.estado === 'agotado');
+  $('[data-aviso-tours]').innerHTML = aca ? `<strong>Ojo con ${aca.nombre.split(' ')[0]}:</strong> ${aca.dispo.texto}` : '';
   const b = DATOS.barcaza;
   $('[data-barcaza]').innerHTML = `Desde Yungay: <strong>${b.ida.join(' · ')}</strong>. Desde Río Bravo: <strong>${b.vuelta.join(' · ')}</strong>. ${b.nota}`;
+  const eq = DATOS.equipo;
+  const lista = (t, items) => `<div class="equipo-col"><span class="etiqueta">${t}</span><ul>${items.map((x) => `<li>${x}</li>`).join('')}</ul></div>`;
+  $('#equipo-austral').innerHTML = lista('en la mochila scout (bodega)', eq.bodega) + lista('en la mano', eq.mano) + lista('se compra allá', eq.alla);
+  $('[data-equipo-nota]').textContent = eq.nota;
 }
 
 // ---------- 4. Armador de ruta (Guatemala) ----------
@@ -571,7 +737,7 @@ function pintarLugaresArmador() {
       <button type="button" class="lugar-chip" data-sumar="${l.id}">
         ${foto ? `<img src="${foto}" alt="" loading="lazy" decoding="async">` : '<span class="sin-foto">GUA</span>'}
         <span class="lugar-texto">
-          <strong>${l.nombre}</strong>
+          <strong>${l.nombre}${l.dispo && l.dispo.estado === 'agotado' ? ' <span class="punto-dispo" title="' + l.dispo.texto + '"></span>' : ''}</strong>
           <small>${l.sugeridas}</small>
           <small>${desde ? 'desde ' + CLP(desde) + ' la noche' : 'alojamiento incluido'}</small>
         </span>
@@ -637,7 +803,7 @@ function pintarArmador() {
             ${l.aloj.map((o, n) => `<option value="${n}" ${n === e.aloj ? 'selected' : ''}>${o.n} · ★ ${o.r} · ${CLP(o.p)}</option>`).join('')}
           </select>` : `<span class="suave">${l.aloj[0].n}</span>`}
         </div>
-        <p class="etapa-nota">${l.activNota}. ${l.nota}${l.busca ? ` <a class="link" href="${busquedaHoteles(l.busca)}" target="_blank" rel="noopener">más alojamiento ↗</a>` : ''}</p>
+        <p class="etapa-nota">${l.dispo && l.dispo.estado !== 'ok' ? insigniaDispo(l.dispo) + ' ' + l.dispo.texto + '. ' : ''}${l.activNota}. ${l.nota}${l.busca ? ` <a class="link" href="${busquedaHoteles(l.busca)}" target="_blank" rel="noopener">más alojamiento ↗</a>` : ''}</p>
       </li>`);
   });
   if (etapas.length) filas.push(filaTraslado(r.tramos[etapas.length], puntos[etapas.length], 'gua'));
@@ -729,14 +895,17 @@ let valores = Object.assign(valoresIniciales(), guardado.leer('valores', {}));
 function llenarSelects() {
   $('#calc-vuelo-ca').innerHTML = DATOS.vuelosCA.map((v) =>
     `<option value="${v.id}">${v.aerolinea} · ${v.ida.dia} → ${v.vuelta.dia}</option>`).join('');
-  $('#calc-vuelo-au').innerHTML = DATOS.vuelosAustral.map((v) =>
-    `<option value="${v.id}">${v.aerolinea} · ${v.ida.split(' · ')[1]} · ${CLP(v.precio)}</option>`).join('');
+  $('#calc-ida-au').innerHTML = AU.idas.map((v) =>
+    `<option value="${v.id}">${v.aerolinea} ${v.sale} · ${CLP(v.precio)}</option>`).join('');
+  $('#calc-vuelta-au').innerHTML = AU.vueltas.map((v) =>
+    `<option value="${v.id}">${v.dia.split(' ').slice(0, 2).join(' ')} · ${v.aerolinea} ${v.sale} · ${CLP(v.precio)}</option>`).join('');
   sincronizarSelects();
 }
 
 function sincronizarSelects() {
   $('#calc-vuelo-ca').value = opciones.vueloCA;
-  $('#calc-vuelo-au').value = opciones.vueloAU;
+  $('#calc-ida-au').value = opciones.idaAU;
+  $('#calc-vuelta-au').value = opciones.vueltaAU;
   $('#calc-internos').value = String(opciones.internos);
   $('#calc-seguro').checked = opciones.seguro;
   $('#calc-equipaje').value = equipaje;
@@ -759,15 +928,14 @@ function pintarLineas(contenedorId, lineas) {
 // Precio del vuelo según equipaje. Si esa combinación no tiene precio, usa el de mano.
 function precioVueloCA() {
   const v = DATOS.vuelosCA.find((x) => x.id === opciones.vueloCA);
-  return (leerPrecio(v[equipaje]) || leerPrecio(v.mano) || leerPrecio(v.sin)).monto;
+  return (precioCA(v) || precioCA(v, 'mano')).monto;
 }
 
 function calcular() {
   const vueloCA = precioVueloCA();
   const internos = (Number(opciones.internos) || 0) * DATOS.vueloFlores.precio;
-  const au = DATOS.vuelosAustral.find((x) => x.id === opciones.vueloAU);
   const seguro = opciones.seguro ? P.seguro : 0;
-  const pasajes = vueloCA + internos + au.precio;
+  const pasajes = vueloCA + internos + precioAU().monto;
 
   // Gastos en destino, por persona
   const porPersona = (lineas) => lineas.reduce((suma, l) => {
@@ -791,7 +959,7 @@ function calcular() {
   let veredicto;
   if (persona <= 2000000) { estado = 'ok'; veredicto = `<strong>Bien.</strong> Dentro del tope con espacio (${CLP(P.tope.max - persona)} de margen).`; }
   else if (persona <= P.tope.max) { estado = 'justo'; veredicto = `<strong>Justo.</strong> Dentro del tope, con ${CLP(P.tope.max - persona)} de margen.`; }
-  else { estado = 'pasado'; veredicto = `<strong>Nos pasamos por ${CLP(persona - P.tope.max)}.</strong> Lo primero que se puede bajar: más camping en la Austral, hostales en Guatemala o un tour menos.`; }
+  else { estado = 'pasado'; veredicto = `<strong>Nos pasamos por ${CLP(persona - P.tope.max)}.</strong> Lo que más baja: hostales en Guatemala, un tour menos o el bus a Flores en vez del avión.`; }
   $('#res-veredicto').innerHTML = veredicto;
 
   $('#res-desglose').innerHTML = `
@@ -815,7 +983,8 @@ function conectarCalculadora() {
   pintarLineas('calc-au', P.austral);
 
   $('#calc-vuelo-ca').addEventListener('change', (e) => { opciones.vueloCA = e.target.value; guardarOpciones(); pintarVuelos(); pintarArmador(); calcular(); });
-  $('#calc-vuelo-au').addEventListener('change', (e) => { opciones.vueloAU = e.target.value; guardarOpciones(); pintarAustral(); calcular(); });
+  $('#calc-ida-au').addEventListener('change', (e) => elegirTramoAU('ida', e.target.value));
+  $('#calc-vuelta-au').addEventListener('change', (e) => elegirTramoAU('vuelta', e.target.value));
   $('#calc-equipaje').addEventListener('change', (e) => cambiarEquipaje(e.target.value));
   $('#calc-internos').addEventListener('change', (e) => { opciones.internos = Number(e.target.value); guardarOpciones(); calcular(); });
   $('#calc-seguro').addEventListener('change', (e) => { opciones.seguro = e.target.checked; guardarOpciones(); calcular(); });
@@ -833,7 +1002,10 @@ function conectarCalculadora() {
     guardado.borrar('opciones');
     valores = valoresIniciales();
     opciones = Object.assign({}, OPCIONES_INICIALES);
+    pintarLinksAustral();
     pintarAutos();
+    pintarRutaAustral();
+    pintarDormir();
     pintarArmador();
     pintarLineas('calc-ca', P.centroamerica);
     pintarLineas('calc-au', P.austral);
@@ -849,11 +1021,10 @@ function conectarCalculadora() {
 // ---------- Barra flotante "tu viaje" ----------
 function pintarTuViaje(persona, estado) {
   const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
-  const au = DATOS.vuelosAustral.find((v) => v.id === opciones.vueloAU);
   const ruta = DATOS.rutas.find((r) => r.id === opciones.ruta);
   const sep = '<span class="sep">·</span>';
   $('#tv-items').innerHTML = [
-    `<b>${au.aerolinea}</b> sur 13 → 23 dic`,
+    `<b>${idaAU().aerolinea}</b> sur 13 → ${diaVuelta()} dic`,
     `<b>${ca.aerolinea}</b> ${ca.ida.dia.replace('noche ', '')} → ${ca.vuelta.dia}`,
     ruta ? `<b>${ruta.nombre}</b>` : 'ruta por elegir'
   ].join(sep);
@@ -877,11 +1048,8 @@ function conectarTuViaje() {
 // ---------- 7. Compra: checklist + links ----------
 function pintarBotonesCompra() {
   const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
-  const au = DATOS.vuelosAustral.find((v) => v.id === opciones.vueloAU);
-  const links = [
-    `<a class="boton" href="${DATOS.compra[au.aerolinea]}" target="_blank" rel="noopener">comprar ${au.aerolinea} ↗</a>`,
-    `<a class="boton" href="${DATOS.compra[ca.aerolinea]}" target="_blank" rel="noopener">comprar ${ca.aerolinea} ↗</a>`
-  ];
+  const aerolineas = [...new Set([idaAU().aerolinea, vueltaAU().aerolinea, ca.aerolinea])];
+  const links = aerolineas.map((a) => `<a class="boton" href="${DATOS.compra[a]}" target="_blank" rel="noopener">comprar ${a} ↗</a>`);
   if (opciones.internos > 0) {
     links.push(`<a class="boton claro" href="${DATOS.vueloFlores.link}" target="_blank" rel="noopener">vuelos Guatemala ↔ Flores ↗</a>`);
   }
@@ -929,6 +1097,8 @@ function conectarNav() {
 // ---------- Inicio ----------
 pintarHero();
 pintarCuentaRegresiva();
+pintarLinksAustral();
+pintarPreciosVivos();
 pintarVuelos();
 pintarPestanas();
 pintarRuta();
@@ -945,3 +1115,18 @@ conectarNav();
 conectarTuViaje();
 marcarSelector();
 calcular();
+
+// Trae los precios al día; si no hay archivo (o falla), quedan los de datos.js
+fetch('precios.json', { cache: 'no-store' })
+  .then((r) => (r.ok ? r.json() : null))
+  .then((pv) => {
+    if (!pv) return;
+    preciosVivos = pv;
+    aplicarPreciosVivos(pv);
+    pintarPreciosVivos();
+    pintarVuelos();
+    pintarAustral();
+    llenarSelects();
+    calcular();
+  })
+  .catch(() => { /* sin precios al día */ });

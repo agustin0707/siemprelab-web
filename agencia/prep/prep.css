@@ -882,3 +882,90 @@ img { max-width: 100%; display: block; }
 .armador-total .desglose { margin-top: 14px; }
 .armador-total .boton.acento { margin-top: 18px; width: 100%; }
 .armador-aviso { font-family: 'Space Mono', monospace; font-size: 11px; color: #a9a9a9; margin-top: 10px; line-height: 1.5; }
+
+/* ---------- v8: precios al día, logos, tramos Austral, autos con foto, disponibilidad, equipo ---------- */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Aviso de precios al día */
+.precios-vivos { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--texto-2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.vivo-punto { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex: none; box-shadow: 0 0 0 3px #e1efe4; }
+.tendencia { font-family: 'Space Mono', monospace; font-size: 11px; align-self: flex-start; border-radius: 99px; padding: 2px 8px; }
+.tendencia.sube { background: var(--acento-suave); color: #8c3a1d; }
+.tendencia.baja { background: #e1efe4; color: var(--ok); }
+
+/* Logos */
+.aerolinea { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.logo { width: 22px; height: 22px; border-radius: 5px; object-fit: contain; background: #fff; flex: none; }
+.logo-ancho { height: 20px; width: auto; max-width: 84px; object-fit: contain; flex: none; }
+
+/* Selector de equipaje: en pantallas chicas se parte en dos líneas si no cabe */
+.selector { flex-wrap: wrap; max-width: 100%; }
+
+/* Austral: ida y vuelta por separado */
+.tramos-lista { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.tramos-lista > div > .etiqueta { display: block; margin-bottom: 10px; }
+@media (min-width: 900px) { .tramos-lista { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; } }
+.tarjetas.tramos { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.tramos-dia { font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--suave); margin-top: 4px; }
+.tramo { position: relative; background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 8px; }
+.tramo.recomendado { border-color: var(--negro); }
+.tramo.elegido { border: 2px solid var(--acento); box-shadow: 0 0 0 4px var(--acento-suave); }
+.tramo .sellos { position: absolute; top: -11px; left: 14px; display: flex; gap: 6px; }
+.tramo .sello { font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; background: var(--negro); color: var(--fondo); padding: 3px 8px; border-radius: 99px; }
+.tramo .sello.acento { background: var(--acento); }
+.tramo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.tramo-fila .aerolinea { font-family: 'Space Mono', monospace; font-size: 12px; }
+.tramo-precio { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; }
+.tramo-precio .aprox, .compara-total .aprox { color: var(--acento); }
+.tramo-horas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 14px; }
+.tramo-horas strong { font-weight: 500; }
+.tramo-horas span { color: var(--suave); font-size: 13px; }
+.tramo .nota-vuelo { font-size: 13px; color: var(--texto-2); }
+.tramo .acciones { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tramo .link { font-family: 'Space Mono', monospace; font-size: 11px; }
+
+/* Comparación volver el 23 o el 24 */
+.compara-vuelta { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 18px; border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; }
+@media (min-width: 760px) { .compara-vuelta { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); } }
+.compara-total { background: var(--negro); color: var(--fondo); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+.compara-total .etiqueta { color: #a9a9a9; }
+.compara-total small { color: #bdbdbd; font-size: 12px; }
+.compara-dif { background: var(--blanco); padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.compara-dif dl { display: grid; gap: 4px; }
+.compara-dif dl div { display: flex; justify-content: space-between; gap: 12px; }
+.compara-dif dt { color: var(--texto-2); }
+.compara-dif dd { font-family: 'Space Mono', monospace; font-size: 13px; white-space: nowrap; }
+.compara-dif .neto { border-top: 1px solid var(--gris); padding-top: 6px; margin-top: 2px; font-weight: 500; }
+.compara-dif small { color: var(--texto-2); font-size: 13px; }
+
+/* Autos con foto y ficha */
+.vuelo.auto { padding-top: 0; overflow: visible; }
+.auto-foto { margin: 0 -18px; position: relative; aspect-ratio: 16 / 9; background: #e6e6e6; border-radius: 11px 11px 0 0; overflow: hidden; }
+.auto-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.auto-foto figcaption { position: absolute; right: 6px; bottom: 6px; font-size: 9px; color: #fff; background: rgba(0, 0, 0, 0.45); padding: 1px 6px; border-radius: 4px; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vuelo.auto .sellos { z-index: 1; }
+.vuelo.auto .vuelo-cabeza .aerolinea { flex-wrap: wrap; }
+.ficha { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; font-size: 12px; color: var(--texto-2); }
+.ficha li { background: #f0f0f0; border-radius: 8px; padding: 6px 8px; }
+.ficha b { display: block; color: var(--negro); font-weight: 500; font-size: 13px; }
+
+/* Disponibilidad de tours */
+.dispo { font-family: 'Space Mono', monospace; font-size: 10px; padding: 1px 8px; border-radius: 99px; white-space: nowrap; }
+.dispo.ok { background: #e1efe4; color: var(--ok); }
+.dispo.ojo { background: #f6ecd6; color: #8a6414; }
+.dispo.agotado { background: var(--acento); color: #fff; }
+.actividad.agotada { border-color: var(--acento); }
+.dispo-texto { font-size: 13px; border-top: 1px solid var(--gris); padding-top: 6px; margin-top: 2px; }
+.actividad .link { font-family: 'Space Mono', monospace; font-size: 11px; margin-top: auto; padding-top: 4px; }
+.aviso.fuerte { border-top-color: var(--acento); margin: 0 0 14px; }
+.aviso.fuerte:empty { display: none; }
+.aviso.fuerte strong { color: var(--acento); }
+.punto-dispo { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--acento); vertical-align: middle; margin-left: 4px; }
+.etapa-nota .dispo { vertical-align: 1px; }
+
+/* Equipo: qué llevamos */
+.equipo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+.equipo-col { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 14px 16px; }
+.equipo-col .etiqueta { display: block; margin-bottom: 8px; }
+.equipo-col ul { list-style: none; display: grid; gap: 4px; font-size: 14px; color: var(--texto-2); }
+.equipo-col li::before { content: '· '; color: var(--acento); }

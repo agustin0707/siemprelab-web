@@ -1,6 +1,7 @@
 // Datos de la web prep · Agencia de Viajes SiempreLab
 // Todo lo que cambia (precios, horarios, montos) vive aquí.
-// Para actualizar precios el sábado, se edita solo este archivo.
+// Los precios de los vuelos se actualizan solos dos veces al día (precios.json, lo escribe GitHub Actions).
+// Lo demás (autos, alojamiento, tours) se edita aquí a mano.
 
 const DATOS = {
   // Fotos que rotan en el hero
@@ -14,19 +15,26 @@ const DATOS = {
   ],
 
   // Si cambia la estructura de los datos, se sube este número y se borra lo guardado en el navegador
-  version: 3,
+  version: 4,
 
   // Fecha de despegue para la cuenta regresiva (primero la Austral: dom 13 dic, hora de Chile)
   despegue: '2026-12-13T14:30:00-03:00',
 
-  // La junta: cada uno presenta su propuesta (Agus la Austral, la Jo Guatemala) y compramos todo
-  junta: '2026-11-07T15:00:00-03:00',
+  // La junta: viernes 6 en la noche. Cada uno presenta su propuesta (Agus la Austral, la Jo Guatemala) y compramos todo
+  junta: '2026-11-06T21:00:00-03:00',
 
   // Dónde comprar cada aerolínea
   compra: {
     Copa: 'https://www.copaair.com/es-cl/',
     Avianca: 'https://www.avianca.com/es/',
-    LATAM: 'https://www.latamairlines.com/cl/es'
+    LATAM: 'https://www.latamairlines.com/cl/es',
+    SKY: 'https://www.skyairline.com/es/chile'
+  },
+
+  // Logos (en la carpeta logos/)
+  logos: {
+    LATAM: 'logos/LA.png', SKY: 'logos/H2.png', Copa: 'logos/CM.png', Avianca: 'logos/AV.png', TAG: 'logos/5U.png',
+    Salfa: 'logos/salfarent.png', Sixt: 'logos/sixt.png', Lucano: 'logos/lucano.png', Budget: 'logos/budget.png'
   },
 
   // Fecha en que se vieron los precios
@@ -35,9 +43,10 @@ const DATOS = {
   // Tipo de cambio implícito en la tarifa de Copa del 30 oct (646.490 CLP = USD 652)
   usd: 992,
 
-  // ---------- Vuelos Centroamérica (ida y vuelta, por persona, CLP) ----------
-  // sin: sin equipaje · mano: con mochila de mano · bodega: con maleta facturada
-  // estimado: true marca precios que no salieron directo de la búsqueda
+  // ---------- Vuelos a Guatemala (ida y vuelta, por persona, CLP) ----------
+  // precio: tarifa más barata (Copa Basic ya incluye mochila de mano de 10 kg).
+  // extraMano / extraBodega: lo que se suma por equipaje en todo el viaje. estimado: true = no salió directo de la búsqueda.
+  // Los que tienen id en precios.json se actualizan solos.
   vuelosCA: [
     {
       id: 'copa-26',
@@ -45,25 +54,26 @@ const DATOS = {
       recomendado: true,
       aerolinea: 'Copa',
       destino: 'GUA',
-      ida: { dia: 'noche vie 25', detalle: 'sáb 26 · 01:07 → 08:45', escalas: '1 escala en Panamá' },
-      vuelta: { dia: 'sáb 9 ene', detalle: '10:43 → 00:28 (llega el 10)', escalas: '1 escala en Panamá' },
-      sin: 766492,
-      mano: 766492,
-      bodega: { monto: 875492, estimado: true },
-      nota: 'Salimos después de la cena de Navidad y llegamos a desayunar a Guatemala. Mochila de mano incluida.',
+      ida: { dia: 'noche vie 25', detalle: 'sáb 26 · 01:07 → 09:40', dur: '11 h 33 min', escalas: '1 escala en Panamá (2 h 16 min)' },
+      vuelta: { dia: 'sáb 9 ene', detalle: '07:19 → 20:18 o 10:43 → 23:40', dur: '≈ 10 h', escalas: '1 escala en Panamá' },
+      precio: 820958,
+      extraMano: 0,
+      extraBodega: { monto: 168640, estimado: true },
+      nota: 'La más barata del 26: salimos después de la cena de Navidad y llegamos a media mañana.',
       link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-26%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     },
     {
-      id: 'copa-26-llega9',
+      id: 'copa-26-0845',
       noches: 14,
       aerolinea: 'Copa',
       destino: 'GUA',
-      ida: { dia: 'noche vie 25', detalle: 'sáb 26 · 01:07 → 08:45', escalas: '1 escala en Panamá' },
-      vuelta: { dia: 'sáb 9 ene', detalle: '10:43 → 23:40', escalas: '1 escala en Panamá' },
-      sin: 813210,
-      mano: 813210,
-      bodega: { monto: 922210, estimado: true },
-      nota: 'Misma ida, pero llegamos el 9 antes de medianoche: un día entero de colchón antes del internado.',
+      ida: { dia: 'noche vie 25', detalle: 'sáb 26 · 01:07 → 08:45', dur: '10 h 38 min', escalas: '1 escala en Panamá (1 h 25 min)' },
+      vuelta: { dia: 'sáb 9 ene', detalle: 'a elegir', dur: '≈ 10 h', escalas: '1 escala en Panamá' },
+      precio: 919147,
+      extraMano: 0,
+      extraBodega: { monto: 168640, estimado: true },
+      antes: { monto: 766492, fecha: '3 nov' },
+      nota: 'La que mirábamos: llega una hora antes, pero subió harto en un día.',
       link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-26%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     },
     {
@@ -71,33 +81,35 @@ const DATOS = {
       noches: 13,
       aerolinea: 'Copa',
       destino: 'GUA',
-      ida: { dia: 'noche sáb 26', detalle: 'dom 27 · 01:31 → 08:45', escalas: '1 escala en Panamá' },
-      vuelta: { dia: 'sáb 9 ene', detalle: 'a elegir', escalas: '1 escala en Panamá' },
-      sin: 820883,
-      mano: 820883,
-      bodega: { monto: 929883, estimado: true },
-      nota: 'Navidad sin apuro: salimos la noche del 26. Precio "desde": confirmar con la vuelta.',
+      ida: { dia: 'noche sáb 26', detalle: 'dom 27 · 01:31 → 08:45', dur: '10 h 14 min', escalas: '1 escala en Panamá' },
+      vuelta: { dia: 'sáb 9 ene', detalle: 'a elegir', dur: '≈ 10 h', escalas: '1 escala en Panamá' },
+      precio: 820958,
+      extraMano: 0,
+      extraBodega: { monto: 168640, estimado: true },
+      antes: { monto: 820883, fecha: '3 nov' },
+      nota: 'Mismo precio que el 26 y Navidad sin apuro, pero una noche menos allá.',
       link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-27%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     },
     {
-      id: 'avianca-27',
-      noches: 12,
+      id: 'avianca-26',
+      noches: 13,
       aerolinea: 'Avianca',
       destino: 'GUA',
-      ida: { dia: 'dom 27', detalle: '16:15 → 00:55 (+1)', escalas: '1 escala en Bogotá' },
-      vuelta: { dia: 'sáb 9 ene', detalle: 'a elegir', escalas: '1 escala' },
-      sin: 843955,
-      mano: { monto: 904000, estimado: true },
-      bodega: null,
-      nota: 'En estas fechas sale más cara que Copa y no incluye mochila de mano.',
-      link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-27%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
+      ida: { dia: 'sáb 26', detalle: '16:15 → 00:55 (+1)', dur: '11 h 40 min', escalas: '1 escala en Bogotá' },
+      vuelta: { dia: 'sáb 9 ene', detalle: '09:20 → 01:05 (+1)', dur: '12 h 45 min', escalas: '1 escala en Bogotá' },
+      precio: 883308,
+      extraMano: { monto: 60000, estimado: true },
+      extraBodega: null,
+      nota: 'Sale de día, pero llega de madrugada y la tarifa básica no incluye mochila de mano.',
+      link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-26%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     }
   ],
 
   // Vuelo interno Guatemala ↔ Flores (Tikal), precio por tramo
   vueloFlores: {
-    precio: 88362,
-    detalle: 'Avianca · 07:40, 19:55 o 23:10 · 45 min. TAG: 98.524 (07:20, 14:20).',
+    id: 'flores',
+    precio: 88370,
+    detalle: 'Avianca · 06:05, 18:20 o 21:35 · 50 min. TAG: $98.533 (17:30).',
     link: 'https://www.google.com/travel/flights?q=One%20way%20flights%20from%20FRS%20to%20GUA%20on%202027-01-08&curr=CLP&hl=es&gl=CL'
   },
 
@@ -193,6 +205,7 @@ const DATOS = {
         aloj: [{ n: 'Somos (hostal)', p: 34078, r: '4,7' }, { n: 'Flore Boutique Hostel', p: 52035, r: '4,8' }, { n: 'Casa Donya Boutique', p: 54981, r: '4,8' }, { n: 'Ojala Hotel', p: 82529, r: '4,7' }], base: 1,
         nota: 'Para Año Nuevo, reservar ya.', busca: 'hoteles Antigua Guatemala' },
       { id: 'acatenango', nombre: 'Acatenango', sugeridas: '1 noche (tour de 2 días)', activ: 130000, activNota: 'Tour USD 90 a 130 + entradas ≈ Q150. Incluye carpa, comida y guía',
+        dispo: { estado: 'agotado', texto: 'OX agotado del 21 dic al 4 ene; cupo el 31 dic y desde el 5 ene' },
         aloj: [{ n: 'Incluido en el tour', p: 0, r: '' }], base: 0,
         nota: 'Sale de Antigua y vuelve al otro día. Frío bajo cero: arrendar ropa de abrigo.', busca: '' },
       { id: 'atitlan', nombre: 'Lago Atitlán', sugeridas: '3 a 5 noches', activ: 25000, activNota: 'Lanchas entre pueblos Q25 a 35 · Nariz del Indio ≈ Q100',
@@ -202,6 +215,7 @@ const DATOS = {
         aloj: [{ n: 'Yaxlik River Lodge', p: 24034, r: '4,6' }, { n: 'Casa Mary Lanquín', p: 27705, r: '4,8' }, { n: 'Utopia Eco Hotel', p: 40533, r: '4,2' }], base: 1,
         nota: 'No hay cajeros en Lanquín: llegar con quetzales.', busca: 'hoteles Lanquín Semuc Champey' },
       { id: 'flores', nombre: 'Flores y Tikal', sugeridas: '2 a 3 noches', activ: 55000, activNota: 'Tikal Q150 + amanecer Q100 + guía y shuttle',
+        dispo: { estado: 'ok', texto: 'Tikal sale todos los días: boleto en línea antes' },
         aloj: [{ n: 'La Casa de Grethel', p: 25212, r: '4,2' }, { n: 'Hotel San Miguel', p: 27988, r: '4,3' }, { n: 'Zapote Tree Inn', p: 56429, r: '4,7' }, { n: 'B&B Del Lago', p: 59583, r: '5,0' }], base: 2,
         nota: 'Para el amanecer en Tikal se sale a las 03:00.', busca: 'hoteles Flores Petén' },
       { id: 'caye-caulker', nombre: 'Caye Caulker (Belice)', sugeridas: '2 a 3 noches', activ: 120000, activNota: 'Snorkel Hol Chan USD 90 a 115 + USD 15 del parque',
@@ -270,29 +284,58 @@ const DATOS = {
       { dias: 'D6 · vie 18', lugar: 'parque-patagonia', titulo: 'Parque Patagonia', detalle: 'Sendero Lagunas Altas con guanacos y bajada a Cochrane.', manejo: '20 km · 30 min' },
       { dias: 'D7 · sáb 19', lugar: 'tortel', titulo: 'Caleta Tortel', detalle: 'Pasarelas de ciprés sobre el agua. Llenar el estanque en Cochrane antes de salir.', manejo: '125 km · 2,5 a 3 h · ripio' },
       { dias: 'D8 a D9 · 20 y 21', lugar: 'villa-ohiggins', titulo: "Villa O'Higgins", detalle: "Barcaza Yungay → Río Bravo y el fin de la Carretera. Glaciar O'Higgins si hay cupo.", manejo: '145 km + barcaza · 4 h' },
-      { dias: 'D10 · mar 22', lugar: 'carretera-austral', titulo: 'De vuelta al norte', detalle: 'El día más largo: barcaza de vuelta y hasta Puerto Guadal.', manejo: '320 km + barcaza · 7 a 8 h' },
-      { dias: 'D11 · mié 23', lugar: null, titulo: 'Vuelta', detalle: 'Salir 08:00, devolver el auto y vuelo 15:00. Navidad en Santiago.', manejo: '290 km · 5,5 h' }
+      { dias: 'D10 · mar 22', lugar: 'carretera-austral', titulo: 'De vuelta al norte', detalle: 'El día más largo: barcaza de vuelta y hasta Puerto Guadal.', manejo: '320 km + barcaza · 7 a 8 h' }
     ],
-    extra: "Son ~1.450 km en 10 días. Si se recorta Villa O'Higgins, se ganan dos días para Tortel y el General Carrera, y el día 10 deja de ser eterno."
+    // Los últimos días cambian según si volvemos el 23 o el 24
+    finales: {
+      23: [
+        { dias: 'D11 · mié 23', lugar: null, titulo: 'Vuelta', detalle: 'Salir 08:00 de Guadal, devolver el auto y vuelo 15:00. Navidad en Santiago.', manejo: '290 km · 5,5 h' }
+      ],
+      24: [
+        { dias: 'D11 · mié 23', lugar: 'general-carrera', titulo: 'Día de colchón', detalle: 'Guadal → Cerro Castillo sin apuro, parando donde dé ganas. Última noche de carpa.', manejo: '195 km · 4 h · ripio y pavimento' },
+        { dias: 'D12 · jue 24', lugar: null, titulo: 'Vuelta', detalle: 'Cerro Castillo → Balmaceda, devolver el auto y vuelo 15:00. Nochebuena en Santiago.', manejo: '95 km · 1,5 h · pavimento' }
+      ]
+    },
+    extra: "Son ~1.450 km. Si se recorta Villa O'Higgins, se ganan dos días para Tortel y el General Carrera, y el día 10 deja de ser eterno."
   },
 
-  // ---------- Auto en Balmaceda (Kayak, 13 dic 17:00 a 23 dic 13:00, total 10 días) ----------
+  // ---------- Auto en Balmaceda (Kayak, 3 nov: retiro dom 13 dic 17:00, devolución el 23 o el 24 a las 13:00) ----------
+  // total: 10 días (vuelta el 23) · total24: 11 días (vuelta el 24). Ficha aprox. del modelo: "o similar" puede cambiar.
+  // consumo en km/l mixto, con ripio y carga. Sirve para estimar la bencina.
   autos: {
-    link: 'https://www.kayak.cl/cars/BBA/2026-12-13-17h/2026-12-23-13h?sort=price_a',
+    link: {
+      23: 'https://www.kayak.cl/cars/BBA/2026-12-13-17h/2026-12-23-13h?sort=price_a',
+      24: 'https://www.kayak.cl/cars/BBA/2026-12-13-17h/2026-12-24-13h?sort=price_a'
+    },
+    km: 1450,
+    litro: { bencina: 1400, diesel: 1100 }, // precio aprox. en Aysén
     opciones: [
-      { id: 'salfa-crosstrek', agencia: 'Salfa', modelo: 'Subaru Crosstrek o similar', tipo: 'SUV compacto · automático', recogida: 'en el aeropuerto', total: 414700, recomendado: true, sello: 'la de 2025',
-        nota: 'La misma empresa que nos funcionó con la Tracker. Esta es su categoría.' },
-      { id: 'sixt-sonet', agencia: 'Sixt', modelo: 'Kia Sonet o similar', tipo: 'SUV chico · automático', recogida: 'en el aeropuerto', total: 261640, sello: 'más barato',
-        nota: 'El SUV más barato. Más bajo y con menos maleta para el ripio largo.' },
-      { id: 'sixt-cx5', agencia: 'Sixt', modelo: 'Mazda CX-5 o similar', tipo: 'SUV mediano · automático', recogida: 'en el aeropuerto', total: 327940,
-        nota: 'Más espacio para la carpa y las mochilas por poco más.' },
-      { id: 'lucano-tucson', agencia: 'Lucano', modelo: 'Hyundai Tucson o similar', tipo: 'SUV compacto · automático', recogida: 'coordinar por teléfono', total: 379170,
-        nota: 'Empresa local, buena nota. Hay que coordinar la entrega.' },
-      { id: 'salfa-4runner', agencia: 'Salfa', modelo: 'Toyota 4Runner o similar', tipo: 'SUV 4x4 grande · automático', recogida: 'en el aeropuerto', total: 741790,
-        nota: '4x4 de verdad. Solo si queremos ir sobrados.' },
-      { id: 'salfa-navara', agencia: 'Salfa', modelo: 'Nissan Navara o similar', tipo: 'camioneta 4x4 · automática', recogida: 'en el aeropuerto', total: 819510,
-        nota: 'Cabe todo, pero gasta más bencina.' }
-    ]
+      { id: 'salfa-crosstrek', agencia: 'Salfa', modelo: 'Subaru Crosstrek o similar', tipo: 'SUV compacto · automático', recogida: 'en el terminal', total: 414700, total24: 441012, recomendado: true, sello: 'la mejor opción',
+        traccion: 'integral', despeje: 220, maletero: 315, consumo: 13, combustible: 'bencina',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Subaru_Crosstrek_%28GU%29_1X7A2484.jpg/960px-Subaru_Crosstrek_%28GU%29_1X7A2484.jpg', credito: 'Alexander-93 · CC BY-SA 4.0' },
+        nota: 'Tracción integral y 22 cm de despeje: la más tranquila para el ripio con carpa y mochilas. Misma empresa de la Tracker de 2025.' },
+      { id: 'sixt-sonet', agencia: 'Sixt', modelo: 'Kia Sonet o similar', tipo: 'SUV chico · automático', recogida: 'en el terminal', total: 261650, total24: 287705, sello: 'más barato',
+        traccion: '4x2', despeje: 190, maletero: 392, consumo: 15, combustible: 'bencina',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Kia_Sonet_IMG001.jpg/960px-Kia_Sonet_IMG001.jpg', credito: 'Zotyefan · CC0' },
+        nota: 'Barato y gasta poco, pero es 4x2 y más bajo. Entran las dos mochilas y el equipo, justo.' },
+      { id: 'sixt-cx5', agencia: 'Sixt', modelo: 'Mazda CX-5 o similar', tipo: 'SUV mediano · automático', recogida: 'en el terminal', total: 327950, total24: 360635,
+        traccion: '4x2 (probable)', despeje: 193, maletero: 442, consumo: 12, combustible: 'bencina',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Mazda_CX-5_%28KF%29_Facelift_1X7A0331_%282%29.jpg/960px-Mazda_CX-5_%28KF%29_Facelift_1X7A0331_%282%29.jpg', credito: 'Alexander Migl · CC BY-SA 4.0' },
+        nota: 'Punto medio: el maletero más grande de los SUV por poco más que el Sonet.' },
+      { id: 'lucano-tucson', agencia: 'Lucano', modelo: 'Hyundai Tucson o similar', tipo: 'SUV compacto · automático', recogida: 'coordinar por teléfono', total: 379170, total24: 417307,
+        traccion: '4x2', despeje: 170, maletero: 539, consumo: 11, combustible: 'bencina',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Hyundai_Tucson_%28NX4%29_1X7A0424.jpg/960px-Hyundai_Tucson_%28NX4%29_1X7A0424.jpg', credito: 'Alexander Migl · CC BY-SA 4.0' },
+        nota: 'Empresa local con buena nota y mucho maletero, pero el más bajo de todos. Hay que coordinar la entrega.' },
+      { id: 'salfa-4runner', agencia: 'Salfa', modelo: 'Toyota 4Runner o similar', tipo: 'SUV 4x4 grande · automático', recogida: 'en el terminal', total: 741790, total24: { monto: 816000, estimado: true },
+        traccion: '4x4', despeje: 244, maletero: 1300, consumo: 8, combustible: 'bencina',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Toyota_4Runner_%28N210%29_1X7A0418.jpg/960px-Toyota_4Runner_%28N210%29_1X7A0418.jpg', credito: 'Alexander Migl · CC BY-SA 4.0' },
+        nota: '4x4 de verdad y cabe todo, pero cuesta el doble y gasta harta más bencina.' },
+      { id: 'salfa-navara', agencia: 'Salfa', modelo: 'Nissan Navara o similar', tipo: 'camioneta 4x4 · automática', recogida: 'en el terminal', total: 819510, total24: { monto: 901000, estimado: true },
+        traccion: '4x4', despeje: 228, maletero: null, consumo: 11, combustible: 'diesel',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Nissan_Navara_%28D23%29_2.5_VE_Calibre_4x2_2022.jpg/960px-Nissan_Navara_%28D23%29_2.5_VE_Calibre_4x2_2022.jpg', credito: 'Ethan Llamas · CC BY-SA 4.0' },
+        nota: 'El equipo va en la pickup: sin cubierta se moja con la lluvia. Diésel.' }
+    ],
+    ojo: 'En Kayak aparece una Toyota 4Runner de Budget a $242.241 vendida por un intermediario (VIP Cars). El mismo auto en Booking.com sale $835.710: lo más probable es que sea un error o que no traiga el seguro. No la tomaría sin confirmar.'
   },
 
   // ---------- Dónde dormir en la Austral (pieza doble por noche, Google Hoteles 3 nov) ----------
@@ -303,18 +346,53 @@ const DATOS = {
     { noche: 'vie 18', donde: 'Cochrane', camping: 8000, techo: [{ n: 'SURí refugios', p: 39566, r: '5,0' }, { n: 'Mate Sur Hostel', p: 63242, r: '4,4' }], busca: 'alojamiento Cochrane Aysén 18 al 19 de diciembre 2026' },
     { noche: 'sáb 19', donde: 'Caleta Tortel', camping: 8000, techo: [], extra: 'Nada publica precio en línea: hospedajes familiares (~$40 a 60 mil) por teléfono o WhatsApp.', busca: 'alojamiento Caleta Tortel 19 al 20 de diciembre 2026' },
     { noche: 'dom 20 y lun 21', donde: "Villa O'Higgins (2 noches)", camping: 10000, techo: [{ n: 'Hostal Puesto Canogas', p: 116834, r: '4,6' }, { n: 'Rumbo Sur Hotel', p: 257032, r: '4,6' }], extra: 'Hay poco y se llena: reservar apenas compremos.', busca: "alojamiento Villa O'Higgins 20 al 22 de diciembre 2026" },
-    { noche: 'mar 22', donde: 'Puerto Guadal', camping: 10000, techo: [{ n: 'Cabañas Buena Vista', p: 122097, r: '4,3' }, { n: 'Parador Austral Lodge', p: 161136, r: '4,1' }], busca: 'alojamiento Puerto Guadal 22 al 23 de diciembre 2026' }
+    { noche: 'mar 22', donde: 'Puerto Guadal', camping: 10000, techo: [{ n: 'Cabañas Buena Vista', p: 122097, r: '4,3' }, { n: 'Parador Austral Lodge', p: 161136, r: '4,1' }], busca: 'alojamiento Puerto Guadal 22 al 23 de diciembre 2026' },
+    { noche: 'mié 23', soloSi: 24, donde: 'Villa Cerro Castillo (si volvemos el 24)', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'Precio de la noche del 13: confirmar para el 23.', busca: 'alojamiento Villa Cerro Castillo 23 al 24 de diciembre 2026' }
   ],
 
   // ---------- Qué hacer y cuánto cuesta (por persona) ----------
+  // dispo: estado 'ok' (sale siempre), 'ojo' (reservar o confirmar), 'agotado'. Revisado el 3 nov.
   actividadesAustral: [
-    { nombre: 'Capillas de Mármol en lancha', donde: 'Río Tranquilo', precio: '$18 mil (1,5 h) · $28 mil con Puerto Sánchez', nota: 'Salir temprano: en la tarde el lago se pone bravo.' },
-    { nombre: 'Capillas de Mármol en kayak', donde: 'Río Tranquilo', precio: '≈ $66 mil', nota: '3 h con guía. Más lento y más cerca de la roca.' },
-    { nombre: 'Glaciar Exploradores sobre el hielo', donde: 'Río Tranquilo', precio: '$150 a 170 mil', nota: 'Día completo (07:00 a 18:00) con transporte, entrada y crampones. Cupos limitados: reservar.', reservar: true },
-    { nombre: 'Glaciar Exploradores, solo miradores', donde: 'Valle Exploradores', precio: '$55 a 60 mil con guía', nota: 'O por nuestra cuenta en el auto, pagando la entrada del sendero.' },
-    { nombre: 'Parque Patagonia', donde: 'Valle Chacabuco', precio: 'entrada ≈ $13 mil (extranjeros)', nota: 'Para chilenos debería ser menos: confirmar en CONAF.' },
-    { nombre: "Glaciar O'Higgins en barco", donde: "Villa O'Higgins", precio: 'consultar (lago desde ≈ $60 mil)', nota: 'Depende del clima y del cupo. Preguntar antes de llegar.', reservar: true },
-    { nombre: 'Barcaza Yungay ↔ Río Bravo', donde: "camino a O'Higgins", precio: 'gratis', nota: 'Subvencionada, por orden de llegada. 45 min.' }
+    { nombre: 'Capillas de Mármol en lancha', donde: 'Río Tranquilo', precio: '$18 mil (1,5 h) · $28 mil con Puerto Sánchez', nota: 'Salir temprano: en la tarde el lago se pone bravo.',
+      dispo: { estado: 'ok', texto: 'Salen todo el día desde la costanera. No hace falta reservar.' } },
+    { nombre: 'Capillas de Mármol en kayak', donde: 'Río Tranquilo', precio: '≈ $66 mil', nota: '3 h con guía. Más lento y más cerca de la roca.',
+      dispo: { estado: 'ojo', texto: 'Grupos chicos: reservar uno o dos días antes.' } },
+    { nombre: 'Glaciar Exploradores sobre el hielo', donde: 'Río Tranquilo', precio: '$150 a 170 mil', nota: 'Día completo (07:00 a 18:00) con transporte, entrada y crampones.', reservar: true,
+      dispo: { estado: 'ojo', texto: 'Grupos de 6 y mínimo 4 para salir. Varias empresas (Nomades, ChileAndes, Newenche, Viajero Austral). Reservar apenas cerremos la fecha: piden un abono de ~$20 mil.' } },
+    { nombre: 'Glaciar Exploradores, solo miradores', donde: 'Valle Exploradores', precio: '$55 a 60 mil con guía', nota: 'O por nuestra cuenta en el auto, pagando la entrada del sendero.',
+      dispo: { estado: 'ok', texto: 'Por nuestra cuenta, cualquier día.' } },
+    { nombre: 'Parque Patagonia', donde: 'Valle Chacabuco', precio: 'entrada ≈ $13 mil (extranjeros)', nota: 'Para chilenos debería ser menos: confirmar en CONAF.',
+      dispo: { estado: 'ojo', texto: 'El camping West Winds tiene ~60 sitios. Preguntar a CONAF (aysen.oirs@conaf.cl) si hay que reservar.' } },
+    { nombre: "Glaciar O'Higgins en barco", donde: "Villa O'Higgins", precio: 'consultar (lago desde ≈ $60 mil)', nota: 'Unas 8 h de navegación, depende del clima.', reservar: true,
+      dispo: { estado: 'ojo', texto: 'No sale todos los días. Escribir antes a Robinson Crusoe o Turismo Las Ruedas con las fechas 20 y 21.' } },
+    { nombre: 'Barcaza Yungay ↔ Río Bravo', donde: "camino a O'Higgins", precio: 'gratis', nota: 'Subvencionada, 45 min.',
+      dispo: { estado: 'ok', texto: 'Sin reserva, por orden de llegada.' } }
+  ],
+
+  // Qué llevamos a la Austral (vamos con mochila scout y equipo de camping)
+  equipo: {
+    bodega: ['Carpa', 'Sacos de dormir para bajo 0 °C', 'Colchonetas o aislantes', 'Cocinilla y ollas, limpias y sin gas', 'Cortaplumas y servicio', 'Frontales', 'Ropa impermeable y primera capa térmica', 'Toalla de secado rápido', 'Bolsas para la basura: se baja todo'],
+    mano: ['Carnet, pasajes y efectivo', 'Batería externa y cargadores (las baterías nunca van en bodega)', 'Un encendedor por persona', 'Remedios', 'Botella de agua vacía'],
+    alla: ['Cartuchos de gas: no se pueden llevar en el avión. Comprar en Coyhaique o en la bomba de Balmaceda', 'Comida para los primeros días en el súper de Coyhaique: más al sur hay poco y caro', 'Llenar el estanque en cada bomba: entre Cochrane y Villa O\'Higgins no hay'],
+    nota: 'Cada mochila scout va en bodega (hasta 23 kg). Con la carpa y la cocinilla repartidas, cabe en una por persona.'
+  },
+
+  // Tours en Guatemala y cómo están de cupos (revisado el 3 nov)
+  actividadesCA: [
+    { nombre: 'Acatenango con noche en el volcán', donde: 'Antigua', precio: 'USD 109 a 119 + Q100 de entrada', nota: 'Sale 06:30 de Antigua y vuelve al otro día. Guardan la mochila grande gratis.', reservar: true,
+      dispo: { estado: 'agotado', texto: 'OX Expeditions está agotado del 21 dic al 4 ene. Su campamento 2 tiene cupo el 31 dic, y desde el 5 ene hay todos los días. Preguntar ya a Wicho & Charlie\'s y otras agencias, o dejar el volcán para el final.' },
+      link: 'https://oxexpeditions.com/tours/acatenango-overnight-hike/' },
+    { nombre: 'Tikal al amanecer', donde: 'Flores', precio: 'Q150 + Q100 el amanecer', nota: 'Shuttle a las 03:00 desde Flores.',
+      dispo: { estado: 'ok', texto: 'Todos los días. Comprar el boleto antes en boletos.culturaguate.com (con pasaporte).' },
+      link: 'https://boletos.culturaguate.com/' },
+    { nombre: 'Semuc Champey: pozas, cueva y tubing', donde: 'Lanquín', precio: 'Q175 a 250', nota: 'Llevar efectivo: no hay cajeros en Lanquín.',
+      dispo: { estado: 'ok', texto: 'Todos los días. Se reserva en el hostal la noche antes.' } },
+    { nombre: 'Snorkel en Hol Chan', donde: 'Caye Caulker', precio: 'USD 90 a 115 + 15 del parque', nota: 'Con tiburones nodriza y mantarrayas.',
+      dispo: { estado: 'ok', texto: 'Salidas diarias. Reservar en la isla un día antes.' } },
+    { nombre: 'Volcán Pacaya', donde: 'Antigua', precio: '≈ USD 25 con guía', nota: 'Medio día, fácil. Buen plan B si no hay cupo en Acatenango.',
+      dispo: { estado: 'ok', texto: 'Todos los días desde Antigua.' } },
+    { nombre: 'Mercado de Chichicastenango', donde: 'cerca de Atitlán', precio: 'gratis (shuttle ≈ USD 15)', nota: 'El más grande de Centroamérica.',
+      dispo: { estado: 'ojo', texto: 'Solo jueves y domingos: el dom 3 ene calza.' } }
   ],
 
   // Barcaza Puerto Yungay ↔ Río Bravo (temporada media: oct, nov, dic, mar · actualizado oct 2026)
@@ -324,13 +402,31 @@ const DATOS = {
     nota: 'Los viernes sale una extra a las 08:10 desde Yungay. Sin reserva: se embarca por orden de llegada. Fuente: carretera-austral.cl.'
   },
 
-  // ---------- Austral 2.0 (ida y vuelta por persona) ----------
-  vuelosAustral: [
-    { id: 'latam-1430', aerolinea: 'LATAM', ida: 'dom 13 dic · 14:30 → 16:49', escalas: 'Directo', vuelta: 'mié 23 · 15:00 → 18:41, 1 escala', precio: 362049, recomendado: true, sello: 'después de almuerzo' },
-    { id: 'latam-1257', aerolinea: 'LATAM', ida: 'dom 13 dic · 12:57 → 15:15', escalas: 'Directo', vuelta: 'mié 23 · 15:00 → 18:41, 1 escala', precio: 345049, sello: 'más barato' },
-    { id: 'latam-1430-dir', aerolinea: 'LATAM', ida: 'dom 13 dic · 14:30 → 16:49', escalas: 'Directo', vuelta: 'mié 23 · 15:25 → 17:45, directo', precio: 420049 }
-  ],
-  linkAustral: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20BBA%20on%202026-12-13%20through%202026-12-23&curr=CLP&hl=es&gl=CL',
+  // ---------- Austral 2.0: vuelos por tramo (por persona, CLP) ----------
+  // Se compran por separado: se elige una ida y una vuelta (el 23 o el 24).
+  // manual: true = SKY no publica precio en Google Vuelos; se revisó a mano en skyairline.com.
+  // maleta: lo que sube la tarifa por tramo con una maleta de 23 kg (SKY Standard vs Basic: real; LATAM: estimado).
+  vuelosAustral: {
+    maleta: { LATAM: { monto: 40000, estimado: true }, SKY: { monto: 40000 } },
+    idas: [
+      { id: 'au-ida-1430', aerolinea: 'LATAM', dia: 'dom 13 dic', sale: '14:30', llega: '16:49', dur: '2 h 19 min', escalas: 'directo', precio: 190972, recomendado: true, sello: 'después de almuerzo' },
+      { id: 'au-ida-1257', aerolinea: 'LATAM', dia: 'dom 13 dic', sale: '12:57', llega: '15:15', dur: '2 h 18 min', escalas: 'directo', precio: 182116, nota: 'Almuerzo al paso, pero llegamos con más luz.' },
+      { id: 'au-ida-sky-0829', aerolinea: 'SKY', dia: 'dom 13 dic', sale: '08:29', llega: '12:00', dur: '3 h 31 min', escalas: '1 escala', precio: 160990, manual: true, nota: 'La más barata, pero a las 08:29 después del matrimonio.' }
+    ],
+    vueltas: [
+      { id: 'au-v24-1500', fecha: 24, aerolinea: 'LATAM', dia: 'jue 24 dic', sale: '15:00', llega: '18:30', dur: '3 h 30 min', escalas: '1 escala', precio: 122059, recomendado: true, sello: 'volver el 24', nota: 'Llegamos a la cena de Nochebuena y el 23 no es un día de 290 km apurados.' },
+      { id: 'au-v24-1418', fecha: 24, aerolinea: 'LATAM', dia: 'jue 24 dic', sale: '14:18', llega: '16:38', dur: '2 h 20 min', escalas: 'directo', precio: 152239 },
+      { id: 'au-v24-sky', fecha: 24, aerolinea: 'SKY', dia: 'jue 24 dic', sale: '13:31', llega: '20:00', dur: '6 h 29 min', escalas: '1 escala', precio: 86181, manual: true, sello: 'más barato', nota: 'Escala larga: llegamos justo a la cena.' },
+      { id: 'au-v23-1500', fecha: 23, aerolinea: 'LATAM', dia: 'mié 23 dic', sale: '15:00', llega: '18:41', dur: '3 h 41 min', escalas: '1 escala', precio: 162059 },
+      { id: 'au-v23-1525', fecha: 23, aerolinea: 'LATAM', dia: 'mié 23 dic', sale: '15:25', llega: '17:45', dur: '2 h 20 min', escalas: 'directo', precio: 220059 },
+      { id: 'au-v23-sky', fecha: 23, aerolinea: 'SKY', dia: 'mié 23 dic', sale: '12:59', llega: '16:31', dur: '3 h 32 min', escalas: '1 escala', precio: 178059, manual: true }
+    ]
+  },
+  linkAustral: {
+    23: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20BBA%20on%202026-12-13%20through%202026-12-23&curr=CLP&hl=es&gl=CL',
+    24: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20BBA%20on%202026-12-13%20through%202026-12-24&curr=CLP&hl=es&gl=CL',
+    sky: 'https://initial-sale.skyairline.com/es/chile?origin=SCL&destination=BBA&departureDate=2026-12-13&arrivalDate=2026-12-24&flightType=RT&ADT=1'
+  },
 
   // ---------- Calculadora ----------
   // tipo 'cada' = cada uno paga eso · tipo 'mitad' = es un total que se divide a la mitad
@@ -343,11 +439,13 @@ const DATOS = {
       { id: 'ca-activ', nombre: 'Actividades (Tikal, Acatenango, Semuc o snorkel)', unitario: 140000, cantidad: 1, unidad: 'total', tipo: 'cada' },
       { id: 'ca-extras', nombre: 'Extras e imprevistos (Año Nuevo incluido)', unitario: 80000, cantidad: 1, unidad: 'total', tipo: 'cada' }
     ],
+    // Arriendo, bencina y cantidad de días se recalculan al elegir el auto o la vuelta (el 23 o el 24)
     austral: [
-      { id: 'au-auto', nombre: 'Arriendo de auto (sale del auto elegido)', unitario: 41470, cantidad: 10, unidad: 'días', tipo: 'mitad' },
-      { id: 'au-bencina', nombre: 'Bencina (~1.450 km)', unitario: 200000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
-      { id: 'au-aloj', nombre: 'Alojamiento (mitad camping, mitad techo)', unitario: 45000, cantidad: 10, unidad: 'noches', tipo: 'mitad' },
-      { id: 'au-comida', nombre: 'Comida', unitario: 15000, cantidad: 11, unidad: 'días', tipo: 'cada' },
+      { id: 'au-auto', nombre: 'Arriendo de auto (sale del auto elegido)', unitario: 40092, cantidad: 11, unidad: 'días', tipo: 'mitad' },
+      { id: 'au-bencina', nombre: 'Bencina (~1.450 km, según el auto)', unitario: 156000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
+      { id: 'au-aloj', nombre: 'Alojamiento (casi todo carpa, 3 noches con techo)', unitario: 28000, cantidad: 11, unidad: 'noches', tipo: 'mitad' },
+      { id: 'au-comida', nombre: 'Comida (cocinamos casi siempre)', unitario: 10000, cantidad: 12, unidad: 'días', tipo: 'cada' },
+      { id: 'au-equipo', nombre: 'Gas y lo que falte del equipo (se compra allá)', unitario: 30000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
       { id: 'au-activ', nombre: 'Tours y entradas (Capillas, Exploradores)', unitario: 190000, cantidad: 1, unidad: 'total', tipo: 'cada' }
     ],
     seguro: 39700 // ~USD 40 por persona, si la tarjeta no lo cubre

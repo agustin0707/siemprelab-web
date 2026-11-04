@@ -10,14 +10,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=7">
+  <link rel="stylesheet" href="prep.css?v=8">
 </head>
 <body>
 
   <!-- Barra superior tipo aerolínea -->
   <header class="banda">
     <span class="marca"><span class="punto"></span>/ agencia siemprelab · prep</span>
-    <span class="estado">precios vistos el <span data-precio-visto></span></span>
+    <span class="estado" data-precio-banda>precios vistos el <span data-precio-visto></span></span>
   </header>
 
   <!-- ---------- Hero: fotos a sangre + tablero de salidas ---------- -->
@@ -27,9 +27,9 @@
 
     <div class="hero-contenido">
       <div class="hero-texto">
-        <p class="hero-etiqueta"><span class="punto"></span>[ agencia siemprelab ] · junta sáb 7 nov</p>
-        <h1>Dos viajes.<br>Un sábado para <em>cerrarlos</em>.</h1>
-        <p class="hero-bajada">La Austral la arma Agus y Guatemala la arma la Jo. El sábado 7 nos presentamos las propuestas y compramos todo.</p>
+        <p class="hero-etiqueta"><span class="punto"></span>[ agencia siemprelab ] · junta vie 6 nov</p>
+        <h1>Dos viajes.<br>Un viernes para <em>cerrarlos</em>.</h1>
+        <p class="hero-bajada">La Austral la arma Agus y Guatemala la arma la Jo. El viernes 6 en la noche nos presentamos las propuestas y compramos todo.</p>
         <div class="hero-botones">
           <a class="boton acento" href="#austral">ver la austral</a>
           <a class="boton vidrio" href="#armar">armar guatemala</a>
@@ -82,9 +82,9 @@
 
     <!-- ---------- Resumen rápido ---------- -->
     <dl class="resumen">
-      <div><dt>austral 2.0 · arma agus</dt><dd>dom 13 → mié 23 dic</dd></div>
+      <div><dt>austral 2.0 · arma agus</dt><dd id="resumen-au">dom 13 → jue 24 dic</dd></div>
       <div><dt>guatemala · arma la jo</dt><dd>noche 25 dic → 9 ene</dd></div>
-      <div><dt>junta y compra</dt><dd>sábado 7 de noviembre</dd></div>
+      <div><dt>junta y compra</dt><dd>viernes 6 de noviembre, en la noche</dd></div>
       <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
     </dl>
 
@@ -93,17 +93,37 @@
       <div class="seccion-cabeza">
         <p class="etiqueta">01 / austral 2.0 · propuesta de agus</p>
         <h2>Santiago ↔ Balmaceda + auto</h2>
-        <p class="bajada">Primer viaje: salida el domingo 13 después del matrimonio y vuelta el miércoles 23, antes de Navidad. En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo, hasta el fin del camino.</p>
+        <p class="bajada">Primer viaje: salida el domingo 13 después del matrimonio y vuelta el miércoles 23 o el jueves 24, antes de Navidad. En 2025 llegamos hasta Cerro Castillo: esta vez seguimos para abajo, hasta el fin del camino. Vamos con mochila scout, carpa y cocinilla.</p>
       </div>
-      <div class="tarjetas" id="lista-austral"></div>
-      <p class="links-cotizar"><a data-link-austral target="_blank" rel="noopener">recotizar Balmaceda ↗</a> · JetSMART y Sky no salen en Google Vuelos: mirar sus webs antes de pagar.</p>
+
+      <p class="precios-vivos" data-precios-vivos></p>
+
+      <!-- Selector de equipaje: vale para los dos viajes -->
+      <div class="selector" role="group" aria-label="Equipaje">
+        <button type="button" data-equipaje="bodega" aria-pressed="true">mochila scout en bodega</button>
+        <button type="button" data-equipaje="mano" aria-pressed="false">solo equipaje de mano</button>
+      </div>
+
+      <div class="tramos-lista">
+        <div>
+          <span class="etiqueta">ida · dom 13 dic · Santiago → Balmaceda</span>
+          <div class="tarjetas tramos" id="lista-idas"></div>
+        </div>
+        <div>
+          <span class="etiqueta">vuelta · Balmaceda → Santiago</span>
+          <div class="tarjetas tramos" id="lista-vueltas"></div>
+        </div>
+      </div>
+      <div class="compara-vuelta" id="compara-vuelta" aria-live="polite"></div>
+      <p class="links-cotizar"><a data-link-austral target="_blank" rel="noopener">ver Balmaceda en vivo ↗</a> · <a data-link-sky target="_blank" rel="noopener">ver en SKY ↗</a> · Se compra cada tramo por separado. SKY solo vuela el 13 en la mañana (choca con el matrimonio) y no sale en Google, así que su precio lo miré a mano. JetSMART no vuela a Balmaceda.</p>
 
       <div class="sub-cabeza">
-        <span class="etiqueta">el auto · 10 días, retiro y devolución en el aeropuerto</span>
+        <span class="etiqueta">el auto · <span data-dias-auto>11</span> días, retiro y devolución en el aeropuerto</span>
         <h3>Arriendo en Balmaceda</h3>
-        <p class="bajada">Precio total por los 10 días, con cancelación gratis. Se divide a la mitad. El que se elige pasa al presupuesto.</p>
+        <p class="bajada">Precio total por los días que lo tenemos (cambia si volvemos el 23 o el 24), con cancelación gratis. Se divide a la mitad. El que se elige pasa al presupuesto con su bencina.</p>
       </div>
       <div class="tarjetas" id="lista-autos"></div>
+      <p class="nota" data-ojo-autos></p>
       <p class="nota">Kayak, 3 nov. Antes de pagar, confirmar: que el seguro cubra ripio y barcazas, el deducible, y si cobran conductor adicional. <a data-link-autos target="_blank" rel="noopener">ver todas las opciones ↗</a></p>
 
       <div class="sub-cabeza">
@@ -129,7 +149,7 @@
       <div class="sub-cabeza">
         <span class="etiqueta">dónde dormir · mitad camping, mitad techo</span>
         <h3>Noche por noche</h3>
-        <p class="bajada">Pieza doble por noche para los dos, con disponibilidad vista para esas fechas. Camping por persona, se paga en el lugar.</p>
+        <p class="bajada">Casi todo en carpa. Pieza doble por noche para los dos, con disponibilidad vista para esas fechas. Camping por persona, se paga en el lugar.</p>
       </div>
       <div class="tabla-marco">
         <table class="tabla" id="tabla-dormir">
@@ -139,7 +159,7 @@
       </div>
 
       <div class="sub-cabeza">
-        <span class="etiqueta">qué hacer · por persona</span>
+        <span class="etiqueta">qué hacer · por persona · cupos vistos el 3 nov</span>
         <h3>Tours y entradas</h3>
       </div>
       <div class="actividades" id="lista-actividades-au"></div>
@@ -158,6 +178,13 @@
           <p>Entre pueblos no hay señal: <strong>bajar los mapas offline</strong>. Llevar efectivo: en Tortel y O'Higgins casi nadie tiene máquina.</p>
         </div>
       </div>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">el equipo · mochila scout, carpa y cocina</span>
+        <h3>Qué llevamos</h3>
+      </div>
+      <div class="equipo" id="equipo-austral"></div>
+      <p class="nota" data-equipo-nota></p>
     </section>
 
     <!-- ---------- 2. Vuelos Centroamérica (segundo viaje) ---------- -->
@@ -168,16 +195,17 @@
         <p class="bajada">Ida y vuelta por persona. Segundo viaje: salimos después de la cena de Navidad y volvemos el 9 de enero, antes del internado. Las noches allá definen cuántas caben en la ruta.</p>
       </div>
 
-      <!-- Selector de equipaje: cambia el precio que se muestra en todas las tarjetas -->
+      <p class="precios-vivos" data-precios-vivos></p>
+
+      <!-- El mismo selector de equipaje de la Austral: vale para los dos viajes -->
       <div class="selector" role="group" aria-label="Equipaje">
-        <button type="button" data-equipaje="sin" aria-pressed="false">sin equipaje</button>
-        <button type="button" data-equipaje="mano" aria-pressed="true">de mano</button>
-        <button type="button" data-equipaje="bodega" aria-pressed="false">en bodega</button>
+        <button type="button" data-equipaje="bodega" aria-pressed="true">mochila scout en bodega</button>
+        <button type="button" data-equipaje="mano" aria-pressed="false">solo equipaje de mano</button>
       </div>
 
       <div class="tarjetas" id="lista-vuelos"></div>
 
-      <p class="nota">≈ estimado: Copa cobra la maleta en bodega según la tarifa (referencia USD 40 a 70 por tramo, más barata prepagada en el web check-in). Confirmar al comprar.</p>
+      <p class="nota">La mochila de mano va incluida. Con mochila en bodega, Copa pide la tarifa Classic: a la ida son USD 85 más (visto en copa.com); la vuelta ≈ la estimé igual. Confirmar al comprar.</p>
     </section>
 
     <!-- ---------- 3. Rutas 14 días ---------- -->
@@ -239,6 +267,13 @@
         </div>
       </div>
       <p class="nota">Alojamiento: pieza doble por noche vista en Google Hoteles el 3 nov para esas fechas, dividida en dos. Traslados en shuttle turístico; ≈ estimado.</p>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">qué hacer · por persona · cupos vistos el 3 nov</span>
+        <h3>Tours, entradas y disponibilidad</h3>
+      </div>
+      <div class="aviso fuerte" data-aviso-tours></div>
+      <div class="actividades" id="lista-actividades-ca"></div>
     </section>
 
     <!-- ---------- 5. Presupuesto ---------- -->
@@ -255,19 +290,22 @@
           <div class="calc-bloque">
             <h3>Pasajes <span class="etiqueta">cada uno el suyo</span></h3>
             <label class="campo">
-              <span>Vuelo Austral</span>
-              <select id="calc-vuelo-au"></select>
+              <span>Austral: ida</span>
+              <select id="calc-ida-au"></select>
+            </label>
+            <label class="campo">
+              <span>Austral: vuelta</span>
+              <select id="calc-vuelta-au"></select>
             </label>
             <label class="campo">
               <span>Vuelo Guatemala</span>
               <select id="calc-vuelo-ca"></select>
             </label>
             <label class="campo">
-              <span>Equipaje a Guatemala</span>
+              <span>Equipaje (los dos viajes)</span>
               <select id="calc-equipaje">
-                <option value="sin">sin equipaje</option>
-                <option value="mano" selected>mochila de mano</option>
-                <option value="bodega">maleta en bodega</option>
+                <option value="bodega" selected>mochila scout en bodega</option>
+                <option value="mano">solo equipaje de mano</option>
               </select>
             </label>
             <label class="campo">
@@ -346,7 +384,7 @@
     <!-- ---------- 7. Junta y compra ---------- -->
     <section id="compra" class="seccion">
       <div class="seccion-cabeza">
-        <p class="etiqueta">07 / la junta del sábado 7</p>
+        <p class="etiqueta">07 / la junta del viernes 6</p>
         <h2>Presentar, decidir y pagar</h2>
         <p class="bajada">Primero cada uno presenta su viaje. Después, este checklist. Se marca acá mismo y queda guardado en este computador.</p>
       </div>
@@ -355,12 +393,12 @@
         <li><label><input type="checkbox" data-check="propuestas"> Agus presenta la Austral y la Jo presenta Guatemala</label></li>
         <li><label><input type="checkbox" data-check="presupuesto"> Revisar el presupuesto con las dos propuestas juntas</label></li>
         <li><label><input type="checkbox" data-check="datos"> Datos del pasaporte de los dos: nombre exacto, número, vencimiento y fecha de nacimiento</label></li>
-        <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (~$725 mil LATAM + ~$1,5 M Copa para dos)</label></li>
-        <li><label><input type="checkbox" data-check="latam"> Comprar Balmaceda en latam.com (acumula LATAM Pass)</label></li>
+        <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (~$800 mil LATAM + ~$2 M Copa para dos, con mochila en bodega)</label></li>
+        <li><label><input type="checkbox" data-check="latam"> Comprar Balmaceda en latam.com, ida y vuelta por separado (acumula LATAM Pass)</label></li>
         <li><label><input type="checkbox" data-check="auto"> Reservar el auto en Balmaceda (con cancelación gratis)</label></li>
-        <li><label><input type="checkbox" data-check="copa"> Comprar Guatemala en la web de la aerolínea, con mochila de mano incluida</label></li>
+        <li><label><input type="checkbox" data-check="copa"> Comprar Guatemala en la web de la aerolínea, con la tarifa que incluye bodega</label></li>
         <li><label><input type="checkbox" data-check="internos"> Vuelos internos Guatemala ↔ Flores, si la ruta los usa</label></li>
-        <li><label><input type="checkbox" data-check="reservas"> Reservar lo que se llena: Acatenango, Año Nuevo, Exploradores y Villa O'Higgins</label></li>
+        <li><label><input type="checkbox" data-check="reservas"> Reservar lo que se llena: Acatenango (OX está agotado esos días), Año Nuevo, Exploradores y Villa O'Higgins</label></li>
         <li><label><input type="checkbox" data-check="seguro"> Seguro de viaje (o confirmar que la tarjeta lo da)</label></li>
         <li><label><input type="checkbox" data-check="foto"> Foto con la pantalla de confirmación</label></li>
         <li><label><input type="checkbox" data-check="transfer"> Transferencia de los pasajes de la Jo: <strong id="monto-transfer"></strong></label></li>
@@ -372,7 +410,7 @@
 
   <footer class="pie">
     <p>atte. tus agentes: agus (sur) y jo (guatemala)</p>
-    <p class="creditos">Fotos: Wikimedia Commons, licencias CC (crédito en cada foto). Mapas: Google Maps. Precios: Google Vuelos, Google Hoteles y Kayak.</p>
+    <p class="creditos">Fotos: Wikimedia Commons, licencias CC (crédito en cada foto). Mapas: Google Maps. Precios: Google Vuelos (se actualizan solos), SKY, Copa, Google Hoteles y Kayak. Logos: de cada empresa.</p>
     <p class="microtexto" aria-hidden="true">siemprelab · sl1312 · sl2612 · prep · siemprelab · sl1312 · sl2612 · prep · siemprelab · sl1312 · sl2612 · prep</p>
   </footer>
 
@@ -383,8 +421,8 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=7"></script>
-  <script src="lugares.js?v=7"></script>
-  <script src="prep.js?v=7"></script>
+  <script src="datos.js?v=8"></script>
+  <script src="lugares.js?v=8"></script>
+  <script src="prep.js?v=8"></script>
 </body>
 </html>
