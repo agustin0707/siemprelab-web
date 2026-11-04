@@ -1189,7 +1189,7 @@ function calcular() {
   pintarReservas();
   totalPersona = persona;
   // La presentación (/agencia/propuesta) lee este resumen para mostrar la plata al día
-  guardado.escribir('resumen', { persona, pasajes, austral: enAU, guatemala: enCA, seguro, visto: new Date().toISOString() });
+  guardado.escribir('resumen', { persona, pasajes, austral: enAU, guatemala: enCA, seguro, auto: opciones.auto, vueltaAU: opciones.vueltaAU, visto: new Date().toISOString() });
   pintarAjustes();
 }
 

@@ -108,9 +108,12 @@ function pintarPortada() {
 const INICIO = new Date('2026-12-01T00:00:00-03:00');
 const DIAS_CAL = 42; // 1 dic al 11 ene
 const diaDe = (iso, hora = 0) => (new Date(iso + 'T00:00:00-03:00') - INICIO) / 86400000 + hora / 24;
-const TRAMOS = [
+// La Austral termina el 23 o el 24 según lo que elijamos
+const tramos = () => [
   { desde: diaDe('2026-12-04'), hasta: diaDe('2026-12-11'), clase: 'gris', t: 'Brasil', s: 'tú con tu papá', d: '<b>Brasil.</b> Tú con tu papá, vuelves el 10 u 11. Yo ando en mi viaje sorpresa.' },
-  { desde: diaDe('2026-12-13', 14.5), hasta: diaDe('2026-12-24', 18.5), clase: 'acento', t: 'Austral 2.0', s: '13 al 24 dic', d: '<b>Austral 2.0.</b> Salimos el domingo 13 después de almuerzo (el matrimonio es la noche antes) y volvemos el 24 para la Nochebuena.' },
+  decisiones.vuelta === '24'
+    ? { desde: diaDe('2026-12-13', 14.5), hasta: diaDe('2026-12-24', 18.5), clase: 'acento', t: 'Austral 2.0', s: '13 al 24 dic', d: '<b>Austral 2.0.</b> Salimos el domingo 13 después de almuerzo (el matrimonio es la noche antes) y volvemos el 24 para la Nochebuena.' }
+    : { desde: diaDe('2026-12-13', 14.5), hasta: diaDe('2026-12-23', 18.7), clase: 'acento', t: 'Austral 2.0', s: '13 al 23 dic', d: '<b>Austral 2.0.</b> Salimos el domingo 13 después de almuerzo (el matrimonio es la noche antes) y volvemos el miércoles 23.' },
   { desde: diaDe('2026-12-25', 16.25), hasta: diaDe('2027-01-10', 1), clase: 'negro', t: 'Guatemala', s: '25 dic al 10 ene', d: '<b>Guatemala.</b> Almorzamos en Navidad y partimos a las 16:15. Volvemos el sábado 9 y llegamos el domingo 10 a la 01:05.' }
 ];
 const HITOS = [
@@ -128,14 +131,15 @@ function pintarCalendario() {
     <div class="cal-meses"><span style="left:0">diciembre</span><span style="left:${pct(31)}%">enero</span></div>
     <div class="cal-dias">${dias}</div>
     <div class="cal-pista">
-      ${TRAMOS.map((t, i) => `<button class="cal-tramo ${t.clase}" data-tramo="${i}" style="left:${pct(t.desde)}%;width:${pct(t.hasta - t.desde)}%;transition-delay:${0.3 + i * 0.25}s"><b>${t.t}</b><small>${t.s}</small></button>`).join('')}
+      ${tramos().map((t, i) => `<button class="cal-tramo ${t.clase}" data-tramo="${i}" style="left:${pct(t.desde)}%;width:${pct(t.hasta - t.desde)}%;transition-delay:${0.3 + i * 0.25}s"><b>${t.t}</b><small>${t.s}</small></button>`).join('')}
       ${HITOS.map((h, i) => `<button class="cal-hito ${h.clase || ''}" data-hito="${i}" style="left:${pct(h.dia)}%">${h.t}</button>`).join('')}
     </div>`;
+  $('#noches-sur').textContent = decisiones.vuelta === '24' ? 11 : 10;
 }
 document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-tramo], [data-hito]');
   if (!t) return;
-  const dato = t.dataset.tramo !== undefined ? TRAMOS[t.dataset.tramo] : HITOS[t.dataset.hito];
+  const dato = t.dataset.tramo !== undefined ? tramos()[t.dataset.tramo] : HITOS[t.dataset.hito];
   $$('.cal-tramo').forEach((x) => x.classList.toggle('elegido', x === t));
   $('#detalle-cal').innerHTML = dato.d;
 });
@@ -421,11 +425,61 @@ document.addEventListener('click', (e) => {
 });
 
 // ---------- 11. La plata ----------
-// Si la prep se abrió en este navegador, usa su último cálculo. Si no, los números del 5 nov.
-const RESPALDO = { persona: 2826167, pasajes: 1125814, austral: 690353, guatemala: 1010000, seguro: 0, visto: '2026-11-05T12:00:00-03:00' };
+// Si la prep se abrió en este navegador, usa su último cálculo. Si no, los números del 4 nov.
+const RESPALDO = { persona: 2826167, pasajes: 1125814, austral: 690353, guatemala: 1010000, seguro: 0, auto: 'sixt-sonet', vueltaAU: 'au-v24-1500', visto: '2026-11-04T17:00:00-03:00' };
 const resumenPlata = () => guardado.leer('resumen', null, 'prep-') || RESPALDO;
-function pintarPlata(animar) {
+const modelo = (a) => a.modelo.replace(' o similar', '');
+const bencina = (a) => Math.round((DATOS.autos.km / a.consumo) * DATOS.autos.litro[a.combustible] / 1000) * 1000;
+
+// Lo que cambia la plata con lo que elegimos en la presentación, contra lo que calculó la prep.
+// La prep guarda con qué auto y qué vuelta sacó la cuenta; lo demás se compara con su presupuesto base.
+function cambiosDeHoy() {
   const r = resumenPlata();
+  const vPrep = AU.vueltas.find((v) => v.id === r.vueltaAU) || AU.vueltas.find((v) => v.recomendado);
+  const diaPrep = String(vPrep.fecha);
+  const aPrep = DATOS.autos.opciones.find((a) => a.id === r.auto) || DATOS.autos.opciones.find((a) => a.recomendado);
+  const aHoy = autoElegido(), vHoy = vueltaElegida();
+  const arriendo = (a, dia) => precioDe(dia === '24' ? a.total24 : a.total);
+  const lista = [];
+  if (vHoy.id !== vPrep.id) lista.push({ t: `volver el ${decisiones.vuelta} en vez del ${diaPrep}`, d: vHoy.precio - vPrep.precio, parte: 'pasajes' });
+  const dAuto = (arriendo(aHoy, decisiones.vuelta) + bencina(aHoy) - arriendo(aPrep, diaPrep) - bencina(aPrep)) / 2;
+  if (Math.abs(dAuto) >= 1000) lista.push({ t: aHoy.id !== aPrep.id ? `${modelo(aHoy)} en vez del ${modelo(aPrep)}` : `auto por ${decisiones.vuelta === '24' ? 11 : 10} días`, d: dAuto, parte: 'austral' });
+  if (decisiones.vuelta !== diaPrep) {
+    // Un día más o menos: comida ($10 mil c/u) y una noche (≈ $28 mil la pieza, a la mitad)
+    const n = decisiones.vuelta === '24' ? 1 : -1;
+    lista.push({ t: n > 0 ? 'un día más en el sur' : 'un día menos en el sur', d: n * 24000, parte: 'austral', aprox: true });
+  }
+  if (decisiones.glaciar === 'miradores') lista.push({ t: 'Exploradores solo por los miradores', d: -140000, parte: 'austral', aprox: true });
+  if (decisiones.capillas === 'kayak') {
+    const k = actividad('capillas-kayak'), l = actividad('capillas-lancha');
+    const num = (a, def) => Number(((a && a.precio.match(/\$(\d+) mil/)) || [0, def])[1]) * 1000;
+    lista.push({ t: 'Capillas en kayak en vez de lancha', d: num(k, 66) - num(l, 18), parte: 'austral', aprox: true });
+  }
+  // Noches con techo: la prep cuenta 3 (las de Tranquilo). Cada noche distinta suma o resta la diferencia con el camping.
+  const noches = nochesDe();
+  let dTecho = 0, nTecho = 0;
+  noches.forEach((x, i) => {
+    const ahora = decisiones.techo.includes(i), antes = i === 1;
+    if (ahora === antes) return;
+    const p = x.techo && x.techo[0] ? x.techo[0].p : 50000;
+    const n = cuantasNoches(x);
+    dTecho += (ahora ? 1 : -1) * n * (p - x.camping) / 2;
+    nTecho += (ahora ? 1 : -1) * n;
+  });
+  if (nTecho || Math.abs(dTecho) >= 1000) lista.push({ t: nTecho >= 0 ? `${nTecho} ${nTecho === 1 ? 'noche más' : 'noches más'} con techo` : `${-nTecho} ${nTecho === -1 ? 'noche menos' : 'noches menos'} con techo`, d: dTecho, parte: 'austral', aprox: true });
+  // Año Nuevo en La Casa del Mundo: dos noches de pieza Standard en vez de un hostal en Antigua
+  if (decisiones.anioNuevo === 'ny-atitlan') lista.push({ t: 'Año Nuevo en La Casa del Mundo', d: (118 * DATOS.usd - 45000), parte: 'guatemala', aprox: true });
+  return lista;
+}
+function plataDeHoy() {
+  const r = Object.assign({}, resumenPlata());
+  const cambios = cambiosDeHoy();
+  cambios.forEach((c) => { r[c.parte] += c.d; r.persona += c.d; });
+  r.cambios = cambios;
+  return r;
+}
+function pintarPlata(animar) {
+  const r = plataDeHoy();
   const partes = [
     { t: 'pasajes', v: r.pasajes, c: 'var(--negro)' },
     { t: 'en la austral', v: r.austral, c: 'var(--acento)' },
@@ -447,6 +501,10 @@ function pintarPlata(animar) {
   else if (r.persona <= P.max) v = `<b>Nos alcanza.</b> Queda dentro de lo que conversamos, entre ${M1(P.min)} y ${M1(P.max)} cada uno.`;
   else v = `<b>Un poco arriba</b> de lo que conversamos, por ${milCLP(r.persona - P.max)}. En la prep hay cosas para mover.`;
   $('#veredicto').innerHTML = v;
+  const signo = (d) => (d >= 0 ? '+' : '−') + milCLP(Math.abs(d));
+  $('#plata-cambios').innerHTML = r.cambios.length
+    ? `<span class="etiqueta">con lo que elegimos hoy</span><ul>${r.cambios.map((c) => `<li><b>${c.aprox ? '≈ ' : ''}${signo(c.d)}</b>${c.t}</li>`).join('')}</ul>`
+    : '';
   const f = new Date(r.visto);
   $('#plata-fuente').textContent = `Sale de la calculadora de la prep (${f.getDate()} de ${['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'][f.getMonth()]}). Ahí se puede mover cualquier número.`;
 }
@@ -489,7 +547,7 @@ function pintarCompras() {
       <a href="${x.link}" target="_blank" rel="noopener">ir ↗</a>
     </li>`).join('');
   const hechos = items.filter((x) => decisiones.compradas[x.id]).length;
-  $('#compras-total').textContent = `${hechos} de ${items.length} listos. Si pago todo con mi tarjeta, lo tuyo de pasajes es ${CLP(resumenPlata().pasajes)} y me lo transfieres después.`;
+  $('#compras-total').textContent = `${hechos} de ${items.length} listos. Si pago todo con mi tarjeta, lo tuyo de pasajes es ${CLP(plataDeHoy().pasajes)} y me lo transfieres después.`;
 }
 document.addEventListener('change', (e) => {
   const c = e.target.closest('[data-compra]');
@@ -514,7 +572,7 @@ function pintarActa() {
     ['noches', `${total - techo} en carpa · ${techo} con techo`],
     ['guatemala', 'la armas tú'],
     ['año nuevo', ny ? ny.titulo : 'por elegir'],
-    ['por persona', CLP(resumenPlata().persona)],
+    ['por persona', CLP(plataDeHoy().persona)],
     ['comprado', `${items.filter((x) => decisiones.compradas[x.id]).length} de ${items.length}`]
   ];
   $('#acta').innerHTML = filas.map(([a, b]) => `<li><span>${a}</span><b>${b}</b></li>`).join('');
@@ -545,6 +603,24 @@ $('#aprobar').addEventListener('click', () => {
   setTimeout(papelitos, 250);
 });
 
+// Copiar el acta para mandarla por WhatsApp
+$('#copiar-acta').addEventListener('click', () => {
+  const texto = ['*Acta · Agencia SiempreLab* (6 nov 2026)', ...$$('#acta li').map((li) => `· ${li.querySelector('span').textContent}: ${li.querySelector('b').textContent}`), 'taxss agus'].join('\n');
+  const listo = () => { $('#copiar-acta').textContent = 'copiada ✓'; setTimeout(() => { $('#copiar-acta').textContent = 'copiar el acta'; }, 2500); };
+  // Si el navegador no deja usar el portapapeles moderno, se copia a la antigua
+  const aLaAntigua = () => {
+    const t = document.createElement('textarea');
+    t.value = texto;
+    t.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(t);
+    t.select();
+    try { if (document.execCommand('copy')) listo(); } catch (e) { /* no se pudo */ }
+    t.remove();
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(texto).then(listo).catch(aLaAntigua);
+  else aLaAntigua();
+});
+
 // Empezar de cero: borra lo elegido y vuelve a la portada
 $('#reiniciar').addEventListener('click', () => {
   try { localStorage.removeItem('propuesta-decisiones'); } catch (e) { /* sin guardado */ }
@@ -554,6 +630,7 @@ $('#reiniciar').addEventListener('click', () => {
 
 // ---------- Repintar lo que depende de las elecciones ----------
 function repintar() {
+  pintarCalendario();
   pintarDias();
   pintarGlaciar();
   pintarMosaico();
@@ -593,6 +670,8 @@ function ir(n) {
   // Los interruptores necesitan la lámina visible para medir dónde va la píldora
   requestAnimationFrame(() => $$('.interruptor', l).forEach(pintarInterruptor));
   if (alEntrar[l.dataset.nombre]) alEntrar[l.dataset.nombre]();
+  // Las fotos de esta lámina y de la que sigue se piden altiro, para que no aparezcan de a poco
+  [l, laminas[actual + 1]].filter(Boolean).forEach((x) => $$('img[loading="lazy"]', x).forEach((img) => { img.loading = 'eager'; }));
   document.body.style.background = l.classList.contains('clara') ? 'var(--fondo)' : 'var(--noche)';
 }
 
