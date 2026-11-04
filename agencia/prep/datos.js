@@ -219,7 +219,7 @@ const DATOS = {
         aloj: [{ n: 'Somos (hostal)', p: 34078, r: '4,7' }, { n: 'Flore Boutique Hostel', p: 52035, r: '4,8' }, { n: 'Casa Donya Boutique', p: 54981, r: '4,8' }, { n: 'Ojala Hotel', p: 82529, r: '4,7' }], base: 1,
         nota: 'Para Año Nuevo, reservar ya.', busca: 'hoteles Antigua Guatemala' },
       { id: 'acatenango', nombre: 'Acatenango', sugeridas: '1 noche (tour de 2 días)', activ: 130000, activNota: 'Tour USD 90 a 130 + entradas ≈ Q150. Incluye carpa, comida y guía',
-        dispo: { estado: 'agotado', texto: 'OX agotado del 21 dic al 4 ene; cupo el 31 dic y desde el 5 ene' },
+        dispo: { estado: 'ojo', texto: 'Lava Trails con cupo todo diciembre; OX no recibe reservas del 21 dic al 4 ene' },
         aloj: [{ n: 'Incluido en el tour', p: 0, r: '' }], base: 0,
         nota: 'Sale de Antigua y vuelve al otro día. Frío bajo cero: arrendar ropa de abrigo.', busca: '' },
       { id: 'atitlan', nombre: 'Lago Atitlán', sugeridas: '3 a 5 noches', activ: 25000, activNota: 'Lanchas entre pueblos Q25 a 35 · Nariz del Indio ≈ Q100',
@@ -365,7 +365,7 @@ const DATOS = {
   ],
 
   // ---------- Qué hacer y cuánto cuesta (por persona) ----------
-  // dispo: estado 'ok' (sale siempre), 'ojo' (reservar o confirmar), 'agotado'. Revisado el 3 nov.
+  // dispo: estado 'ok' (sale siempre), 'ojo' (reservar o confirmar), 'agotado'. Revisado el 3 nov (Acatenango, el 4 nov).
   actividadesAustral: [
     { nombre: 'Capillas de Mármol en lancha', donde: 'Río Tranquilo', precio: '$18 mil (1,5 h) · $28 mil con Puerto Sánchez', nota: 'Salir temprano: en la tarde el lago se pone bravo.',
       dispo: { estado: 'ok', texto: 'Salen todo el día desde la costanera. No hace falta reservar.' } },
@@ -393,9 +393,9 @@ const DATOS = {
 
   // Tours en Guatemala y cómo están de cupos (revisado el 3 nov)
   actividadesCA: [
-    { nombre: 'Acatenango con noche en el volcán', donde: 'Antigua', precio: 'USD 109 a 119 + Q100 de entrada', nota: 'Sale 06:30 de Antigua y vuelve al otro día. Guardan la mochila grande gratis.', reservar: true,
-      dispo: { estado: 'agotado', texto: 'OX Expeditions está agotado del 21 dic al 4 ene. Su campamento 2 tiene cupo el 31 dic, y desde el 5 ene hay todos los días. Preguntar ya a Wicho & Charlie\'s y otras agencias, o dejar el volcán para el final.' },
-      link: 'https://oxexpeditions.com/tours/acatenango-overnight-hike/' },
+    { nombre: 'Acatenango con noche en el volcán', donde: 'Antigua', precio: 'USD 102 a 119 + Q100 de entrada', nota: 'Sale temprano de Antigua y vuelve al otro día. Guardan la mochila grande gratis.', reservar: true,
+      dispo: { estado: 'ojo', texto: 'Lava Trails tiene cupo todos los días de diciembre y de enero (menos el 1 ene): USD 102 con cama en el campamento, se reserva con USD 50 de abono que devuelven hasta 48 h antes. OX Expeditions no recibe reservas online del 21 dic al 4 ene. Reservarlo apenas tengamos los vuelos.' },
+      link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
     { nombre: 'Tikal al amanecer', donde: 'Flores', precio: 'Q150 + Q100 el amanecer', nota: 'Shuttle a las 03:00 desde Flores.',
       dispo: { estado: 'ok', texto: 'Todos los días. Comprar el boleto antes en boletos.culturaguate.com (con pasaporte).' },
       link: 'https://boletos.culturaguate.com/' },
