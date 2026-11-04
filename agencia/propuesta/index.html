@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- No indexar en buscadores -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#161616">
+  <title>La propuesta · Agencia de Viajes SiempreLab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="propuesta.css?v=3">
+</head>
+<body>
+
+  <!-- Barra de arriba: marca, avance y número de lámina -->
+  <header class="barra">
+    <span class="marca">/ agencia siemprelab <b>· la propuesta</b></span>
+    <nav class="avance" id="avance" aria-label="láminas"></nav>
+    <span class="contador" id="contador">01 / 13</span>
+  </header>
+
+  <main class="pres" id="pres">
+
+    <!-- ---------- 1. Portada ---------- -->
+    <section class="lamina oscura portada" data-nombre="portada">
+      <div class="fondo-fotos" id="portada-fotos"></div>
+      <div class="velo"></div>
+      <div class="contenido">
+        <span class="etiqueta" data-a>/ agencia de viajes siemprelab</span>
+        <h1 data-a>Dos viajes.<br>Un verano.</h1>
+        <p class="bajada" data-a>Esto es lo que estuve viendo estas semanas. Te lo muestro rápido y después lo decidimos juntos.</p>
+
+        <!-- Tarjeta de embarque -->
+        <div class="pase" data-a>
+          <div class="pase-cuerpo">
+            <div><span>pasajera</span><b>Josefina</b></div>
+            <div><span>acompañante</span><b>Agustín</b></div>
+            <div><span>destinos</span><b>BBA · GUA</b></div>
+            <div><span>salida</span><b>13 dic</b></div>
+          </div>
+          <div class="pase-talon">
+            <span>embarque en</span>
+            <b id="cuenta">· · ·</b>
+          </div>
+        </div>
+
+        <button class="boton-grande" data-ir="1" data-a>partamos <span>→</span></button>
+        <p class="pista" data-a>se avanza con las flechas, la barra espaciadora o deslizando</p>
+      </div>
+      <p class="credito-foto" id="portada-credito"></p>
+    </section>
+
+    <!-- ---------- 2. El verano en una línea ---------- -->
+    <section class="lamina clara" data-nombre="el verano">
+      <div class="contenido">
+        <span class="etiqueta" data-a>01 / el verano</span>
+        <h2 data-a>Así nos queda diciembre</h2>
+        <div class="calendario" id="calendario" data-a></div>
+        <p class="detalle-cal" id="detalle-cal" data-a>Toca cada parte de la línea.</p>
+        <div class="cifras" data-a>
+          <div><b data-contar="11">11</b><span>noches en el sur</span></div>
+          <div><b data-contar="14">14</b><span>noches en Guatemala</span></div>
+          <div><b data-contar="1">1</b><span>día libre antes del internado</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 3. Austral 2.0: el mapa ---------- -->
+    <section class="lamina oscura" data-nombre="austral 2.0">
+      <div class="contenido dos-col">
+        <div class="col-texto">
+          <span class="etiqueta" data-a>02 / austral 2.0</span>
+          <h2 data-a>Retomamos donde quedamos</h2>
+          <p class="bajada" data-a>El año pasado llegamos hasta Cerro Castillo. Esta vez seguimos hasta donde se acaba el camino.</p>
+          <div class="cifras chicas" data-a>
+            <div><b>~1.450</b><span>km de ruta</span></div>
+            <div><b>6</b><span>pueblos nuevos</span></div>
+            <div><b>1</b><span>barcaza</span></div>
+          </div>
+          <div class="leyenda" data-a>
+            <span><i class="linea-2025"></i> 2025, ya hecho</span>
+            <span><i class="linea-2026"></i> 2026, lo nuevo</span>
+          </div>
+          <p class="parada-tocada" id="parada-tocada" data-a>Toca un punto del mapa.</p>
+        </div>
+        <div class="col-mapa" data-a>
+          <svg id="mapa" class="mapa" role="img" aria-label="Mapa de la ruta de la Carretera Austral"></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 4. Día a día ---------- -->
+    <section class="lamina clara" data-nombre="día a día">
+      <div class="contenido">
+        <div class="cabeza-fila">
+          <div>
+            <span class="etiqueta" data-a>03 / día a día</span>
+            <h2 data-a id="titulo-dias">Doce días hacia el sur</h2>
+          </div>
+          <div class="eleccion" data-a>
+            <span class="eleccion-pregunta">¿volvemos el 23 o el 24?</span>
+            <div class="interruptor" data-decision="vuelta">
+              <button data-valor="24">el 24</button>
+              <button data-valor="23">el 23</button>
+            </div>
+          </div>
+        </div>
+        <p class="nota-eleccion" id="nota-vuelta" data-a></p>
+        <div class="carril-caja" data-a>
+          <div class="carril" id="dias"></div>
+          <button class="carril-flecha izq" data-carril="-1" aria-label="anterior">‹</button>
+          <button class="carril-flecha der" data-carril="1" aria-label="siguiente">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 5. Glaciar Exploradores ---------- -->
+    <section class="lamina oscura foto-completa" data-nombre="el glaciar">
+      <div class="fondo-fotos" id="glaciar-fotos"></div>
+      <div class="velo lateral"></div>
+      <div class="contenido">
+        <div class="col-texto ancho">
+          <span class="etiqueta" data-a>04 / el día que más quiero</span>
+          <h2 data-a>Caminar sobre el glaciar</h2>
+          <p class="bajada" data-a id="glaciar-resumen"></p>
+          <div class="cifras chicas" data-a>
+            <div><b>12 h</b><span>día completo</span></div>
+            <div><b>1 a 2 h</b><span>sobre el hielo</span></div>
+            <div><b id="glaciar-precio">$150 mil</b><span>cada uno</span></div>
+          </div>
+          <ol class="pasos" id="glaciar-pasos" data-a></ol>
+          <div class="eleccion" data-a>
+            <span class="eleccion-pregunta">¿cómo lo hacemos?</span>
+            <div class="interruptor" data-decision="glaciar">
+              <button data-valor="hielo">sobre el hielo</button>
+              <button data-valor="miradores">solo miradores</button>
+            </div>
+          </div>
+          <p class="nota-eleccion clara" id="nota-glaciar" data-a></p>
+        </div>
+      </div>
+      <p class="credito-foto" id="glaciar-credito"></p>
+    </section>
+
+    <!-- ---------- 6. Lo que hay en el camino ---------- -->
+    <section class="lamina clara" data-nombre="en el camino">
+      <div class="contenido">
+        <div class="cabeza-fila">
+          <div>
+            <span class="etiqueta" data-a>05 / en el camino</span>
+            <h2 data-a>Lo demás que hay</h2>
+          </div>
+          <div class="eleccion" data-a>
+            <span class="eleccion-pregunta">capillas de mármol en</span>
+            <div class="interruptor" data-decision="capillas">
+              <button data-valor="lancha">lancha</button>
+              <button data-valor="kayak">kayak</button>
+            </div>
+          </div>
+        </div>
+        <p class="pista oscura" data-a>Toca una foto para darla vuelta.</p>
+        <div class="mosaico" id="mosaico" data-a></div>
+      </div>
+    </section>
+
+    <!-- ---------- 7. Cómo nos movemos ---------- -->
+    <section class="lamina clara" data-nombre="cómo nos movemos">
+      <div class="contenido">
+        <span class="etiqueta" data-a>06 / cómo nos movemos</span>
+        <h2 data-a>Avión a Balmaceda y un auto para todo lo demás</h2>
+        <div class="dos-col arriba">
+          <div class="vuelos-au" id="vuelos-au" data-a></div>
+          <div class="auto-caja" data-a>
+            <div class="interruptor chico" data-decision="auto">
+              <button data-valor="sixt-sonet">Kia Sonet</button>
+              <button data-valor="salfa-crosstrek">Subaru Crosstrek</button>
+            </div>
+            <div id="auto"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 8. Dónde dormimos ---------- -->
+    <section class="lamina oscura" data-nombre="dónde dormimos">
+      <div class="contenido">
+        <span class="etiqueta" data-a>07 / dónde dormimos</span>
+        <h2 data-a>Carpa casi siempre, techo cuando toca</h2>
+        <p class="bajada" data-a>Vamos con la carpa y la cocinilla como el año pasado. Toca una noche para cambiarla.</p>
+        <div class="noches" id="noches" data-a></div>
+        <p class="resumen-noches" id="resumen-noches" data-a></p>
+      </div>
+    </section>
+
+    <!-- ---------- 9. Guatemala ---------- -->
+    <section class="lamina oscura foto-completa" data-nombre="guatemala">
+      <div class="fondo-fotos" id="gua-fotos"></div>
+      <div class="velo lateral"></div>
+      <div class="contenido">
+        <div class="col-texto ancho">
+          <span class="etiqueta" data-a>08 / guatemala</span>
+          <h2 data-a>Esta parte la armas tú</h2>
+          <p class="bajada" data-a>Yo solo dejé listo el vuelo y te traje un par de ideas.</p>
+          <div class="pase vuelo-gua" id="vuelo-gua" data-a></div>
+          <p class="etiqueta separada" data-a>las rutas que quedaron en la prep</p>
+          <div class="rutas" id="rutas" data-a></div>
+        </div>
+      </div>
+      <p class="credito-foto" id="gua-credito"></p>
+    </section>
+
+    <!-- ---------- 10. Año Nuevo ---------- -->
+    <section class="lamina oscura" data-nombre="año nuevo">
+      <div class="contenido">
+        <span class="etiqueta" data-a>09 / jueves 31 de diciembre</span>
+        <h2 data-a>¿Dónde recibimos el 2027?</h2>
+        <div class="opciones-ny" id="opciones-ny" data-a></div>
+        <div class="noche-elegida" id="noche-elegida" data-a></div>
+      </div>
+    </section>
+
+    <!-- ---------- 11. La plata ---------- -->
+    <section class="lamina clara" data-nombre="la plata">
+      <div class="contenido">
+        <span class="etiqueta" data-a>10 / la plata</span>
+        <h2 data-a>¿Nos alcanza?</h2>
+        <div class="plata" data-a>
+          <div class="plata-grande">
+            <span class="etiqueta">por persona, los dos viajes</span>
+            <b id="plata-persona">$0</b>
+            <span class="plata-dos" id="plata-dos"></span>
+          </div>
+          <div class="plata-barra" id="plata-barra"></div>
+          <div class="plata-leyenda" id="plata-leyenda"></div>
+        </div>
+        <div class="medidor" data-a>
+          <div class="medidor-rango"></div>
+          <div class="medidor-marca" id="medidor-marca"></div>
+          <div class="medidor-etiquetas"><span>$2 M</span><span>$2,6 M</span><span>$3,1 M</span><span>$3,5 M</span></div>
+        </div>
+        <p class="veredicto" id="veredicto" data-a></p>
+        <p class="nota-chica" id="plata-fuente" data-a></p>
+      </div>
+    </section>
+
+    <!-- ---------- 12. Lo que compramos hoy ---------- -->
+    <section class="lamina clara" data-nombre="hoy">
+      <div class="contenido">
+        <span class="etiqueta" data-a>11 / hoy en la noche</span>
+        <h2 data-a>Lo que compramos hoy</h2>
+        <p class="alerta" data-a><b>Antes de pagar:</b> los pasaportes de los dos tienen que vencer después de julio 2027 (6 meses desde que entramos a Guatemala).</p>
+        <ul class="compras" id="compras" data-a></ul>
+        <p class="nota-chica" id="compras-total" data-a></p>
+      </div>
+    </section>
+
+    <!-- ---------- 13. Cierre ---------- -->
+    <section class="lamina oscura cierre" data-nombre="¿partimos?">
+      <div class="fondo-fotos tenue" id="cierre-fotos"></div>
+      <div class="velo"></div>
+      <div class="contenido">
+        <span class="etiqueta" data-a>/ el acta</span>
+        <h2 data-a>¿Partimos?</h2>
+        <ul class="acta" id="acta" data-a></ul>
+        <div class="acciones" data-a>
+          <button class="boton-grande acento" id="aprobar">aprobado <span>✓</span></button>
+          <a class="boton-grande claro" href="../prep/#compra">abrir la prep para comprar <span>↗</span></a>
+        </div>
+        <p class="firma" data-a>taxss agus</p>
+        <button class="reiniciar" id="reiniciar" data-a>empezar de cero (borra lo elegido en este computador)</button>
+      </div>
+      <div class="timbre" id="timbre" aria-hidden="true">
+        <span>aprobado</span>
+        <small>agencia siemprelab · 6 nov 2026</small>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Controles -->
+  <div class="controles">
+    <button id="anterior" aria-label="lámina anterior">←</button>
+    <button id="siguiente" aria-label="lámina siguiente">→</button>
+    <button id="pantalla" aria-label="pantalla completa">⛶</button>
+  </div>
+
+  <!-- Los datos vienen de la prep: si cambian allá, cambian acá -->
+  <script src="../prep/datos.js?v=19"></script>
+  <script src="../prep/lugares.js?v=19"></script>
+  <script src="../prep/fotos-panoramas.js?v=19"></script>
+  <script src="propuesta.js?v=2"></script>
+</body>
+</html>
