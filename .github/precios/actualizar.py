@@ -6,6 +6,7 @@
 import json
 import re
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -98,11 +99,16 @@ def main():
     for v in VUELOS:
         previo = antes.get(v['id'], {})
         historial = previo.get('historial', [])
-        try:
-            r = buscar(v)
-        except Exception as e:  # Google cambió algo o bloqueó: se deja lo anterior
-            print(f"{v['id']}: error {e}", file=sys.stderr)
-            r = None
+        # Google a veces responde vacío desde los servidores de GitHub: hasta 4 intentos
+        r = None
+        for intento in range(4):
+            try:
+                r = buscar(v)
+            except Exception as e:  # Google cambió algo o bloqueó: se deja lo anterior
+                print(f"{v['id']}: intento {intento + 1}, error {str(e)[:80]}", file=sys.stderr)
+            if r is not None:
+                break
+            time.sleep(5 + intento * 5)
         if r is None:
             fallas += 1
             if previo:
