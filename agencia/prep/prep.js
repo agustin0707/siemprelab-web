@@ -818,18 +818,74 @@ function pintarDormir() {
 const ETIQUETA_DISPO = { ok: 'sale siempre', ojo: 'reservar o confirmar', agotado: 'agotado en esas fechas' };
 const insigniaDispo = (d) => (d ? `<span class="dispo ${d.estado}">${ETIQUETA_DISPO[d.estado]}</span>` : '');
 
+// Galería deslizable con las fotos libres de fotos-panoramas.js (una o varias llaves)
+function galeria(llaves, alt) {
+  const banco = typeof FOTOS_PANORAMAS !== 'undefined' ? FOTOS_PANORAMAS : {};
+  const fotos = [].concat(llaves || []).flatMap((k) => banco[k] || []);
+  if (!fotos.length) return '';
+  const flechas = fotos.length > 1 ? '<button type="button" class="galeria-flecha izq" data-galeria="-1" aria-label="foto anterior">‹</button><button type="button" class="galeria-flecha der" data-galeria="1" aria-label="foto siguiente">›</button>' : '';
+  return `<div class="galeria-caja"><div class="galeria">${fotos.map((f, i) => `
+    <figure><img src="${f.src}" alt="${alt}" loading="lazy">
+      <figcaption><span>${i + 1}/${fotos.length}</span><a href="${f.pagina}" target="_blank" rel="noopener">${f.credito} · ${f.licencia}</a></figcaption></figure>`).join('')}</div>${flechas}</div>`;
+}
+
+// Listas de "todo el detalle" de una actividad
+const bloqueLista = (titulo, items, tag = 'ul') => items && items.length
+  ? `<div class="detalle-bloque"><span class="etiqueta">${titulo}</span><${tag}>${items.map((x) => `<li>${x}</li>`).join('')}</${tag}></div>` : '';
+function detalleActividad(a) {
+  const ops = a.operadores ? `<div class="detalle-bloque"><span class="etiqueta">quién lo hace</span><ul class="operadores">${a.operadores.map((o) =>
+    `<li><a href="${o.link}" target="_blank" rel="noopener">${o.n} ↗</a><span>${o.precio}</span></li>`).join('')}</ul></div>` : '';
+  const cuerpo = bloqueLista('de qué consta', a.consta, 'ol') + bloqueLista('incluye', a.incluye) + bloqueLista('qué llevar', a.llevar) + bloqueLista('ojo', a.ojo) + ops;
+  return cuerpo ? `<details class="actividad-mas"><summary>todo el detalle</summary>${cuerpo}</details>` : '';
+}
+
 function tarjetasActividades(lista) {
   return lista.map((a) => `
     <div class="actividad${a.dispo && a.dispo.estado === 'agotado' ? ' agotada' : ''}">
+      ${galeria(a.id, a.nombre)}
       <div class="actividad-cabeza"><span class="etiqueta">${a.donde}</span>${insigniaDispo(a.dispo)}</div>
       <strong>${a.nombre}</strong>
       <p class="actividad-precio">${a.precio}</p>
+      ${a.resumen ? `<p>${a.resumen}</p>` : ''}
       <p>${a.nota}</p>
       ${a.dispo ? `<p class="dispo-texto">${a.dispo.texto}</p>` : ''}
+      ${detalleActividad(a)}
       ${a.link ? `<a class="link" href="${a.link}" target="_blank" rel="noopener">ver cupos ↗</a>` : ''}
       ${recotizar('act-' + a.nombre, a.link || `https://www.google.com/search?q=${encodeURIComponent(a.nombre + ' ' + a.donde + ' precio')}`, { clp: false })}
     </div>`).join('');
 }
+
+// ---------- Noche de Año Nuevo ----------
+function pintarAnioNuevo() {
+  $('#anio-nuevo').innerHTML = DATOS.anioNuevo.map((n, i) => `
+    <article class="noche-vieja${i === 0 ? ' destacada' : ''}">
+      ${galeria(n.fotos, n.titulo)}
+      <div class="noche-cuerpo">
+        <div class="actividad-cabeza"><span class="etiqueta">${n.donde}</span><span class="sello-mini">${n.sello}</span></div>
+        <h4>${n.titulo}</h4>
+        <p class="actividad-precio">${n.precio}</p>
+        <p>${n.resumen}</p>
+        <ol class="noche-horas">${n.noche.map(([h, q]) => `<li><span>${h}</span>${q}</li>`).join('')}</ol>
+        <p class="dispo-texto">${n.calza}</p>
+        <details class="actividad-mas"><summary>lo que hay que saber</summary>${bloqueLista('ojo', n.ojo)}</details>
+        <div class="noche-links">${n.links.map((l) => `<a class="link" href="${l.url}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('')}</div>
+        ${recotizar('ny-' + n.id, n.links[0].url, { clp: false })}
+      </div>
+    </article>`).join('');
+}
+
+// Flechas de las galerías (en el computador no se desliza con el dedo)
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-galeria]');
+  if (!b) return;
+  const g = b.closest('.galeria-caja').querySelector('.galeria');
+  const paso = Number(b.dataset.galeria) * g.clientWidth;
+  const fin = g.scrollWidth - g.clientWidth - 2;
+  // En la última foto vuelve a la primera (y al revés)
+  if (paso > 0 && g.scrollLeft >= fin) g.scrollTo({ left: 0, behavior: 'smooth' });
+  else if (paso < 0 && g.scrollLeft <= 2) g.scrollTo({ left: g.scrollWidth, behavior: 'smooth' });
+  else g.scrollBy({ left: paso, behavior: 'smooth' });
+});
 
 function pintarActividadesAustral() {
   $('#lista-actividades-au').innerHTML = tarjetasActividades(DATOS.actividadesAustral);
@@ -1355,6 +1411,7 @@ pintarAutos();
 pintarRutaAustral();
 pintarDormir();
 pintarActividadesAustral();
+pintarAnioNuevo();
 pintarLugaresArmador();
 pintarArmador();
 conectarCalculadora();

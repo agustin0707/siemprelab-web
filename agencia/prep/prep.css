@@ -795,7 +795,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* ---------- Tours y entradas ---------- */
-.actividades { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+.actividades { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 12px; align-items: start; }
 .actividad { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: var(--texto-2); display: flex; flex-direction: column; gap: 4px; }
 .actividad strong { color: var(--negro); font-weight: 500; }
 .actividad-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
@@ -1013,3 +1013,45 @@ img { max-width: 100%; display: block; }
 .ajuste-monto { font-family: 'Space Mono', monospace; font-size: 12px; white-space: nowrap; }
 .ajustes-total { font-size: 14px; margin-top: 12px; }
 .ajustes-total:empty { display: none; }
+
+/* ---------- Galerías de fotos (v17) ---------- */
+.galeria-caja { position: relative; margin: -14px -16px 8px; }
+.galeria { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px 12px 0 0; scrollbar-width: none; background: #e6e6e6; }
+.galeria::-webkit-scrollbar { display: none; }
+.galeria figure { flex: 0 0 100%; margin: 0; position: relative; scroll-snap-align: start; aspect-ratio: 3 / 2; }
+.galeria img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.galeria figcaption { position: absolute; left: 8px; right: 8px; bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: 'Space Mono', monospace; font-size: 9px; color: #fff; pointer-events: none; }
+.galeria figcaption span { background: rgba(0, 0, 0, 0.55); padding: 2px 7px; border-radius: 99px; }
+.galeria figcaption a { pointer-events: auto; color: rgba(255, 255, 255, 0.85); text-decoration: none; background: rgba(0, 0, 0, 0.45); padding: 2px 7px; border-radius: 99px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.galeria-flecha { position: absolute; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, 0.85); color: var(--negro); font-size: 20px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding: 0 0 3px; }
+.galeria-flecha.izq { left: 8px; }
+.galeria-flecha.der { right: 8px; }
+.galeria-flecha:hover { background: #fff; }
+
+/* "Todo el detalle" de cada actividad */
+.actividad-mas { border-top: 1px dashed var(--borde); margin-top: 6px; padding-top: 8px; }
+.actividad-mas summary { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--acento); cursor: pointer; list-style: none; }
+.actividad-mas summary::-webkit-details-marker { display: none; }
+.actividad-mas summary::before { content: '+ '; }
+.actividad-mas[open] summary::before { content: '− '; }
+.detalle-bloque { margin-top: 10px; }
+.detalle-bloque ul, .detalle-bloque ol { margin: 4px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.5; }
+.detalle-bloque li { margin-bottom: 3px; }
+.operadores { list-style: none; padding-left: 0 !important; }
+.operadores li { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-bottom: 1px solid var(--borde); padding: 4px 0; }
+.operadores li span { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--negro); }
+
+/* ---------- Noche de Año Nuevo ---------- */
+.nota-arriba { margin: -4px 0 14px; }
+.anio-nuevo { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; align-items: start; margin-bottom: 8px; }
+.noche-vieja { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 14px 16px; font-size: 14px; color: var(--texto-2); display: flex; flex-direction: column; }
+.noche-vieja.destacada { border-color: var(--acento); box-shadow: 0 0 0 1px var(--acento); }
+.noche-vieja .galeria figure { aspect-ratio: 4 / 3; }
+.noche-cuerpo { display: flex; flex-direction: column; gap: 6px; }
+.noche-vieja h4 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--negro); line-height: 1.2; }
+.noche-vieja .destacada .sello-mini, .noche-vieja.destacada .sello-mini { background: var(--acento); color: #fff; }
+.noche-horas { list-style: none; margin: 6px 0 2px; padding: 0; border-left: 2px solid var(--acento); }
+.noche-horas li { position: relative; padding: 0 0 8px 14px; font-size: 13px; line-height: 1.45; }
+.noche-horas li::before { content: ''; position: absolute; left: -5px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--blanco); border: 2px solid var(--acento); }
+.noche-horas li span { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); text-transform: uppercase; letter-spacing: 0.04em; }
+.noche-links { display: flex; flex-wrap: wrap; gap: 4px 14px; }
