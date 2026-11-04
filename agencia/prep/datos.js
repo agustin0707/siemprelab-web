@@ -33,8 +33,9 @@ const DATOS = {
 
   // Lo que hay que reservar además de pasajes y auto (esos salen de lo elegido en la página). Cotizado el 4 nov.
   reservas: [
-    { id: 'res-acatenango', que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
+    { id: 'res-acatenango', que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic, o el jue 31 si recibimos el Año Nuevo en el volcán. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
     { id: 'res-antigua', que: 'Hostal en Antigua para Año Nuevo', detalle: 'Del 30 dic al 1 ene. Es lo primero que se llena: con cancelación gratis.', precio: '≈ $45 mil la noche', link: 'https://www.google.com/travel/search?q=hostal%20Antigua%20Guatemala%2030%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
+    { id: 'res-anio-nuevo', que: 'Año Nuevo · lo que elijamos', detalle: 'Acatenango el 31 (arriba), mesa en El Tenedor del Cerro (+502 7820-1220) o La Casa del Mundo en Atitlán, que es chica y se llena.', precio: 'según la opción', link: 'https://hotels.cloudbeds.com/reservation/EbWilf', boton: 'Casa del Mundo' },
     { id: 'res-shuttle-flores', que: 'Shuttle Lanquín → Flores', detalle: 'Sale 08:00, unas 8 h. También se compra en el hostal de Lanquín.', precio: 'USD 40 a 45 c/u', link: 'https://turisteando.wetravel.com/trips/shuttle-shuttle-from-lanquin-to-flores-turisteando-7470215393' },
     { id: 'res-tikal', que: 'Entrada a Tikal con amanecer', detalle: 'Con pasaporte, en la web oficial.', precio: 'Q250 c/u', link: 'https://boletos.culturaguate.com/', boton: 'comprar' },
     { id: 'res-exploradores', que: 'Glaciar Exploradores sobre el hielo · Viajero Austral', detalle: 'Día completo desde Río Tranquilo, solo mayores de 18. Preguntar por WhatsApp si salen en diciembre (Huente-Có es la otra opción al mismo precio).', precio: '$150 mil c/u', link: 'https://www.viajeroaustral.com/tour-glaciar-exploradores' },
@@ -234,7 +235,7 @@ const DATOS = {
       { id: 'antigua', nombre: 'Antigua', sugeridas: '2 a 4 noches', activ: 15000, activNota: 'Cerro de la Cruz gratis · Pacaya ≈ USD 25 con guía',
         aloj: [{ n: 'Somos (hostal)', p: 34078, r: '4,7' }, { n: 'Flore Boutique Hostel', p: 52035, r: '4,8' }, { n: 'Casa Donya Boutique', p: 54981, r: '4,8' }, { n: 'Ojala Hotel', p: 82529, r: '4,7' }], base: 1,
         nota: 'Para Año Nuevo, reservar ya.', busca: 'hoteles Antigua Guatemala' },
-      { id: 'acatenango', nombre: 'Acatenango', sugeridas: '1 noche (tour de 2 días)', activ: 130000, activNota: 'Tour USD 90 a 130 + entradas ≈ Q150. Incluye carpa, comida y guía',
+      { id: 'acatenango', nombre: 'Acatenango', sugeridas: '1 noche (tour de 2 días)', activ: 115000, activNota: 'Lava Trails USD 102 + Q100 de entrada. Incluye cama, comida y guía',
         dispo: { estado: 'ojo', texto: 'Lava Trails con cupo todo diciembre; OX no recibe reservas del 21 dic al 4 ene' },
         aloj: [{ n: 'Incluido en el tour', p: 0, r: '' }], base: 0,
         nota: 'Sale de Antigua y vuelve al otro día. Frío bajo cero: arrendar ropa de abrigo.', busca: '' },
@@ -383,7 +384,7 @@ const DATOS = {
 
   // ---------- Qué hacer y cuánto cuesta (por persona) ----------
   // dispo: estado 'ok' (sale siempre), 'ojo' (reservar o confirmar), 'agotado'. Revisado el 3 nov (Acatenango, el 4 nov).
-  // id: llave de las fotos en fotos-panoramas.js. resumen, consta, incluye, llevar, ojo y operadores van en "todo el detalle".
+  // id: llave de las fotos en fotos-panoramas.js (o en lugares.js; fotos: otra llave si no calza). resumen, consta, incluye, llevar, ojo y operadores van en "todo el detalle".
   actividadesAustral: [
     { id: 'capillas-lancha', nombre: 'Capillas de Mármol en lancha', donde: 'Río Tranquilo', precio: '$18 mil (1,5 h) · $35 mil el Full Mármol con Puerto Sánchez', nota: 'Salir temprano: en la tarde el lago se pone bravo.',
       resumen: 'Cuevas y columnas de mármol que el Lago General Carrera fue tallando por miles de años. Con el lago calmo la lancha se mete a las cavernas y el agua se ve turquesa con las vetas azules y blancas de la roca.',
@@ -401,7 +402,7 @@ const DATOS = {
       operadores: [{ n: 'Nomades', precio: '$60 a 66 mil', link: 'https://www.nomades.com/puerto-rio-tranquilo/kayak-capillas-marmol-id1276' }, { n: 'Varias en tur.com', precio: 'comparar', link: 'https://chile.tur.com/en/tour/tours-a-las-capillas-de-marmol-en-kayak-25339' }],
       dispo: { estado: 'ojo', texto: 'Grupos chicos: reservar uno o dos días antes.' },
       link: 'https://www.nomades.com/puerto-rio-tranquilo/kayak-capillas-marmol-id1276' },
-    { id: 'exploradores-hielo', nombre: 'Glaciar Exploradores caminando sobre el hielo', donde: 'Río Tranquilo', precio: '$150 mil · hasta $210 mil con Gran Patagonia', nota: 'Día completo (06:00 a 18:00). Solo mayores de 18 y nivel exigente.', reservar: true,
+    { id: 'exploradores-hielo', nombre: 'Glaciar Exploradores caminando sobre el hielo', donde: 'Río Tranquilo', precio: '$150 mil', nota: 'Día completo (06:00 a 18:00). Solo mayores de 18 y nivel exigente.', reservar: true,
       resumen: 'Es el glaciar de la Austral donde se camina encima con crampones, entre grietas, cuevas de hielo azul y lagunitas. Desde 2024 se entra por una ruta nueva (la antigua se cerró por un derrumbe de hielo) que es más larga: 7 a 8 h caminando, y de eso 1 a 2 h sobre hielo limpio.',
       consta: ['06:00 · salida en van desde Río Tranquilo: 1,5 h por el Valle Exploradores, entre lagos y una cascada', 'Entrada al sector con CONAF y caminata por la morrena frontal', '~2 h por roca y sedimento hasta el borde del glaciar', 'Crampones, arnés y casco: 1 a 2 h sobre el hielo, entre grietas, cuevas y lagunas', 'Vuelta por la misma ruta y llegada a Tranquilo entre 17:30 y 18:30'],
       incluye: ['Transporte ida y vuelta', 'Entrada al sector (CONAF)', 'Crampones, arnés, casco, polainas y guantes', 'Guías certificados y seguro', 'Colación (en Huente-Có)'],
@@ -409,8 +410,7 @@ const DATOS = {
       ojo: ['Edad mínima 18 años y dificultad alta: es la regla de CONAF para la ruta nueva', 'Nomades dejó de hacerlo. Los que lo están haciendo son Viajero Austral y Huente-Có', 'Sus páginas hablan de la temporada 2025-26: preguntar por WhatsApp si salen en diciembre 2026', 'Grupos de 3 a 12. Se reserva con un abono de ~$20 mil', 'Con lluvia fuerte o viento lo suspenden: dejarlo para el primer día bueno en Tranquilo'],
       operadores: [
         { n: 'Viajero Austral', precio: '$150.000', link: 'https://www.viajeroaustral.com/tour-glaciar-exploradores' },
-        { n: 'Huente-Có', precio: '$150.000 · $190.000 con kayak en las Capillas', link: 'https://carretera-austral.cl/producto/excursion-al-glaciar-exploradores/' },
-        { n: 'Gran Patagonia', precio: '$210.000', link: 'https://granpatagonia.com/es/ice-trekking-glaciar-exploradores/' }
+        { n: 'Huente-Có', precio: '$150.000 · $190.000 con kayak en las Capillas', link: 'https://carretera-austral.cl/producto/excursion-al-glaciar-exploradores/' }
       ],
       dispo: { estado: 'ojo', texto: 'Ruta nueva desde 2024, solo mayores de 18. Viajero Austral y Huente-Có lo hacen a $150 mil: confirmar que salen en diciembre y reservar apenas cerremos la fecha.' },
       link: 'https://www.viajeroaustral.com/tour-glaciar-exploradores' },
@@ -421,12 +421,29 @@ const DATOS = {
       ojo: ['Sirve de plan B si el del hielo no sale o si queremos un día más suave'],
       dispo: { estado: 'ok', texto: 'Por nuestra cuenta, cualquier día.' },
       link: 'https://chile.tur.com/en/tour/trekking-a-los-miradores-del-glaciar-exploradores-25340' },
+    { id: 'confluencia-baker', nombre: 'Confluencia del Baker y rafting en Bertrand', donde: 'Puerto Bertrand', precio: 'mirador sin entrada publicada · rafting ≈ $28 a 37 mil', nota: 'El mirador es una parada corta en el camino. El rafting es de 2 a 2,5 h.',
+      resumen: 'El Baker, el río más caudaloso de Chile, sale turquesa del Lago Bertrand y más abajo choca con el Nef, que viene gris del glaciar: se ven los dos colores juntos sin mezclarse. En Bertrand se puede bajar el Baker en balsa.',
+      consta: ['Mirador de la Confluencia: sendero corto y fácil, a 37 km al norte de Cochrane', 'Rafting: sale del Lago Bertrand y baja el Baker unas 2 h', 'Snack al final y vuelta al pueblo'],
+      incluye: ['Rafting: traje de neopreno, botines, casco, remo, chaleco y cortaviento', 'Snack'],
+      llevar: ['Traje de baño y ropa seca para después', 'Bloqueador'],
+      ojo: ['El rafting se reserva directo con Baker Patagonia Aventura (contacto@bakerpatagonia.com)', 'Los precios del rafting son de páginas viejas: confirmar'],
+      operadores: [{ n: 'Rafting Baker (tur.com)', precio: 'consultar', link: 'https://chile.tur.com/en/tour/rafting-baker-buena-vista-32584' }],
+      dispo: { estado: 'ok', texto: 'El mirador, cualquier día. El rafting, reservar un día antes.' } },
     { id: 'parque-patagonia', nombre: 'Parque Patagonia', donde: 'Valle Chacabuco', precio: 'entrada ≈ $13 mil (extranjeros)', nota: 'Para chilenos debería ser menos: confirmar en CONAF.',
       resumen: 'Valle abierto de estepa con guanacos por todas partes, lagunas y cumbres nevadas. Es el parque que armó Tompkins y hoy es uno de los más lindos de Chile.',
       consta: ['Entrada por el Valle Chacabuco, al norte de Cochrane', 'Sendero Lagunas Altas (~6 h) o miradores cortos', 'Noche en el camping West Winds'],
       llevar: ['Equipo de camping completo', 'Comida: adentro no hay dónde comprar'],
       ojo: ['El camping West Winds tiene ~60 sitios'],
       dispo: { estado: 'ojo', texto: 'Preguntar a CONAF (aysen.oirs@conaf.cl) si hay que reservar el camping.' } },
+    { id: 'tortel', nombre: 'Caleta Tortel e Isla de los Muertos', donde: 'Caleta Tortel', precio: 'pueblo gratis · Isla de los Muertos $36 mil', nota: 'El auto queda arriba en el estacionamiento y se baja caminando.',
+      resumen: 'Un pueblo sin calles: todo se recorre por pasarelas de ciprés colgadas sobre el fiordo, entre casas de madera y el agua verde del Baker. En lancha se llega a la Isla de los Muertos, monumento histórico con una historia rara de los trabajadores que murieron ahí en 1906.',
+      consta: ['Bajar por las pasarelas desde el estacionamiento hasta la plaza', 'Recorrer los sectores del pueblo y los miradores', 'Lancha a la Isla de los Muertos: 30 min de navegación, 2,5 h en total, sale a las 09:00'],
+      incluye: ['Isla de los Muertos: lancha y guía'],
+      llevar: ['Zapatos con buena suela: las pasarelas resbalan con lluvia', 'Ropa impermeable'],
+      ojo: ['La lancha sale con mínimo 5 personas, de septiembre a abril', 'Son 23 km de ripio desde la Carretera'],
+      operadores: [{ n: 'Nomades', precio: '$36.000', link: 'https://www.nomades.com/caleta-tortel/isla-de-los-muertos-id2441' }],
+      dispo: { estado: 'ojo', texto: 'El pueblo, cualquier día. La lancha a la isla, reservar el día antes.' },
+      link: 'https://www.nomades.com/caleta-tortel/isla-de-los-muertos-id2441' },
     { id: 'ohiggins', nombre: "Glaciar O'Higgins en barco", donde: "Villa O'Higgins", precio: 'consultar (lago desde ≈ $60 mil)', nota: 'Unas 8 h de navegación, depende del clima.', reservar: true,
       resumen: "Navegación por el Lago O'Higgins hasta la pared del glaciar, que cae directo al agua desde el Campo de Hielo Sur. Es el final de la Carretera Austral y el premio de llegar hasta abajo.",
       consta: ["Salida desde Bahía Bahamondez, a 7 km de Villa O'Higgins", 'Navegación por el lago entre fiordos', "Parada frente al frente del glaciar O'Higgins", 'Vuelta a la bahía en la tarde'],
@@ -485,6 +502,14 @@ const DATOS = {
       incluye: ['Transporte y guía'],
       llevar: ['Efectivo para la entrada al parque', 'Malvaviscos', 'Cortaviento'],
       dispo: { estado: 'ok', texto: 'Todos los días desde Antigua.' } },
+    { id: 'nariz-del-indio', fotos: 'atitlan', nombre: 'Amanecer en la Nariz del Indio', donde: 'Lago Atitlán', precio: '≈ Q100 con guía local (≈ $13 mil)', nota: 'Salida ~04:00 desde San Pedro o San Juan. 45 min de subida.',
+      resumen: 'El mirador más famoso del lago: se sube de noche y el sol sale detrás de los volcanes con el lago y la neblina abajo. Es corto y vale cada minuto de madrugar.',
+      consta: ['~04:00 nos buscan en San Pedro o San Juan en pickup', '45 min de subida con frontal', 'Amanecer arriba con café', 'Bajada y desayuno en el pueblo'],
+      incluye: ['Transporte y guía de la comunidad'],
+      llevar: ['Frontal y algo de abrigo', 'Efectivo en quetzales: no hay cajeros en Santa Clara ni San Juan'],
+      ojo: ['Por internet lo venden a USD 40 o más: con una agencia de San Pedro sale ~Q100'],
+      dispo: { estado: 'ok', texto: 'Todos los días. Se reserva en el pueblo la tarde antes.' },
+      link: 'https://livinginguatemala.com/hiking/indian-nose/' },
     { id: 'chichi', nombre: 'Mercado de Chichicastenango', donde: 'cerca de Atitlán', precio: 'gratis (shuttle ≈ USD 15)', nota: 'El más grande de Centroamérica.',
       resumen: 'Mercado maya enorme con textiles, máscaras y flores, y en las escaleras de la iglesia de Santo Tomás se hacen ceremonias con incienso que mezclan lo católico y lo maya.',
       consta: ['Shuttle desde Panajachel o Antigua temprano', 'Mañana en el mercado y la iglesia de Santo Tomás', 'Cementerio de colores', 'Vuelta en la tarde'],
@@ -582,7 +607,7 @@ const DATOS = {
       { id: 'ca-aloj', nombre: 'Alojamiento (pieza doble, temporada alta)', unitario: 45000, cantidad: 14, unidad: 'noches', tipo: 'mitad' },
       { id: 'ca-comida', nombre: 'Comida', unitario: 15000, cantidad: 15, unidad: 'días', tipo: 'cada' },
       { id: 'ca-transp', nombre: 'Transporte interno (shuttles, lanchas)', unitario: 150000, cantidad: 1, unidad: 'total', tipo: 'cada' },
-      { id: 'ca-activ', nombre: 'Actividades (Tikal, Acatenango, Semuc o snorkel)', unitario: 140000, cantidad: 1, unidad: 'total', tipo: 'cada' },
+      { id: 'ca-activ', nombre: 'Tours y entradas (Acatenango, Tikal, Semuc y lo de cada lugar)', unitario: 240000, cantidad: 1, unidad: 'total', tipo: 'cada' },
       { id: 'ca-extras', nombre: 'Extras e imprevistos (Año Nuevo incluido)', unitario: 80000, cantidad: 1, unidad: 'total', tipo: 'cada' }
     ],
     // Arriendo, bencina y cantidad de días se recalculan al elegir el auto o la vuelta (el 23 o el 24)

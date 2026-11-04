@@ -821,7 +821,8 @@ const insigniaDispo = (d) => (d ? `<span class="dispo ${d.estado}">${ETIQUETA_DI
 // Galería deslizable con las fotos libres de fotos-panoramas.js (una o varias llaves)
 function galeria(llaves, alt) {
   const banco = typeof FOTOS_PANORAMAS !== 'undefined' ? FOTOS_PANORAMAS : {};
-  const fotos = [].concat(llaves || []).flatMap((k) => banco[k] || []);
+  // Si la actividad no tiene fotos propias, usa las del lugar (lugares.js)
+  const fotos = [].concat(llaves || []).flatMap((k) => banco[k] || (typeof LUGARES !== 'undefined' && LUGARES[k] ? LUGARES[k].fotos : []));
   if (!fotos.length) return '';
   const flechas = fotos.length > 1 ? '<button type="button" class="galeria-flecha izq" data-galeria="-1" aria-label="foto anterior">‹</button><button type="button" class="galeria-flecha der" data-galeria="1" aria-label="foto siguiente">›</button>' : '';
   return `<div class="galeria-caja"><div class="galeria">${fotos.map((f, i) => `
@@ -842,7 +843,7 @@ function detalleActividad(a) {
 function tarjetasActividades(lista) {
   return lista.map((a) => `
     <div class="actividad${a.dispo && a.dispo.estado === 'agotado' ? ' agotada' : ''}">
-      ${galeria(a.id, a.nombre)}
+      ${galeria(a.fotos || a.id, a.nombre)}
       <div class="actividad-cabeza"><span class="etiqueta">${a.donde}</span>${insigniaDispo(a.dispo)}</div>
       <strong>${a.nombre}</strong>
       <p class="actividad-precio">${a.precio}</p>
@@ -1093,6 +1094,12 @@ if (!guardado.leer('migracion-5nov', false)) {
   valores['au-bencina'] = { unitario: bencina(autoElegido()), cantidad: 1 };
   guardado.escribir('valores', valores);
   guardado.escribir('migracion-5nov', true);
+}
+// 4 nov (v18): los tours de Guatemala estaban en $140 mil y la ruta suma ~$240 mil
+if (!guardado.leer('migracion-v18', false)) {
+  if (valores['ca-activ'] && Number(valores['ca-activ'].unitario) === 140000) valores['ca-activ'].unitario = 240000;
+  guardado.escribir('valores', valores);
+  guardado.escribir('migracion-v18', true);
 }
 
 function llenarSelects() {
