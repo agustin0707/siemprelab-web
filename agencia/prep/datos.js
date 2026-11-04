@@ -60,7 +60,7 @@ const DATOS = {
       // Basic solo trae un bolso chico. Con mochila en bodega hay que tomar Classic (mano 10 kg + bodega 23 kg): diferencia estimada
       extraMano: { monto: 60000, estimado: true },
       extraBodega: { monto: 130000, estimado: true },
-      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Sale unos $265 mil menos que Copa y Google lo marca como precio normal. Con la mochila en bodega va la tarifa Classic: lo que suma es estimado, confirmarlo en avianca.com.',
+      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Sale unos $265 mil menos que Copa y Google lo marca como precio normal. Volvemos el sáb 9 y llegamos el dom 10 a la 01:05: queda el domingo para descansar antes del internado. Volver el 8 ahorra $27 mil pero perdemos una noche; el 10 cuesta lo mismo que el 9 y llega el mismo lunes 11. Con la mochila en bodega va la tarifa Classic: lo que suma es estimado, confirmarlo en avianca.com.',
       link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-25%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     },
     {
