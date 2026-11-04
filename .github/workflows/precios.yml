@@ -1,0 +1,31 @@
+# Actualiza los precios de los vuelos de la prep dos veces al día (08:00 y 20:00 de Chile, aprox.)
+name: precios de vuelos
+
+on:
+  schedule:
+    - cron: '0 11,23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: precios
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install fast-flights==2.2 typing_extensions
+      - run: python .github/precios/actualizar.py
+      - name: Guardar si cambió
+        run: |
+          git config user.name "precios-bot"
+          git config user.email "precios-bot@users.noreply.github.com"
+          git add agencia/prep/precios.json
+          git diff --cached --quiet || (git commit -m "Precios de vuelos al día" && git push)
