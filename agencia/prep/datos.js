@@ -33,14 +33,14 @@ const DATOS = {
 
   // Lo que hay que reservar además de pasajes y auto (esos salen de lo elegido en la página). Cotizado el 4 nov.
   reservas: [
-    { que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
-    { que: 'Hostal en Antigua para Año Nuevo', detalle: 'Del 30 dic al 1 ene. Es lo primero que se llena: con cancelación gratis.', precio: '≈ $45 mil la noche', link: 'https://www.google.com/travel/search?q=hostal%20Antigua%20Guatemala%2030%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
-    { que: 'Shuttle Lanquín → Flores', detalle: 'Sale 08:00, unas 8 h. También se compra en el hostal de Lanquín.', precio: 'USD 40 a 45 c/u', link: 'https://turisteando.wetravel.com/trips/shuttle-shuttle-from-lanquin-to-flores-turisteando-7470215393' },
-    { que: 'Entrada a Tikal con amanecer', detalle: 'Con pasaporte, en la web oficial.', precio: 'Q250 c/u', link: 'https://boletos.culturaguate.com/', boton: 'comprar' },
-    { que: 'Glaciar Exploradores sobre el hielo · Nomades', detalle: 'Día completo desde Río Tranquilo. Salen con mínimo 4 personas.', precio: '$150 mil c/u', link: 'https://www.nomades.com/puerto-rio-tranquilo/caminata-hielo-glaciar-exploradores-id1273' },
-    { que: 'Navegación al Glaciar O\'Higgins', detalle: 'No sale todos los días: preguntar por el 20 o el 21 dic.', precio: 'consultar', link: 'https://www.tur.com/es/villa-ohiggins-286/navegacion-villa-ohiggins-a-candelario-mancilla-1-1-1-1-1-26362-1995', boton: 'consultar' },
-    { que: 'Alojamiento en Villa O\'Higgins', detalle: '20 al 22 dic. Hay poco: Hostal Puesto Canogas (4,6).', precio: '$116.834 la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Villa%20O%27Higgins%2020%20al%2022%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
-    { que: 'Alojamiento en Puerto Río Tranquilo', detalle: '14 al 17 dic. Rimaya Hostel (4,7) o cabañas que se reservan directo.', precio: '$93.424 la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Puerto%20R%C3%ADo%20Tranquilo%2014%20al%2017%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' }
+    { id: 'res-acatenango', que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
+    { id: 'res-antigua', que: 'Hostal en Antigua para Año Nuevo', detalle: 'Del 30 dic al 1 ene. Es lo primero que se llena: con cancelación gratis.', precio: '≈ $45 mil la noche', link: 'https://www.google.com/travel/search?q=hostal%20Antigua%20Guatemala%2030%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
+    { id: 'res-shuttle-flores', que: 'Shuttle Lanquín → Flores', detalle: 'Sale 08:00, unas 8 h. También se compra en el hostal de Lanquín.', precio: 'USD 40 a 45 c/u', link: 'https://turisteando.wetravel.com/trips/shuttle-shuttle-from-lanquin-to-flores-turisteando-7470215393' },
+    { id: 'res-tikal', que: 'Entrada a Tikal con amanecer', detalle: 'Con pasaporte, en la web oficial.', precio: 'Q250 c/u', link: 'https://boletos.culturaguate.com/', boton: 'comprar' },
+    { id: 'res-exploradores', que: 'Glaciar Exploradores sobre el hielo · Nomades', detalle: 'Día completo desde Río Tranquilo. Salen con mínimo 4 personas.', precio: '$150 mil c/u', link: 'https://www.nomades.com/puerto-rio-tranquilo/caminata-hielo-glaciar-exploradores-id1273' },
+    { id: 'res-ohiggins', que: 'Navegación al Glaciar O\'Higgins', detalle: 'No sale todos los días: preguntar por el 20 o el 21 dic.', precio: 'consultar', link: 'https://www.tur.com/es/villa-ohiggins-286/navegacion-villa-ohiggins-a-candelario-mancilla-1-1-1-1-1-26362-1995', boton: 'consultar' },
+    { id: 'res-dormir-ohiggins', que: 'Alojamiento en Villa O\'Higgins', detalle: '20 al 22 dic. Hay poco: Hostal Puesto Canogas (4,6).', precio: '$116.834 la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Villa%20O%27Higgins%2020%20al%2022%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
+    { id: 'res-dormir-tranquilo', que: 'Alojamiento en Puerto Río Tranquilo', detalle: '14 al 17 dic. Rimaya Hostel (4,7) o cabañas que se reservan directo.', precio: '$93.424 la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Puerto%20R%C3%ADo%20Tranquilo%2014%20al%2017%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' }
   ],
 
   // Logos (en la carpeta logos/)
@@ -52,8 +52,8 @@ const DATOS = {
   // Fecha en que se vieron los precios
   precioVisto: '4 nov',
 
-  // Tipo de cambio implícito en la tarifa de Copa del 30 oct (646.490 CLP = USD 652)
-  usd: 992,
+  // Tipo de cambio implícito de Avianca el 4 nov ($549.350 = USD 565,60). Lo usa "recotizar" si se anota en dólares.
+  usd: 971,
 
   // ---------- Vuelos a Guatemala (ida y vuelta, por persona, CLP) ----------
   // precio: tarifa más barata (Copa Basic ya incluye mochila de mano de 10 kg).
@@ -258,7 +258,8 @@ const DATOS = {
         aloj: [{ n: 'Hotel Citadin zona 10', p: 34652, r: '4,0' }, { n: 'Aurora Express', p: 53694, r: '4,5' }, { n: 'Barceló', p: 96489, r: '4,5' }], base: 1,
         nota: 'Moverse en Uber, no caminar de noche.', busca: 'hoteles cerca aeropuerto La Aurora' }
     ],
-    // Traslados por persona. vuelo: true suma un vuelo interno (Guatemala ↔ Flores).
+    // Traslados por persona. vuelo: true suma un vuelo interno (Guatemala ↔ Flores), que en p viene a vueloBase.
+    vueloBase: 88362,
     // Se busca 'a>b' y si no está, 'b>a'. gua = aeropuerto (inicio y fin).
     traslados: {
       'gua>antigua': { h: '1 h', modo: 'shuttle', p: 15000, est: true },

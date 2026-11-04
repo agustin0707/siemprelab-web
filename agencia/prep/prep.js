@@ -72,23 +72,38 @@ if (!guardado.leer('migracion-4nov', false)) {
 if (opciones.ruta && !DATOS.rutas.some((r) => r.id === opciones.ruta)) opciones.ruta = null;
 const guardarOpciones = () => guardado.escribir('opciones', opciones);
 
+// Lo recotizado a mano al momento de comprar: { clave: { monto o texto, ctx, visto, antes } }.
+// ctx es lo que cambia el precio (equipaje o día de vuelta): un precio anotado con otro equipaje no se usa.
+let recotizado = guardado.leer('recotizado', {});
+const recotizadoDe = (clave, ctx = '') => {
+  const r = recotizado[clave];
+  return r && (r.ctx || '') === String(ctx) ? r : null;
+};
+
 // Lo elegido para la Austral: el día de vuelta (23 o 24) cambia días de auto, noches y ruta
 const idaAU = () => AU.idas.find((v) => v.id === opciones.idaAU);
 const vueltaAU = () => AU.vueltas.find((v) => v.id === opciones.vueltaAU);
 const diaVuelta = () => vueltaAU().fecha;
 const diasAuto = () => (diaVuelta() === 24 ? 11 : 10);
 const autoElegido = () => DATOS.autos.opciones.find((a) => a.id === opciones.auto);
-const totalAuto = (a) => leerPrecio(diaVuelta() === 24 ? a.total24 : a.total);
+const totalAuto = (a) => {
+  const r = recotizadoDe(a.id, diaVuelta());
+  return r && r.monto ? { monto: r.monto, estimado: false } : leerPrecio(diaVuelta() === 24 ? a.total24 : a.total);
+};
 
 // ---------- Precios con equipaje ----------
 // Guatemala: tarifa + lo que suma el equipaje (null si no hay dato para esa combinación)
 function precioCA(v, eq = equipaje) {
+  const r = recotizadoDe(v.id, eq);
+  if (r && r.monto) return { monto: r.monto, estimado: false };
   const extra = leerPrecio(eq === 'bodega' ? v.extraBodega : v.extraMano);
   if (eq === 'bodega' && !extra) return null;
   return { monto: v.precio + (extra ? extra.monto : 0), estimado: !!(extra && extra.estimado && extra.monto) };
 }
 // Austral: cada tramo + la maleta de esa aerolínea si va en bodega
 function precioTramoAU(t) {
+  const r = recotizadoDe(t.id, equipaje);
+  if (r && r.monto) return { monto: r.monto, estimado: false };
   const m = equipaje === 'bodega' ? leerPrecio(AU.maleta[t.aerolinea]) : null;
   return { monto: t.precio + (m ? m.monto : 0), estimado: !!(m && m.estimado) };
 }
@@ -98,7 +113,10 @@ function precioAU() {
   return { monto: a.monto + b.monto, estimado: a.estimado || b.estimado };
 }
 // Vuelo interno a Flores: con la mochila en bodega va la tarifa Classic
-const precioInterno = () => DATOS.vueloFlores.precio + (equipaje === 'bodega' ? DATOS.vueloFlores.extraBodega || 0 : 0);
+const precioInterno = () => {
+  const r = recotizadoDe('flores', equipaje);
+  return r && r.monto ? r.monto : DATOS.vueloFlores.precio + (equipaje === 'bodega' ? DATOS.vueloFlores.extraBodega || 0 : 0);
+};
 const conAprox = (p) => (p.estimado ? '<span class="aprox" title="estimado">≈</span>' : '') + CLP(p.monto);
 
 // Logos de aerolíneas y arrendadoras
@@ -141,6 +159,101 @@ function pintarPreciosVivos() {
   el.forEach((e) => { e.innerHTML = `<span class="vivo-punto"></span>Vuelos al día: ${hace}, en ${preciosVivos.fuente}. Se actualizan solos dos veces al día.`; });
   $$('[data-precio-banda]').forEach((e) => { e.textContent = `vuelos al día · ${hace}`; });
 }
+
+// ---------- Recotizar ----------
+// Al comprar: se abre la web, se mira el precio y se anota acá. Lo anotado manda en la página y en el presupuesto.
+// clp: el precio se anota en pesos (o en dólares con "USD") · si no, se anota como texto (tours en quetzales, etc.)
+const cuando = (iso) => {
+  const d = new Date(iso);
+  const dia = d.toDateString() === new Date().toDateString() ? 'hoy' : `el ${d.getDate()} ${MESES[d.getMonth()]}`;
+  return `${dia} a las ${d.toTimeString().slice(0, 5)}`;
+};
+
+function recotizar(clave, link, { ctx = '', clp = true, antes = null, conTexto = true } = {}) {
+  const r = recotizadoDe(clave, ctx);
+  let visto = '';
+  if (r) {
+    const d = r.monto && r.antes ? r.monto - r.antes : 0;
+    const cambio = Math.abs(d) >= 1000 ? ` · <span class="tendencia ${d > 0 ? 'sube' : 'baja'}">${d > 0 ? '↑' : '↓'} ${CLP(Math.abs(d))}</span>` : (r.monto && r.antes ? ' · igual' : '');
+    visto = `<span class="recotizado">${r.monto || !conTexto ? '' : `${r.texto} · `}visto ${cuando(r.visto)}${cambio}</span>`;
+  }
+  return `
+    <div class="recotizar" data-clave="${clave}" data-ctx="${ctx}" data-clp="${clp}" data-link="${link || ''}" data-antes="${antes || ''}">
+      <button type="button" class="recotizar-boton" data-recotizar>recotizar</button>${visto}
+    </div>`;
+}
+
+function abrirRecotizar(caja) {
+  if (caja.dataset.link) window.open(caja.dataset.link, '_blank', 'noopener');
+  if ($('.recotizar-form', caja)) return;
+  const clp = caja.dataset.clp === 'true';
+  const hay = recotizado[caja.dataset.clave];
+  caja.insertAdjacentHTML('beforeend', `
+    <div class="recotizar-form">
+      <input type="text" ${clp ? 'inputmode="decimal"' : ''} placeholder="${clp ? 'precio que ves ($ o USD)' : 'precio que ves'}" aria-label="Precio que ves ahora">
+      <button type="button" class="boton" data-guardar-recotizado>anotar</button>
+      ${hay ? '<button type="button" class="recotizar-boton" data-borrar-recotizado>volver al de antes</button>' : ''}
+    </div>`);
+  $('input', caja).focus();
+}
+
+// "287.705", "$287.705" o "USD 725,60" → pesos
+function leerMonto(texto) {
+  const t = texto.toLowerCase();
+  if (/usd|us\$|dólar|dolar/.test(t)) {
+    const n = t.replace(/[^\d.,]/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.');
+    return parseFloat(n) ? Math.round(parseFloat(n) * DATOS.usd) : null;
+  }
+  return Number(t.replace(/\D/g, '')) || null;
+}
+
+function guardarRecotizado(caja, borrar) {
+  const clave = caja.dataset.clave;
+  if (borrar) {
+    delete recotizado[clave];
+  } else {
+    const texto = $('input', caja).value.trim();
+    if (!texto) return;
+    const r = { ctx: caja.dataset.ctx, visto: new Date().toISOString() };
+    if (caja.dataset.clp === 'true') {
+      r.monto = leerMonto(texto);
+      if (!r.monto) { $('input', caja).setCustomValidity('Escribe un monto, por ejemplo 287.705 o USD 725,60'); $('input', caja).reportValidity(); return; }
+      // Contra lo que mostraba la página antes de la primera recotización
+      const previo = recotizado[clave];
+      r.antes = previo && previo.antes ? previo.antes : Number(caja.dataset.antes) || null;
+    } else {
+      r.texto = texto.replace(/[<>]/g, '');
+    }
+    recotizado[clave] = r;
+  }
+  guardado.escribir('recotizado', recotizado);
+  if (clave === opciones.auto) aplicarAutoAlPresupuesto();
+  repintarPrecios();
+}
+
+function repintarPrecios() {
+  pintarVuelos();
+  pintarAustral();
+  pintarAutos();
+  pintarDormir();
+  pintarActividadesAustral();
+  pintarPrecioFlores();
+  pintarArmador();
+  calcular();
+}
+
+document.addEventListener('click', (e) => {
+  const caja = e.target.closest('.recotizar');
+  if (!caja) return;
+  if (e.target.closest('[data-recotizar]')) abrirRecotizar(caja);
+  else if (e.target.closest('[data-guardar-recotizado]')) guardarRecotizado(caja, false);
+  else if (e.target.closest('[data-borrar-recotizado]')) guardarRecotizado(caja, true);
+});
+document.addEventListener('keydown', (e) => {
+  const caja = e.target.closest && e.target.closest('.recotizar');
+  if (caja && e.key === 'Enter' && e.target.matches('input')) guardarRecotizado(caja, false);
+});
+document.addEventListener('input', (e) => { if (e.target.closest('.recotizar')) e.target.setCustomValidity(''); });
 
 // ---------- Textos sueltos ----------
 $$('[data-precio-visto]').forEach((el) => { el.textContent = DATOS.precioVisto; });
@@ -392,6 +505,7 @@ function pintarVuelos() {
           <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-vuelo="${v.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
           <a class="link" href="${v.link}" target="_blank" rel="noopener">ver en vivo ↗</a>
         </div>
+        ${recotizar(v.id, v.link, { ctx: equipaje, antes: p && p.monto })}
       </article>`;
   }).join('');
 }
@@ -507,6 +621,7 @@ function tarjetaTramo(t, tipo, elegido) {
     elegido ? '<span class="sello acento">elegido</span>' : ''
   ].join('');
   const link = t.manual ? DATOS.linkAustral.sky : DATOS.linkAustral[t.fecha || diaVuelta()];
+  const directo = tipo === 'ida' ? linkTramoAU(t, 'SCL', 'BBA') : linkTramoAU(t, 'BBA', 'SCL');
   return `
     <article class="tramo${t.recomendado ? ' recomendado' : ''}${elegido ? ' elegido' : ''}">
       ${sellos ? `<div class="sellos">${sellos}</div>` : ''}
@@ -521,6 +636,7 @@ function tarjetaTramo(t, tipo, elegido) {
         <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-${tipo}="${t.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir'}</button>
         <a class="link" href="${link}" target="_blank" rel="noopener">${t.manual ? 'ver en sky ↗' : 'ver en vivo ↗'}</a>
       </div>
+      ${recotizar(t.id, directo, { ctx: equipaje, antes: p.monto })}
     </article>`;
 }
 
@@ -653,6 +769,7 @@ function pintarAutos() {
           <button type="button" class="boton${elegido ? ' elegido' : ''}" data-elegir-auto="${a.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir este'}</button>
           <a class="link" href="${DATOS.autos.link[diaVuelta()]}" target="_blank" rel="noopener">reservar ↗</a>
         </div>
+        ${recotizar(a.id, DATOS.autos.link[diaVuelta()], { ctx: diaVuelta(), antes: total.monto })}
       </article>`;
   }).join('');
   $('[data-ojo-autos]').textContent = DATOS.autos.ojo;
@@ -693,7 +810,8 @@ function pintarDormir() {
       <td data-col="con techo">${d.techo.length
         ? d.techo.map((t) => `<span class="opcion">${t.n} <span class="mono">★ ${t.r}</span> <b>${CLP(t.p)}</b></span>`).join('')
         : '<span class="suave">sin precio en línea</span>'}</td>
-      <td data-col=""><a class="link" href="${busquedaHoteles(d.busca)}" target="_blank" rel="noopener">ver más ↗</a></td>
+      <td data-col=""><a class="link" href="${busquedaHoteles(d.busca)}" target="_blank" rel="noopener">ver más ↗</a>
+        ${recotizar('dormir-' + d.noche, busquedaHoteles(d.busca), { clp: false })}</td>
     </tr>`).join('');
 }
 
@@ -709,6 +827,7 @@ function tarjetasActividades(lista) {
       <p>${a.nota}</p>
       ${a.dispo ? `<p class="dispo-texto">${a.dispo.texto}</p>` : ''}
       ${a.link ? `<a class="link" href="${a.link}" target="_blank" rel="noopener">ver cupos ↗</a>` : ''}
+      ${recotizar('act-' + a.nombre, a.link || `https://www.google.com/search?q=${encodeURIComponent(a.nombre + ' ' + a.donde + ' precio')}`, { clp: false })}
     </div>`).join('');
 }
 
@@ -738,8 +857,8 @@ function traslado(a, b) {
   if (a === b) return null;
   const t = A.traslados[`${a}>${b}`] || A.traslados[`${b}>${a}`];
   if (!t) return { h: '?', modo: 'sin dato directo: conviene pasar por Antigua o Flores', p: 0, falta: true };
-  // Si el tramo tiene vuelo y la mochila va en bodega, suma la diferencia de tarifa
-  return t.vuelo && equipaje === 'bodega' ? { ...t, p: t.p + (DATOS.vueloFlores.extraBodega || 0) } : t;
+  // Si el tramo tiene vuelo, se cambia el vuelo de datos.js por el de ahora (con bodega o recotizado)
+  return t.vuelo ? { ...t, p: t.p - A.vueloBase + precioInterno() } : t;
 }
 
 const nombrePunto = (id) => (id === 'gua' ? 'aeropuerto' : lugarArmador(id).nombre);
@@ -1091,21 +1210,27 @@ function pintarReservas() {
   const bodega = equipaje === 'bodega';
   // Lo elegido en la página, con su precio por persona
   const elegidos = [
-    { que: `Ida a Balmaceda · ${ida.aerolinea}`, detalle: `${ida.dia} · ${ida.sale} → ${ida.llega}${bodega && ida.aerolinea === 'LATAM' ? ' · bodega gratis con la WorldMember' : ''}`, precio: conAprox(precioTramoAU(ida)) + ' c/u', link: linkTramoAU(ida, 'SCL', 'BBA') },
-    { que: `Vuelta de Balmaceda · ${vuelta.aerolinea}`, detalle: `${vuelta.dia} · ${vuelta.sale} → ${vuelta.llega}`, precio: conAprox(precioTramoAU(vuelta)) + ' c/u', link: linkTramoAU(vuelta, 'BBA', 'SCL') },
-    { que: `Auto en Balmaceda · ${a.modelo}`, detalle: `${a.agencia} · ${diasAuto()} días · elegir cancelación gratis`, precio: conAprox(totalAuto(a)) + ' los dos', link: DATOS.autos.link[diaVuelta()] },
-    { que: `Guatemala ida y vuelta · ${ca.aerolinea}`, detalle: `${ca.ida.dia} y ${ca.vuelta.dia}${bodega ? ' · tarifa con bodega' : ''}`, precio: conAprox(pca) + ' c/u', link: ca.link }
+    { id: ida.id, ctx: equipaje, antes: precioTramoAU(ida).monto, que: `Ida a Balmaceda · ${ida.aerolinea}`, detalle: `${ida.dia} · ${ida.sale} → ${ida.llega}${bodega && ida.aerolinea === 'LATAM' ? ' · bodega gratis con la WorldMember' : ''}`, precio: conAprox(precioTramoAU(ida)) + ' c/u', link: linkTramoAU(ida, 'SCL', 'BBA') },
+    { id: vuelta.id, ctx: equipaje, antes: precioTramoAU(vuelta).monto, que: `Vuelta de Balmaceda · ${vuelta.aerolinea}`, detalle: `${vuelta.dia} · ${vuelta.sale} → ${vuelta.llega}`, precio: conAprox(precioTramoAU(vuelta)) + ' c/u', link: linkTramoAU(vuelta, 'BBA', 'SCL') },
+    { id: a.id, ctx: diaVuelta(), antes: totalAuto(a).monto, que: `Auto en Balmaceda · ${a.modelo}`, detalle: `${a.agencia} · ${diasAuto()} días · elegir cancelación gratis`, precio: conAprox(totalAuto(a)) + ' los dos', link: DATOS.autos.link[diaVuelta()] },
+    { id: ca.id, ctx: equipaje, antes: pca.monto, que: `Guatemala ida y vuelta · ${ca.aerolinea}`, detalle: `${ca.ida.dia} y ${ca.vuelta.dia}${bodega ? ' · tarifa con bodega' : ''}`, precio: conAprox(pca) + ' c/u', link: ca.link }
   ];
   if (opciones.internos > 0) {
-    elegidos.push({ que: `Vuelo Flores → Guatemala${opciones.internos > 1 ? ` (${opciones.internos} tramos)` : ''}`, detalle: DATOS.vueloFlores.detalle, precio: CLP(precioInterno() * opciones.internos) + ' c/u', link: DATOS.vueloFlores.link });
+    elegidos.push({ id: 'flores', ctx: equipaje, antes: precioInterno(), que: `Vuelo Flores → Guatemala${opciones.internos > 1 ? ` (${opciones.internos} tramos)` : ''}`, detalle: DATOS.vueloFlores.detalle, precio: CLP(precioInterno() * opciones.internos) + ' c/u', link: DATOS.vueloFlores.link });
   }
+  // Las reservas sueltas se anotan como texto (vienen en dólares, quetzales o por noche)
+  const sueltas = DATOS.reservas.map((r) => {
+    const x = recotizadoDe(r.id);
+    return { ...r, clp: false, precio: x ? x.texto : r.precio };
+  });
   const fila = (r) => `
     <li class="reserva">
       <div class="reserva-texto"><strong>${r.que}</strong><small>${r.detalle}</small></div>
       <span class="reserva-precio">${r.precio}</span>
       ${r.link ? `<a class="boton claro" href="${r.link}" target="_blank" rel="noopener">${r.boton || 'reservar'} ↗</a>` : ''}
+      ${recotizar(r.id, r.link, { ctx: r.ctx || '', clp: r.clp !== false, antes: r.antes, conTexto: false })}
     </li>`;
-  $('#reservas').innerHTML = [...elegidos, ...DATOS.reservas].map(fila).join('');
+  $('#reservas').innerHTML = [...elegidos, ...sueltas].map(fila).join('');
 }
 
 function conectarChecklist() {

@@ -978,3 +978,25 @@ img { max-width: 100%; display: block; }
 .equipo-col .etiqueta { display: block; margin-bottom: 8px; }
 .equipo-col ul { list-style: none; display: grid; gap: 4px; font-size: 14px; color: var(--texto-2); }
 .equipo-col li::before { content: '· '; color: var(--acento); }
+
+/* ---------- Recotizar: precio anotado a mano al momento de comprar ---------- */
+.recotizar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--texto-2); }
+.vuelo .recotizar, .tramo .recotizar { border-top: 1px dashed var(--borde); padding-top: 8px; }
+.tabla .recotizar { margin-top: 6px; }
+.reserva .recotizar { grid-column: 1 / -1; }
+.recotizar-boton { font: inherit; color: var(--acento); background: none; border: 0; padding: 2px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.recotizar-boton:hover { color: var(--negro); }
+.recotizado { color: var(--negro); }
+.recotizar-form { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; width: 100%; }
+.recotizar-form input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--negro);
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  padding: 7px 9px;
+  flex: 1 1 140px;
+  min-width: 0;
+}
+.recotizar-form .boton { padding: 7px 12px; }
