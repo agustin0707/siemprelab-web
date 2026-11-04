@@ -466,7 +466,8 @@ const DATOS = {
   // ---------- Calculadora ----------
   // tipo 'cada' = cada uno paga eso · tipo 'mitad' = es un total que se divide a la mitad
   presupuesto: {
-    tope: { min: 1500000, max: 2500000 },
+    // La idea: que ronde entre $2,6 y $3,1 M por persona (no es un tope duro)
+    tope: { min: 2600000, max: 3100000 },
     centroamerica: [
       { id: 'ca-aloj', nombre: 'Alojamiento (pieza doble, temporada alta)', unitario: 45000, cantidad: 14, unidad: 'noches', tipo: 'mitad' },
       { id: 'ca-comida', nombre: 'Comida', unitario: 15000, cantidad: 15, unidad: 'días', tipo: 'cada' },

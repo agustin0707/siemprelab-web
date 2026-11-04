@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=15">
+  <link rel="stylesheet" href="prep.css?v=16">
 </head>
 <body>
 
@@ -335,6 +335,14 @@
             <h3>En Guatemala <span class="etiqueta">el armador puede llenar esto</span></h3>
             <div id="calc-ca"></div>
           </div>
+
+          <!-- Otras versiones: cambios que suben o bajan el total, solo para probar -->
+          <div class="calc-bloque" id="ajustes-bloque">
+            <h3>Otras versiones del mismo viaje</h3>
+            <p class="ajustes-bajada">Cosas que se pueden cambiar, para un lado o para el otro. Márcalas para ver cómo queda el total: no cambian nada de lo elegido.</p>
+            <ul class="ajustes" id="ajustes"></ul>
+            <p class="ajustes-total" id="ajustes-total"></p>
+          </div>
         </div>
 
         <!-- Resultado (fijo al costado en escritorio) -->
@@ -353,7 +361,7 @@
             <div class="medidor-rango"></div>
             <div class="medidor-marca" id="res-marca"></div>
           </div>
-          <div class="medidor-leyenda"><span>$0</span><span>$1,5 M</span><span>$2,5 M</span><span>$3,5 M</span></div>
+          <div class="medidor-leyenda"><span>$0</span><span>$2,6 M</span><span>$3,1 M</span></div>
           <p class="veredicto" id="res-veredicto"></p>
           <dl class="desglose" id="res-desglose"></dl>
           <button type="button" class="boton-secundario" id="calc-reset">volver a los valores iniciales</button>
@@ -422,8 +430,8 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=15"></script>
-  <script src="lugares.js?v=15"></script>
-  <script src="prep.js?v=15"></script>
+  <script src="datos.js?v=16"></script>
+  <script src="lugares.js?v=16"></script>
+  <script src="prep.js?v=16"></script>
 </body>
 </html>

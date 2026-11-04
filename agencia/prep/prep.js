@@ -1099,14 +1099,16 @@ function calcular() {
 
   $('#res-persona').textContent = CLP(persona);
   $('#res-total').textContent = CLP(persona * 2);
-  $('#res-marca').style.left = Math.min(100, (persona / 3500000) * 100) + '%';
+  $('#res-marca').style.left = Math.min(100, (persona / 4000000) * 100) + '%';
 
-  // Veredicto contra el tope
+  // Cómo queda contra la idea (entre $2,6 y $3,1 M c/u, no es un tope duro)
   let estado;
   let veredicto;
-  if (persona <= 2000000) { estado = 'ok'; veredicto = `<strong>Bien.</strong> Dentro del tope con espacio (${CLP(P.tope.max - persona)} de margen).`; }
-  else if (persona <= P.tope.max) { estado = 'justo'; veredicto = `<strong>Justo.</strong> Dentro del tope, con ${CLP(P.tope.max - persona)} de margen.`; }
-  else { estado = 'pasado'; veredicto = `<strong>Nos pasamos por ${CLP(persona - P.tope.max)}.</strong> Lo que más baja: hostales en Guatemala, un tour menos o el bus a Flores en vez del avión.`; }
+  const idea = `entre ${millones(P.tope.min)} y ${millones(P.tope.max)} c/u`;
+  if (persona < P.tope.min) { estado = 'ok'; veredicto = `<strong>Holgado.</strong> Queda bajo la idea (${idea}): hay espacio para darse algún gusto.`; }
+  else if (persona <= P.tope.max) { estado = 'ok'; veredicto = `<strong>Bien.</strong> Dentro de la idea: ${idea}.`; }
+  else if (persona <= P.tope.max + 300000) { estado = 'justo'; veredicto = `<strong>Un poco arriba</strong> de la idea (${idea}), por ${CLP(persona - P.tope.max)}.`; }
+  else { estado = 'pasado'; veredicto = `<strong>Arriba de la idea</strong> (${idea}) por ${CLP(persona - P.tope.max)}.`; }
   $('#res-veredicto').innerHTML = veredicto;
 
   $('#res-desglose').innerHTML = `
@@ -1122,7 +1124,76 @@ function calcular() {
   pintarTuViaje(persona, estado);
   pintarTablero();
   pintarReservas();
+  totalPersona = persona;
+  pintarAjustes();
 }
+
+// ---------- Otras versiones del viaje: cambios que suben o bajan el total, solo para probar ----------
+// d = cuánto cambia por persona. Se calcula con lo elegido, así que se mueve si cambia el auto, el vuelo o el armador.
+let totalPersona = 0;
+let ajustesMarcados = guardado.leer('ajustes', []);
+if (!Array.isArray(ajustesMarcados)) ajustesMarcados = [];
+
+function ajustesDelViaje() {
+  const lista = [
+    { id: 'kayak', que: 'Capillas de Mármol en kayak', nota: 'En vez de la lancha: tres horas con guía, pegados a la roca.', d: 66000 - 18000, aprox: true }
+  ];
+  // Allá no hay camping: basta la mochila de mano de 10 kg que ya trae la tarifa Light
+  const v = DATOS.vuelosCA.find((x) => x.id === opciones.vueloCA);
+  const pb = precioCA(v, 'bodega');
+  const pm = precioCA(v, 'mano');
+  if (equipaje === 'bodega' && pb && pm) {
+    lista.push({ id: 'mano-gua', que: 'Guatemala con mochila de mano', nota: 'Allá no hay camping: la carpa se queda en Santiago el 24 y vamos con una mochila de 10 kg.',
+      d: pm.monto - pb.monto - (Number(opciones.internos) || 0) * (DATOS.vueloFlores.extraBodega || 0) });
+  }
+  const ant = lugarArmador('antigua');
+  const lindo = ant.aloj.reduce((a, b) => (b.p > a.p ? b : a));
+  if (lindo.p > ant.aloj[ant.base].p) {
+    lista.push({ id: 'anio-nuevo', que: `Año Nuevo en ${lindo.n}`, nota: `Las dos noches de Año Nuevo en Antigua en algo más lindo (★ ${lindo.r}).`, d: (lindo.p - ant.aloj[ant.base].p) * 2 / 2 });
+  }
+  lista.push({ id: 'miradores', que: 'Exploradores por los miradores', nota: 'Sin caminar en el hielo: por nuestra cuenta en el auto, pagando la entrada del sendero.', d: -140000, aprox: true });
+  const a = autoElegido();
+  const cx = DATOS.autos.opciones.find((x) => x.id === 'salfa-crosstrek');
+  if (cx && a.id !== cx.id) {
+    lista.push({ id: 'crosstrek', que: `Subaru Crosstrek en vez del ${a.modelo.replace(' o similar', '')}`, nota: `Tracción integral y ${cx.despeje / 10} cm de despeje: más margen en el ripio.`,
+      d: (totalAuto(cx).monto - totalAuto(a).monto + bencina(cx) - bencina(a)) / 2 });
+  }
+  // Con el armador lleno: lo más económico de cada lugar contra lo que está en la calculadora
+  if (etapas.length) {
+    const minimo = etapas.reduce((s, e) => s + e.noches * Math.min(...lugarArmador(e.lugar).aloj.map((o) => o.p)), 0);
+    const ahora = (Number(valores['ca-aloj'].unitario) || 0) * (Number(valores['ca-aloj'].cantidad) || 0);
+    const d = (minimo - ahora) / 2;
+    if (d < -5000) lista.push({ id: 'aloj-gua', que: 'En Guatemala, lo más económico de cada lugar', nota: 'Con los precios del armador, en vez de lo que está elegido ahí.', d });
+  }
+  lista.push({ id: 'ohiggins', que: "Navegación al Glaciar O'Higgins", nota: 'Unas 8 horas por el lago hasta el glaciar. Sale según el clima.', d: 60000, aprox: true });
+  return lista;
+}
+
+function pintarAjustes() {
+  const lista = ajustesDelViaje();
+  const marcados = lista.filter((x) => ajustesMarcados.includes(x.id));
+  const suma = marcados.reduce((s, x) => s + x.d, 0);
+  const monto = (n) => CLP(Math.abs(Math.round(n / 1000) * 1000));
+  $('#ajustes').innerHTML = lista.map((x) => `
+    <li><label class="ajuste">
+      <input type="checkbox" data-ajuste="${x.id}"${ajustesMarcados.includes(x.id) ? ' checked' : ''}>
+      <span class="ajuste-texto"><strong>${x.que}</strong><small>${x.nota}</small></span>
+      <span class="ajuste-monto">${x.d >= 0 ? '+' : '−'}${x.aprox ? '≈ ' : ''}${monto(x.d)} c/u</span>
+    </label></li>`).join('');
+  const conAjustes = totalPersona + suma;
+  const dentro = conAjustes >= P.tope.min && conAjustes <= P.tope.max;
+  $('#ajustes-total').innerHTML = marcados.length
+    ? `Con lo marcado: <strong>${CLP(conAjustes)}</strong> c/u (${suma >= 0 ? '+' : '−'}${monto(suma)})${dentro ? ', dentro de la idea.' : '.'}`
+    : '';
+}
+
+$('#ajustes').addEventListener('change', (e) => {
+  const c = e.target.closest('[data-ajuste]');
+  if (!c) return;
+  ajustesMarcados = c.checked ? [...new Set([...ajustesMarcados, c.dataset.ajuste])] : ajustesMarcados.filter((id) => id !== c.dataset.ajuste);
+  guardado.escribir('ajustes', ajustesMarcados);
+  pintarAjustes();
+});
 
 function conectarCalculadora() {
   llenarSelects();
