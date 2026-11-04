@@ -1,6 +1,6 @@
 # Actualiza los precios de los vuelos de la web prep · Agencia de Viajes SiempreLab
 # Consulta Google Vuelos (librería fast-flights) y escribe agencia/prep/precios.json.
-# Lo corre GitHub Actions dos veces al día (.github/workflows/precios.yml).
+# Lo corre GitHub Actions cada 4 horas (.github/workflows/precios.yml).
 # Los id de VUELOS tienen que ser los mismos de datos.js.
 
 import json
@@ -31,8 +31,8 @@ VUELOS = [
     {'id': 'copa-26-0845', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-26', 'vuelta': '2027-01-09', 'aerolinea': 'COPA', 'sale': '01:07', 'llega': '08:45'},
     {'id': 'copa-27', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-27', 'vuelta': '2027-01-09', 'aerolinea': 'COPA', 'sale': '01:31'},
     {'id': 'avianca-26', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-26', 'vuelta': '2027-01-09', 'aerolinea': 'Avianca', 'sale': '16:15'},
-    # Vuelo interno a Flores (el más barato del día)
-    {'id': 'flores', 'tipo': 'ida', 'o': 'GUA', 'd': 'FRS', 'fecha': '2027-01-02', 'aerolinea': 'Avianca', 'sale': None},
+    # Vuelo interno Flores → Guatemala el vie 8 (el más barato del día; Avianca sale 07:40, 19:55 o 23:10)
+    {'id': 'flores', 'tipo': 'ida', 'o': 'FRS', 'd': 'GUA', 'fecha': '2027-01-08', 'aerolinea': 'Avianca', 'sale': None},
 ]
 
 

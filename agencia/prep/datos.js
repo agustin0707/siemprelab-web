@@ -31,6 +31,18 @@ const DATOS = {
     SKY: 'https://www.skyairline.com/es/chile'
   },
 
+  // Lo que hay que reservar además de pasajes y auto (esos salen de lo elegido en la página). Cotizado el 4 nov.
+  reservas: [
+    { que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
+    { que: 'Hostal en Antigua para Año Nuevo', detalle: 'Del 30 dic al 1 ene. Es lo primero que se llena: con cancelación gratis.', precio: '≈ $45 mil la noche', link: 'https://www.google.com/travel/search?q=hostal%20Antigua%20Guatemala%2030%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
+    { que: 'Shuttle Lanquín → Flores', detalle: 'Sale 08:00, unas 8 h. También se compra en el hostal de Lanquín.', precio: 'USD 40 a 45 c/u', link: 'https://turisteando.wetravel.com/trips/shuttle-shuttle-from-lanquin-to-flores-turisteando-7470215393' },
+    { que: 'Entrada a Tikal con amanecer', detalle: 'Con pasaporte, en la web oficial.', precio: 'Q250 c/u', link: 'https://boletos.culturaguate.com/', boton: 'comprar' },
+    { que: 'Glaciar Exploradores sobre el hielo · Nomades', detalle: 'Día completo desde Río Tranquilo. Salen con mínimo 4 personas.', precio: '$150 mil c/u', link: 'https://www.nomades.com/puerto-rio-tranquilo/caminata-hielo-glaciar-exploradores-id1273' },
+    { que: 'Navegación al Glaciar O\'Higgins', detalle: 'No sale todos los días: preguntar por el 20 o el 21 dic.', precio: 'consultar', link: 'https://www.tur.com/es/villa-ohiggins-286/navegacion-villa-ohiggins-a-candelario-mancilla-1-1-1-1-1-26362-1995', boton: 'consultar' },
+    { que: 'Alojamiento en Villa O\'Higgins', detalle: '20 al 22 dic. Hay poco: Hostal Puesto Canogas (4,6).', precio: '$116.834 la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Villa%20O%27Higgins%2020%20al%2022%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
+    { que: 'Alojamiento en Puerto Río Tranquilo', detalle: '14 al 17 dic. Rimaya Hostel (4,7) o cabañas que se reservan directo.', precio: '$93.424 la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Puerto%20R%C3%ADo%20Tranquilo%2014%20al%2017%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' }
+  ],
+
   // Logos (en la carpeta logos/)
   logos: {
     LATAM: 'logos/LA.png', SKY: 'logos/H2.png', Copa: 'logos/CM.png', Avianca: 'logos/AV.png', TAG: 'logos/5U.png',
@@ -38,7 +50,7 @@ const DATOS = {
   },
 
   // Fecha en que se vieron los precios
-  precioVisto: '3 nov',
+  precioVisto: '4 nov',
 
   // Tipo de cambio implícito en la tarifa de Copa del 30 oct (646.490 CLP = USD 652)
   usd: 992,
@@ -57,11 +69,12 @@ const DATOS = {
       ida: { dia: 'vie 25', detalle: '16:15 → 00:55 (+1)', dur: '11 h 40 min', escalas: '1 escala en Bogotá' },
       vuelta: { dia: 'sáb 9 ene', detalle: '09:20 → 01:05 (+1)', dur: '12 h 45 min', escalas: '1 escala en Bogotá' },
       precio: 555419,
-      // Basic solo trae un bolso chico. Con mochila en bodega hay que tomar Classic (mano 10 kg + bodega 23 kg): diferencia estimada
-      extraMano: { monto: 60000, estimado: true },
-      extraBodega: { monto: 130000, estimado: true },
-      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Sale unos $265 mil menos que Copa y Google lo marca como precio normal. Volvemos el sáb 9 y llegamos el dom 10 a la 01:05: queda el domingo para descansar antes del internado. Volver el 8 ahorra $27 mil pero perdemos una noche; el 10 cuesta lo mismo que el 9 y llega el mismo lunes 11. Con la mochila en bodega va la tarifa Classic: lo que suma es estimado, confirmarlo en avianca.com.',
-      link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-25%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
+      // Visto en avianca.com el 4 nov: Light USD 265 + 300,60 (trae mano de 10 kg); Classic USD 345 + 380,60 (suma bodega de 23 kg).
+      // Classic cuesta USD 160 más ida y vuelta ≈ $155 mil.
+      extraMano: 0,
+      extraBodega: { monto: 155000 },
+      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Volvemos el sáb 9 y llegamos el dom 10 a la 01:05, así la Jo tiene el domingo entero para preparar sus cosas y dormir bien antes del internado. La tarifa Light ya trae mochila de mano de 10 kg; para la mochila scout en bodega va Classic (USD 160 más ida y vuelta, visto en avianca.com). El 4 nov quedaban 4 asientos a este precio en la ida.',
+      link: 'https://booking.avianca.com/av/booking/avail?departureDate=2026-12-25&tripType=round-trip&platform=WEBB2C&from=SCL&to=GUA&nbAdults=1&nbYoungs=0&nbChildren=0&nbInfants=0&language=ES&pointOfSale=CL&returnDate=2027-01-09&promoCode=&selectedCabin=ECO&accessMethod=default&backend=PRD'
     },
     {
       id: 'copa-26',
@@ -112,19 +125,22 @@ const DATOS = {
       ida: { dia: 'sáb 26', detalle: '16:15 → 00:55 (+1)', dur: '11 h 40 min', escalas: '1 escala en Bogotá' },
       vuelta: { dia: 'sáb 9 ene', detalle: '09:20 → 01:05 (+1)', dur: '12 h 45 min', escalas: '1 escala en Bogotá' },
       precio: 883308,
-      extraMano: { monto: 60000, estimado: true },
-      extraBodega: { monto: 130000, estimado: true },
+      extraMano: 0,
+      extraBodega: { monto: 155000, estimado: true },
       nota: 'El mismo vuelo que el del 25, pero un día después cuesta $330 mil más.',
       link: 'https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20GUA%20on%202026-12-26%20through%202027-01-09&curr=CLP&hl=es&gl=CL'
     }
   ],
 
   // Vuelo interno Guatemala ↔ Flores (Tikal), precio por tramo
+  // Flores → Guatemala (la vuelta desde Petén). Visto en avianca.com: Basic USD 90 (solo bolso chico), Classic USD 102,30 con bodega de 23 kg.
+  // TAG es parecido de precio, pero su maleta en vuelos nacionales es de 9 kg: no sirve para la mochila scout.
   vueloFlores: {
     id: 'flores',
-    precio: 88370,
-    detalle: 'Avianca · 06:05, 18:20 o 21:35 · 50 min. TAG: $98.533 (17:30).',
-    link: 'https://www.google.com/travel/flights?q=One%20way%20flights%20from%20FRS%20to%20GUA%20on%202027-01-08&curr=CLP&hl=es&gl=CL'
+    precio: 87414,
+    extraBodega: 12000,
+    detalle: 'Avianca · 07:40, 19:55 o 23:10 · 45 min. Con la mochila en bodega va la tarifa Classic (USD 12 más).',
+    link: 'https://booking.avianca.com/av/booking/avail?departureDate=2027-01-08&tripType=one-way&platform=WEBB2C&from=FRS&to=GUA&nbAdults=1&nbYoungs=0&nbChildren=0&nbInfants=0&language=ES&pointOfSale=CL&promoCode=&selectedCabin=ECO&accessMethod=default&backend=PRD'
   },
 
   // ---------- Rutas de 14 días (26 dic a 9 ene) ----------
@@ -138,16 +154,16 @@ const DATOS = {
       mapaRuta: ['Antigua Guatemala', 'Volcán de Acatenango', 'Lago de Atitlán', 'Semuc Champey', 'Flores, Petén', 'Parque Nacional Tikal'],
       etapas: [['antigua', 2], ['acatenango', 1], ['antigua', 3], ['atitlan', 3], ['semuc-champey', 2], ['flores', 2], ['ciudad', 1]],
       paradas: [
-        { dias: 'D1 a D2 · sáb 26 y dom 27', lugar: 'antigua', titulo: 'Antigua', detalle: 'Llegamos 08:45 y shuttle a Antigua (1 h). Cerro de la Cruz, mercados y rooftops con el Volcán de Agua.' },
+        { dias: 'D1 a D2 · sáb 26 y dom 27', lugar: 'antigua', titulo: 'Antigua', detalle: 'Llegamos 00:55 y shuttle a Antigua (1 h) a dormir. Cerro de la Cruz, mercados y rooftops con el Volcán de Agua.' },
         { dias: 'D3 a D4 · lun 28 y mar 29', lugar: 'acatenango', titulo: 'Acatenango', detalle: 'Trekking con noche frente al Volcán de Fuego en erupción. Bajamos el 29 a Antigua.' },
         { dias: 'D5 a D6 · mié 30 y jue 31', lugar: 'antigua', titulo: 'Año Nuevo en Antigua', detalle: 'Piernas de descanso y fuegos artificiales en la plaza con los volcanes de fondo.' },
         { dias: 'D7 a D9 · 1 al 3 ene', lugar: 'atitlan', titulo: 'Lago Atitlán', detalle: 'San Pedro, San Marcos, kayak entre pueblos.' },
         { dias: 'D10 a D11 · 4 y 5 ene', lugar: 'semuc-champey', titulo: 'Semuc Champey', detalle: 'Shuttle largo a Lanquín. Pozas turquesa, mirador y cueva con velas.' },
         { dias: 'D12 a D13 · 6 y 7 ene', lugar: 'tikal', titulo: 'Flores y Tikal', detalle: 'Shuttle por tierra a Flores (7 a 8 h) y amanecer en el Templo IV con monos aulladores.' },
         { dias: 'D14 · vie 8', lugar: 'flores', titulo: 'Flores → Guatemala', detalle: 'Mañana en la isla y vuelo a la capital (45 min). Noche cerca del aeropuerto.' },
-        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Copa 10:43 y a Santiago, a tiempo para el internado.' }
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Avianca 09:20 y llegamos a Santiago el dom 10 a la 01:05. El domingo queda para preparar el internado.' }
       ],
-      extra: 'Un vuelo interno (Flores → Guatemala, ~88 mil). Fin de año es temporada alta: reservar Acatenango y hostales en Antigua apenas compremos.',
+      extra: 'Un vuelo interno (Flores → Guatemala, ~$100 mil con la mochila en bodega). De Semuc a Flores se va en shuttle. Fin de año es temporada alta: reservar Acatenango y hostales en Antigua apenas compremos.',
       internos: 1
     },
     {
@@ -166,9 +182,9 @@ const DATOS = {
         { dias: 'D11 a D12 · 5 y 6 ene', lugar: 'caye-caulker', titulo: 'Caye Caulker', detalle: 'Snorkel en el arrecife: tiburones nodriza y mantarrayas.' },
         { dias: 'D13 · jue 7', lugar: 'flores', titulo: 'Vuelta a Flores', detalle: 'Lancha + shuttle de vuelta a la isla.' },
         { dias: 'D14 · vie 8', lugar: 'flores', titulo: 'Flores → Guatemala', detalle: 'Vuelo a la capital (07:40 o 19:55).' },
-        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Copa 10:43 y a Santiago.' }
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Avianca 09:20 y a Santiago (llegamos el dom 10, 01:05).' }
       ],
-      extra: 'Dos vuelos internos (~88 mil c/u). Salida de Belice por tierra: USD 20 (BZ$40) en efectivo. Caye Caulker en Año Nuevo se llena: reservar luego.',
+      extra: 'Dos vuelos internos (~$100 mil c/u con bodega). Salida de Belice por tierra: USD 20 (BZ$40) en efectivo. Caye Caulker en Año Nuevo se llena: reservar luego.',
       internos: 2
     },
     {
@@ -184,7 +200,7 @@ const DATOS = {
         { dias: 'D7 a D12 · 1 al 6 ene', lugar: 'atitlan', titulo: 'Seis días de lago', detalle: 'Un pueblo distinto cada día en lancha: San Marcos, San Juan, Santa Cruz. Nariz del Indio al amanecer.' },
         { dias: 'D10 · dom 3', lugar: 'atitlan', titulo: 'Mercado de Chichicastenango', detalle: 'El mercado maya más grande, solo jueves y domingo. Ida y vuelta en el día desde el lago (1,5 h).' },
         { dias: 'D13 a D14 · 7 y 8 ene', lugar: 'antigua', titulo: 'Cierre en Antigua', detalle: 'Compras, última comida y cerca del aeropuerto.' },
-        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Shuttle al aeropuerto (1 h) y Copa 10:43.' }
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Shuttle al aeropuerto (1 h) y Avianca 09:20.' }
       ],
       extra: 'Sin vuelos internos: la más barata en traslados. No incluye Tikal; si se quiere, se cambian dos días de lago por Flores en el armador.',
       internos: 0
@@ -202,7 +218,7 @@ const DATOS = {
         { dias: 'D7 a D9 · 1 al 3 ene', lugar: 'rio-dulce', titulo: 'Río Dulce y Livingston', detalle: 'Lancha por el cañón hasta Livingston, tapado garífuna y el Castillo de San Felipe.' },
         { dias: 'D10 a D12 · 4 al 6 ene', lugar: 'tikal', titulo: 'Flores y Tikal', detalle: 'Shuttle a Flores (4 h), Tikal al amanecer y la laguna.' },
         { dias: 'D13 a D14 · 7 y 8 ene', lugar: 'antigua', titulo: 'Vuelo y cierre en Antigua', detalle: 'Flores → Guatemala en avión y dos días tranquilos en Antigua.' },
-        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Copa 10:43 y a Santiago.' }
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Avianca 09:20 y a Santiago (llegamos el dom 10, 01:05).' }
       ],
       extra: 'Un vuelo interno (Flores → Guatemala). Ojo: el 1 de enero algunos shuttles no corren; confirmar el Lanquín → Río Dulce. Repelente para la selva y el río.',
       internos: 1
@@ -324,14 +340,14 @@ const DATOS = {
     km: 1450,
     litro: { bencina: 1400, diesel: 1100 }, // precio aprox. en Aysén
     opciones: [
-      { id: 'salfa-crosstrek', agencia: 'Salfa', modelo: 'Subaru Crosstrek o similar', tipo: 'SUV compacto · automático', recogida: 'en el terminal', total: 414700, total24: 441012, recomendado: true, sello: 'la mejor opción',
-        traccion: 'integral', despeje: 220, maletero: 315, consumo: 13, combustible: 'bencina',
-        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Subaru_Crosstrek_%28GU%29_1X7A2484.jpg/960px-Subaru_Crosstrek_%28GU%29_1X7A2484.jpg', credito: 'Alexander-93 · CC BY-SA 4.0' },
-        nota: 'Tracción integral y 22 cm de despeje: la más tranquila para el ripio con carpa y mochilas. Misma empresa de la Tracker de 2025.' },
-      { id: 'sixt-sonet', agencia: 'Sixt', modelo: 'Kia Sonet o similar', tipo: 'SUV chico · automático', recogida: 'en el terminal', total: 261650, total24: 287705, sello: 'más barato',
+      { id: 'sixt-sonet', agencia: 'Sixt', modelo: 'Kia Sonet o similar', tipo: 'SUV chico · automático', recogida: 'en el terminal', total: 261650, total24: 287705, recomendado: true, sello: 'la mejor opción',
         traccion: '4x2', despeje: 190, maletero: 392, consumo: 15, combustible: 'bencina',
         foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/Kia_Sonet_IMG001.jpg/960px-Kia_Sonet_IMG001.jpg', credito: 'Zotyefan · CC0' },
-        nota: 'Barato y gasta poco, pero es 4x2 y más bajo. Entran las dos mochilas y el equipo, justo.' },
+        nota: 'Automático, el que menos gasta (≈ 15 km/l) y 19 cm de despeje. En diciembre el ripio hasta O\'Higgins se hace bien en 4x2. Maletero de 392 L: más grande que el del Crosstrek. Ir sin apuro en el ripio y revisar la rueda de repuesto al retirarlo.' },
+      { id: 'salfa-crosstrek', agencia: 'Salfa', modelo: 'Subaru Crosstrek o similar', tipo: 'SUV compacto · automático', recogida: 'en el terminal', total: 414700, total24: 441012, sello: 'más holgado',
+        traccion: 'integral', despeje: 220, maletero: 315, consumo: 13, combustible: 'bencina',
+        foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Subaru_Crosstrek_%28GU%29_1X7A2484.jpg/960px-Subaru_Crosstrek_%28GU%29_1X7A2484.jpg', credito: 'Alexander-93 · CC BY-SA 4.0' },
+        nota: 'Tracción integral y 3 cm más de despeje: más margen en el ripio, pero en verano no hace falta y sale $153 mil más (más $21 mil de bencina). Misma empresa de la Tracker de 2025.' },
       { id: 'sixt-cx5', agencia: 'Sixt', modelo: 'Mazda CX-5 o similar', tipo: 'SUV mediano · automático', recogida: 'en el terminal', total: 327950, total24: 360635,
         traccion: '4x2 (probable)', despeje: 193, maletero: 442, consumo: 12, combustible: 'bencina',
         foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Mazda_CX-5_%28KF%29_Facelift_1X7A0331_%282%29.jpg/960px-Mazda_CX-5_%28KF%29_Facelift_1X7A0331_%282%29.jpg', credito: 'Alexander Migl · CC BY-SA 4.0' },
@@ -372,13 +388,16 @@ const DATOS = {
     { nombre: 'Capillas de Mármol en kayak', donde: 'Río Tranquilo', precio: '≈ $66 mil', nota: '3 h con guía. Más lento y más cerca de la roca.',
       dispo: { estado: 'ojo', texto: 'Grupos chicos: reservar uno o dos días antes.' } },
     { nombre: 'Glaciar Exploradores sobre el hielo', donde: 'Río Tranquilo', precio: '$150 a 170 mil', nota: 'Día completo (07:00 a 18:00) con transporte, entrada y crampones.', reservar: true,
-      dispo: { estado: 'ojo', texto: 'Grupos de 6 y mínimo 4 para salir. Varias empresas (Nomades, ChileAndes, Newenche, Viajero Austral). Reservar apenas cerremos la fecha: piden un abono de ~$20 mil.' } },
+      dispo: { estado: 'ojo', texto: 'Grupos de 6 y mínimo 4 para salir. Varias empresas (Nomades, ChileAndes, Newenche, Viajero Austral). Reservar apenas cerremos la fecha: piden un abono de ~$20 mil.' },
+      link: 'https://www.nomades.com/puerto-rio-tranquilo/caminata-hielo-glaciar-exploradores-id1273' },
     { nombre: 'Glaciar Exploradores, solo miradores', donde: 'Valle Exploradores', precio: '$55 a 60 mil con guía', nota: 'O por nuestra cuenta en el auto, pagando la entrada del sendero.',
-      dispo: { estado: 'ok', texto: 'Por nuestra cuenta, cualquier día.' } },
+      dispo: { estado: 'ok', texto: 'Por nuestra cuenta, cualquier día.' },
+      link: 'https://chile.tur.com/en/tour/trekking-a-los-miradores-del-glaciar-exploradores-25340' },
     { nombre: 'Parque Patagonia', donde: 'Valle Chacabuco', precio: 'entrada ≈ $13 mil (extranjeros)', nota: 'Para chilenos debería ser menos: confirmar en CONAF.',
       dispo: { estado: 'ojo', texto: 'El camping West Winds tiene ~60 sitios. Preguntar a CONAF (aysen.oirs@conaf.cl) si hay que reservar.' } },
     { nombre: "Glaciar O'Higgins en barco", donde: "Villa O'Higgins", precio: 'consultar (lago desde ≈ $60 mil)', nota: 'Unas 8 h de navegación, depende del clima.', reservar: true,
-      dispo: { estado: 'ojo', texto: 'No sale todos los días. Escribir antes a Robinson Crusoe o Turismo Las Ruedas con las fechas 20 y 21.' } },
+      dispo: { estado: 'ojo', texto: 'No sale todos los días. Escribir antes a Robinson Crusoe o Turismo Las Ruedas con las fechas 20 y 21.' },
+      link: 'https://www.tur.com/es/villa-ohiggins-286/navegacion-villa-ohiggins-a-candelario-mancilla-1-1-1-1-1-26362-1995' },
     { nombre: 'Barcaza Yungay ↔ Río Bravo', donde: "camino a O'Higgins", precio: 'gratis', nota: 'Subvencionada, 45 min.',
       dispo: { estado: 'ok', texto: 'Sin reserva, por orden de llegada.' } }
   ],
@@ -456,8 +475,8 @@ const DATOS = {
     ],
     // Arriendo, bencina y cantidad de días se recalculan al elegir el auto o la vuelta (el 23 o el 24)
     austral: [
-      { id: 'au-auto', nombre: 'Arriendo de auto (sale del auto elegido)', unitario: 40092, cantidad: 11, unidad: 'días', tipo: 'mitad' },
-      { id: 'au-bencina', nombre: 'Bencina (~1.450 km, según el auto)', unitario: 156000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
+      { id: 'au-auto', nombre: 'Arriendo de auto (sale del auto elegido)', unitario: 26155, cantidad: 11, unidad: 'días', tipo: 'mitad' },
+      { id: 'au-bencina', nombre: 'Bencina (~1.450 km, según el auto)', unitario: 135000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
       { id: 'au-aloj', nombre: 'Alojamiento (casi todo carpa, 3 noches con techo)', unitario: 28000, cantidad: 11, unidad: 'noches', tipo: 'mitad' },
       { id: 'au-comida', nombre: 'Comida (cocinamos casi siempre)', unitario: 10000, cantidad: 12, unidad: 'días', tipo: 'cada' },
       { id: 'au-equipo', nombre: 'Gas y lo que falte del equipo (se compra allá)', unitario: 30000, cantidad: 1, unidad: 'total', tipo: 'mitad' },

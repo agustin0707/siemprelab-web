@@ -48,7 +48,7 @@ const OPCIONES_INICIALES = {
   vueltaAU: AU.vueltas.find((v) => v.recomendado).id,
   auto: DATOS.autos.opciones.find((a) => a.recomendado).id,
   ruta: null,       // id de ruta elegida (null = sin elegir)
-  internos: 2,      // tramos Guatemala ↔ Flores
+  internos: 1,      // tramos Guatemala ↔ Flores
   seguro: false
 };
 // Equipaje para los dos viajes: con mochila scout va en bodega
@@ -97,6 +97,8 @@ function precioAU() {
   const b = precioTramoAU(vueltaAU());
   return { monto: a.monto + b.monto, estimado: a.estimado || b.estimado };
 }
+// Vuelo interno a Flores: con la mochila en bodega va la tarifa Classic
+const precioInterno = () => DATOS.vueloFlores.precio + (equipaje === 'bodega' ? DATOS.vueloFlores.extraBodega || 0 : 0);
 const conAprox = (p) => (p.estimado ? '<span class="aprox" title="estimado">≈</span>' : '') + CLP(p.monto);
 
 // Logos de aerolíneas y arrendadoras
@@ -142,7 +144,8 @@ function pintarPreciosVivos() {
 
 // ---------- Textos sueltos ----------
 $$('[data-precio-visto]').forEach((el) => { el.textContent = DATOS.precioVisto; });
-$$('[data-vuelo-flores]').forEach((el) => { el.textContent = CLP(DATOS.vueloFlores.precio); });
+const pintarPrecioFlores = () => $$('[data-vuelo-flores]').forEach((el) => { el.textContent = CLP(precioInterno()); });
+pintarPrecioFlores();
 function pintarLinksAustral() {
   $$('[data-link-austral]').forEach((el) => { el.href = DATOS.linkAustral[diaVuelta()]; });
   $$('[data-link-sky]').forEach((el) => { el.href = DATOS.linkAustral.sky; });
@@ -415,6 +418,8 @@ function cambiarEquipaje(valor) {
   marcarSelector();
   pintarVuelos();
   pintarAustral();
+  pintarPrecioFlores();
+  pintarArmador();
   calcular();
 }
 $$('.selector button').forEach((b) => b.addEventListener('click', () => cambiarEquipaje(b.dataset.equipaje)));
@@ -731,8 +736,10 @@ const guardarEtapas = () => guardado.escribir('armador', etapas);
 // Traslado entre dos puntos: busca a>b y si no, b>a. Mismo lugar: no hay traslado.
 function traslado(a, b) {
   if (a === b) return null;
-  return A.traslados[`${a}>${b}`] || A.traslados[`${b}>${a}`] ||
-    { h: '?', modo: 'sin dato directo: conviene pasar por Antigua o Flores', p: 0, falta: true };
+  const t = A.traslados[`${a}>${b}`] || A.traslados[`${b}>${a}`];
+  if (!t) return { h: '?', modo: 'sin dato directo: conviene pasar por Antigua o Flores', p: 0, falta: true };
+  // Si el tramo tiene vuelo y la mochila va en bodega, suma la diferencia de tarifa
+  return t.vuelo && equipaje === 'bodega' ? { ...t, p: t.p + (DATOS.vueloFlores.extraBodega || 0) } : t;
 }
 
 const nombrePunto = (id) => (id === 'gua' ? 'aeropuerto' : lugarArmador(id).nombre);
@@ -766,7 +773,7 @@ function calcularArmador() {
   const activ = unicos.reduce((s, id) => s + lugarArmador(id).activ, 0);
   const vuelos = tramos.filter((t) => t && t.vuelo).length;
   const traslados = tramos.reduce((s, t) => s + (t ? t.p : 0), 0);
-  const trasladosTierra = traslados - vuelos * DATOS.vueloFlores.precio;
+  const trasladosTierra = traslados - vuelos * precioInterno();
   const comidaDia = Number(valores['ca-comida'].unitario) || 15000;
   const comida = (noches + 1) * comidaDia;
   const persona = alojNoches / 2 + activ + traslados + comida;
@@ -901,6 +908,18 @@ function valoresIniciales() {
 }
 let valores = Object.assign(valoresIniciales(), guardado.leer('valores', {}));
 
+// Una sola vez (5 nov): el recomendado pasó del Crosstrek al Kia Sonet y la ruta clásica usa un solo vuelo interno.
+// Se recalculan el arriendo y la bencina con el auto que quede; después se respeta lo que cada uno elija.
+if (!guardado.leer('migracion-5nov', false)) {
+  if (opciones.auto === 'salfa-crosstrek') opciones.auto = 'sixt-sonet';
+  if (!opciones.ruta && opciones.internos === 2) opciones.internos = 1;
+  guardarOpciones();
+  valores['au-auto'] = { unitario: Math.round(totalAuto(autoElegido()).monto / diasAuto()), cantidad: diasAuto() };
+  valores['au-bencina'] = { unitario: bencina(autoElegido()), cantidad: 1 };
+  guardado.escribir('valores', valores);
+  guardado.escribir('migracion-5nov', true);
+}
+
 function llenarSelects() {
   $('#calc-vuelo-ca').innerHTML = DATOS.vuelosCA.map((v) =>
     `<option value="${v.id}">${v.aerolinea} · ${v.ida.dia} → ${v.vuelta.dia}</option>`).join('');
@@ -942,7 +961,7 @@ function precioVueloCA() {
 
 function calcular() {
   const vueloCA = precioVueloCA();
-  const internos = (Number(opciones.internos) || 0) * DATOS.vueloFlores.precio;
+  const internos = (Number(opciones.internos) || 0) * precioInterno();
   const seguro = opciones.seguro ? P.seguro : 0;
   const pasajes = vueloCA + internos + precioAU().monto;
 
@@ -983,7 +1002,7 @@ function calcular() {
 
   pintarTuViaje(persona, estado);
   pintarTablero();
-  pintarBotonesCompra();
+  pintarReservas();
 }
 
 function conectarCalculadora() {
@@ -1054,15 +1073,39 @@ function conectarTuViaje() {
   obs.observe($('#hero'));
 }
 
-// ---------- 7. Compra: checklist + links ----------
-function pintarBotonesCompra() {
+// ---------- 7. Compra: lo que hay que reservar, con precio y link ----------
+// Links directos a la búsqueda de cada aerolínea (fecha y ruta ya puestas)
+const linkLatam = (o, d, dia) => `https://www.latamairlines.com/cl/es/ofertas-vuelos?origin=${o}&inbound=null&outbound=2026-12-${dia}T15%3A00%3A00.000Z&destination=${d}&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=false&sort=RECOMMENDED`;
+const linkSky = (o, d, dia) => `https://initial-sale.skyairline.com/es/chile?origin=${o}&destination=${d}&departureDate=2026-12-${dia}&flightType=OW&ADT=1`;
+const linkTramoAU = (t, o, d) => {
+  const dia = t.fecha || 13;
+  return t.aerolinea === 'SKY' ? linkSky(o, d, dia) : linkLatam(o, d, dia);
+};
+
+function pintarReservas() {
   const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
-  const aerolineas = [...new Set([idaAU().aerolinea, vueltaAU().aerolinea, ca.aerolinea])];
-  const links = aerolineas.map((a) => `<a class="boton" href="${DATOS.compra[a]}" target="_blank" rel="noopener">comprar ${a} ↗</a>`);
+  const pca = precioCA(ca) || precioCA(ca, 'mano');
+  const ida = idaAU();
+  const vuelta = vueltaAU();
+  const a = autoElegido();
+  const bodega = equipaje === 'bodega';
+  // Lo elegido en la página, con su precio por persona
+  const elegidos = [
+    { que: `Ida a Balmaceda · ${ida.aerolinea}`, detalle: `${ida.dia} · ${ida.sale} → ${ida.llega}${bodega && ida.aerolinea === 'LATAM' ? ' · bodega gratis con la WorldMember' : ''}`, precio: conAprox(precioTramoAU(ida)) + ' c/u', link: linkTramoAU(ida, 'SCL', 'BBA') },
+    { que: `Vuelta de Balmaceda · ${vuelta.aerolinea}`, detalle: `${vuelta.dia} · ${vuelta.sale} → ${vuelta.llega}`, precio: conAprox(precioTramoAU(vuelta)) + ' c/u', link: linkTramoAU(vuelta, 'BBA', 'SCL') },
+    { que: `Auto en Balmaceda · ${a.modelo}`, detalle: `${a.agencia} · ${diasAuto()} días · elegir cancelación gratis`, precio: conAprox(totalAuto(a)) + ' los dos', link: DATOS.autos.link[diaVuelta()] },
+    { que: `Guatemala ida y vuelta · ${ca.aerolinea}`, detalle: `${ca.ida.dia} y ${ca.vuelta.dia}${bodega ? ' · tarifa con bodega' : ''}`, precio: conAprox(pca) + ' c/u', link: ca.link }
+  ];
   if (opciones.internos > 0) {
-    links.push(`<a class="boton claro" href="${DATOS.vueloFlores.link}" target="_blank" rel="noopener">vuelos Guatemala ↔ Flores ↗</a>`);
+    elegidos.push({ que: `Vuelo Flores → Guatemala${opciones.internos > 1 ? ` (${opciones.internos} tramos)` : ''}`, detalle: DATOS.vueloFlores.detalle, precio: CLP(precioInterno() * opciones.internos) + ' c/u', link: DATOS.vueloFlores.link });
   }
-  $('#botones-compra').innerHTML = links.join('');
+  const fila = (r) => `
+    <li class="reserva">
+      <div class="reserva-texto"><strong>${r.que}</strong><small>${r.detalle}</small></div>
+      <span class="reserva-precio">${r.precio}</span>
+      ${r.link ? `<a class="boton claro" href="${r.link}" target="_blank" rel="noopener">${r.boton || 'reservar'} ↗</a>` : ''}
+    </li>`;
+  $('#reservas').innerHTML = [...elegidos, ...DATOS.reservas].map(fila).join('');
 }
 
 function conectarChecklist() {
@@ -1135,6 +1178,7 @@ fetch('precios.json', { cache: 'no-store' })
     pintarPreciosVivos();
     pintarVuelos();
     pintarAustral();
+    pintarPrecioFlores();
     llenarSelects();
     calcular();
   })

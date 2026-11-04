@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=12">
+  <link rel="stylesheet" href="prep.css?v=14">
 </head>
 <body>
 
@@ -320,7 +320,7 @@
             </label>
             <label class="check">
               <input type="checkbox" id="calc-seguro">
-              <span>Seguro de viaje (~USD 40), si la tarjeta no lo cubre</span>
+              <span>Seguro de viaje (~USD 40). Ni Guatemala ni Belice lo piden: no se cuenta si no se marca</span>
             </label>
           </div>
 
@@ -377,7 +377,7 @@
         <div class="papel"><span class="etiqueta">salud</span><p>Agua embotellada siempre, <strong>repelente</strong> para Petén y Río Dulce, protector solar por la altura.</p></div>
         <div class="papel"><span class="etiqueta">año nuevo</span><p>El 1 de enero varios shuttles no corren y todo se llena. <strong>Reservar alojamiento y traslados de esos días primero.</strong></p></div>
         <div class="papel"><span class="etiqueta">chip</span><p>Tigo o Claro en el aeropuerto, o una eSIM antes de salir. En la Austral, Entel es lo que mejor funciona.</p></div>
-        <div class="papel"><span class="etiqueta">seguro</span><p>Revisar si la <strong>World Member Santander</strong> lo da al pagar los pasajes con ella.</p></div>
+        <div class="papel"><span class="etiqueta">seguro</span><p>No es obligatorio para entrar a Guatemala ni a Belice, así que no se cuenta. La <strong>World Member Santander</strong> puede darlo al pagar los pasajes con ella.</p></div>
       </div>
     </section>
 
@@ -393,17 +393,18 @@
         <li><label><input type="checkbox" data-check="propuestas"> Agus presenta la Austral y la Jo presenta Guatemala</label></li>
         <li><label><input type="checkbox" data-check="presupuesto"> Revisar el presupuesto con las dos propuestas juntas</label></li>
         <li><label><input type="checkbox" data-check="datos"> Datos del pasaporte de los dos: nombre exacto, número, vencimiento y fecha de nacimiento</label></li>
-        <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (~$650 mil LATAM + ~$1,4 M Avianca o ~$2 M Copa para dos, con mochila en bodega)</label></li>
+        <li><label><input type="checkbox" data-check="cupo"> Tarjeta con cupo internacional (para los dos, con mochila en bodega: ~$630 mil LATAM + ~$1,4 M Avianca + ~$200 mil del vuelo a Flores)</label></li>
         <li><label><input type="checkbox" data-check="latam"> Comprar Balmaceda en latam.com, ida y vuelta por separado, con el número LATAM Pass de cada uno (así la WorldMember nos da la mochila en bodega gratis)</label></li>
         <li><label><input type="checkbox" data-check="auto"> Reservar el auto en Balmaceda (con cancelación gratis)</label></li>
-        <li><label><input type="checkbox" data-check="copa"> Comprar Guatemala en la web de la aerolínea, con la tarifa que incluye bodega</label></li>
+        <li><label><input type="checkbox" data-check="copa"> Comprar Guatemala en avianca.com con la tarifa Classic (la que trae bodega)</label></li>
         <li><label><input type="checkbox" data-check="internos"> Vuelos internos Guatemala ↔ Flores, si la ruta los usa</label></li>
         <li><label><input type="checkbox" data-check="reservas"> Reservar lo que se llena: Acatenango (Lava Trails tiene cupo), Año Nuevo, Exploradores y Villa O'Higgins</label></li>
-        <li><label><input type="checkbox" data-check="seguro"> Seguro de viaje (o confirmar que la tarjeta lo da)</label></li>
         <li><label><input type="checkbox" data-check="foto"> Foto con la pantalla de confirmación</label></li>
         <li><label><input type="checkbox" data-check="transfer"> Transferencia de los pasajes de la Jo: <strong id="monto-transfer"></strong></label></li>
       </ul>
-      <div class="botones-compra" id="botones-compra"></div>
+      <h3 class="reservas-titulo">Todo lo que se reserva, con precio y link</h3>
+      <p class="nota">Los pasajes y el auto salen de lo que esté elegido arriba. Los links abren la búsqueda con la fecha puesta: solo falta revisar y pagar.</p>
+      <ul class="reservas" id="reservas"></ul>
     </section>
 
   </main>
@@ -421,8 +422,8 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=12"></script>
-  <script src="lugares.js?v=12"></script>
-  <script src="prep.js?v=13"></script>
+  <script src="datos.js?v=14"></script>
+  <script src="lugares.js?v=14"></script>
+  <script src="prep.js?v=14"></script>
 </body>
 </html>
