@@ -128,6 +128,11 @@ def main():
     datos = {'actualizado': ahora.isoformat(timespec='minutes'), 'fuente': 'Google Vuelos', 'vuelos': vuelos}
     SALIDA.write_text(json.dumps(datos, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
 
+    # Se guardó lo que hubo, pero si falló más de un tercio la corrida queda en rojo para enterarse
+    if fallas > len(VUELOS) // 3:
+        print(f'Faltaron {fallas} de {len(VUELOS)} precios.', file=sys.stderr)
+        sys.exit(2)
+
 
 if __name__ == '__main__':
     main()

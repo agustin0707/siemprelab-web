@@ -1,9 +1,11 @@
-# Actualiza los precios de los vuelos de la prep dos veces al día (08:00 y 20:00 de Chile, aprox.)
+# Actualiza los precios de los vuelos de la prep cada 4 horas.
+# El minuto 23 es a propósito: GitHub atrasa o se salta muchas tareas programadas a la hora en punto.
+# Si faltan varios precios la corrida queda en rojo y GitHub manda un correo.
 name: precios de vuelos
 
 on:
   schedule:
-    - cron: '0 11,23 * * *'
+    - cron: '23 */4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -23,10 +25,18 @@ jobs:
           python-version: '3.12'
       # primp fijo: las versiones nuevas ya no traen el modo "chrome_126" que usa fast-flights
       - run: pip install fast-flights==2.2 primp==0.15.0 protobuf==6.33.6 selectolax==1.0.2 typing_extensions
-      - run: python .github/precios/actualizar.py
+      - id: precios
+        run: python .github/precios/actualizar.py
+        continue-on-error: true
       - name: Guardar si cambió
         run: |
           git config user.name "precios-bot"
           git config user.email "precios-bot@users.noreply.github.com"
           git add agencia/prep/precios.json
-          git diff --cached --quiet || (git commit -m "Precios de vuelos al día" && git push)
+          if ! git diff --cached --quiet; then
+            git commit -m "Precios de vuelos al día"
+            git pull --rebase origin main && git push
+          fi
+      - name: Avisar si faltaron precios
+        if: steps.precios.outcome == 'failure'
+        run: exit 1
