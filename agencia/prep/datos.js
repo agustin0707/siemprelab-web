@@ -33,7 +33,7 @@ const DATOS = {
 
   // Lo que hay que reservar además de pasajes y auto (esos salen de lo elegido en la página). Cotizado el 4 nov.
   reservas: [
-    { id: 'res-acatenango', que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic, o el jue 31 si recibimos el Año Nuevo en el volcán. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
+    { id: 'res-acatenango', que: 'Acatenango con noche en el volcán · Lava Trails', detalle: 'Elegir el lun 28 dic, o el jue 31 si recibimos el Año Nuevo en el volcán. Ojo: el 4 nov la web salía agotada todo diciembre, hay que escribirles por WhatsApp. Abono de USD 50 que devuelven hasta 48 h antes.', precio: 'USD 102 c/u + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
     { id: 'res-antigua', que: 'Hostal en Antigua para Año Nuevo', detalle: 'Del 30 dic al 1 ene. Es lo primero que se llena: con cancelación gratis.', precio: '≈ $45 mil la noche', link: 'https://www.google.com/travel/search?q=hostal%20Antigua%20Guatemala%2030%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
     { id: 'res-anio-nuevo', que: 'Año Nuevo · lo que elijamos', detalle: 'Acatenango el 31 (arriba), mesa en El Tenedor del Cerro (+502 7820-1220) o La Casa del Mundo en Atitlán, que es chica y se llena.', precio: 'según la opción', link: 'https://hotels.cloudbeds.com/reservation/EbWilf', boton: 'Casa del Mundo' },
     { id: 'res-shuttle-flores', que: 'Shuttle Lanquín → Flores', detalle: 'Sale 08:00, unas 8 h. También se compra en el hostal de Lanquín.', precio: 'USD 40 a 45 c/u', link: 'https://turisteando.wetravel.com/trips/shuttle-shuttle-from-lanquin-to-flores-turisteando-7470215393' },
@@ -236,7 +236,7 @@ const DATOS = {
         aloj: [{ n: 'Somos (hostal)', p: 34078, r: '4,7' }, { n: 'Flore Boutique Hostel', p: 52035, r: '4,8' }, { n: 'Casa Donya Boutique', p: 54981, r: '4,8' }, { n: 'Ojala Hotel', p: 82529, r: '4,7' }], base: 1,
         nota: 'Para Año Nuevo, reservar ya.', busca: 'hoteles Antigua Guatemala' },
       { id: 'acatenango', nombre: 'Acatenango', sugeridas: '1 noche (tour de 2 días)', activ: 115000, activNota: 'Lava Trails USD 102 + Q100 de entrada. Incluye cama, comida y guía',
-        dispo: { estado: 'ojo', texto: 'Lava Trails con cupo todo diciembre; OX no recibe reservas del 21 dic al 4 ene' },
+        dispo: { estado: 'agotado', texto: 'Lava Trails sale agotado online todo diciembre (visto el 4 nov); OX no recibe reservas del 21 dic al 4 ene' },
         aloj: [{ n: 'Incluido en el tour', p: 0, r: '' }], base: 0,
         nota: 'Sale de Antigua y vuelve al otro día. Frío bajo cero: arrendar ropa de abrigo.', busca: '' },
       { id: 'atitlan', nombre: 'Lago Atitlán', sugeridas: '3 a 5 noches', activ: 25000, activNota: 'Lanchas entre pueblos Q25 a 35 · Nariz del Indio ≈ Q100',
@@ -473,7 +473,7 @@ const DATOS = {
       llevar: ['Ropa de nieve de verdad: en la cumbre baja de 0 °C (arriendan en la base)', 'Frontal', 'Unos 4 L de agua por persona', 'Zapatos de trekking'],
       ojo: ['Es exigente: mucha subida en arena volcánica', 'OX Expeditions no recibe reservas online del 21 dic al 4 ene'],
       operadores: [{ n: 'Lava Trails', precio: 'USD 102 + Q100', link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' }],
-      dispo: { estado: 'ojo', texto: 'Lava Trails tiene cupo todos los días de diciembre y de enero (menos el 1 ene): USD 102 con cama en el campamento, se reserva con USD 50 de abono que devuelven hasta 48 h antes. OX Expeditions no recibe reservas online del 21 dic al 4 ene. Reservarlo apenas tengamos los vuelos.' },
+      dispo: { estado: 'agotado', texto: 'El 4 nov Lava Trails salía agotado online todo diciembre, incluidos el 28 y el 31 (enero sí tiene cupo). Hay que escribirles por WhatsApp por si liberan camas o buscar otra agencia. OX Expeditions no recibe reservas online del 21 dic al 4 ene.' },
       link: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' },
     { id: 'tikal', nombre: 'Tikal al amanecer', donde: 'Flores', precio: 'Q150 + Q100 el amanecer', nota: 'Shuttle a las 03:00 desde Flores.',
       resumen: 'La ciudad maya más grande, perdida en la selva. Se sube al Templo IV de noche y se espera el amanecer con las puntas de los templos saliendo entre la neblina y los monos aulladores gritando.',
@@ -532,7 +532,7 @@ const DATOS = {
         ['04:00 · 1 ene', 'Subida a la cumbre (3.976 m) para el primer amanecer del año'],
         ['mediodía', 'De vuelta en Antigua a almorzar y dormir']
       ],
-      ojo: ['Hay que correr el Acatenango del 28 al 31 en la ruta (el 28 y 29 quedan para Antigua)', 'Lava Trails tiene cupo saliendo el 31. El que no sale es el del 1 ene', 'Hace frío de verdad: bajo 0 °C en la cumbre', 'Los fuegos artificiales desde arriba dependen de las nubes: no está asegurado', 'El 1 ene hay pocos shuttles: mejor dormir esa noche en Antigua y seguir el 2'],
+      ojo: ['Hay que correr el Acatenango del 28 al 31 en la ruta (el 28 y 29 quedan para Antigua)', 'El 4 nov Lava Trails salía agotado online el 31 (y todo diciembre): preguntarles por WhatsApp o buscar otra agencia', 'Hace frío de verdad: bajo 0 °C en la cumbre', 'Los fuegos artificiales desde arriba dependen de las nubes: no está asegurado', 'El 1 ene hay pocos shuttles: mejor dormir esa noche en Antigua y seguir el 2'],
       links: [{ t: 'Reservar en Lava Trails', url: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' }],
       calza: 'Calza en todas las rutas cambiando el orden de los días en Antigua.' },
     { id: 'ny-antigua', sello: 'el más fiestero', titulo: 'Cena en el cerro y fuegos en la Plaza Mayor', donde: 'Antigua Guatemala', fotos: ['ny-cerro', 'ny-plaza'],
