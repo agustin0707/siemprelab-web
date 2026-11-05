@@ -533,6 +533,10 @@ const DATOS = {
         ['mediodía', 'De vuelta en Antigua a almorzar y dormir']
       ],
       ojo: ['Hay que correr el Acatenango del 28 al 31 en la ruta (el 28 y 29 quedan para Antigua)', 'El 4 nov Lava Trails salía agotado online el 31 (y todo diciembre): preguntarles por WhatsApp o buscar otra agencia', 'Hace frío de verdad: bajo 0 °C en la cumbre', 'Los fuegos artificiales desde arriba dependen de las nubes: no está asegurado', 'El 1 ene hay pocos shuttles: mejor dormir esa noche en Antigua y seguir el 2'],
+      costo: [['tour con carpa y comida', 99000], ['entrada al parque (Q100)', 13000], ['espumante chico para arriba', 5000]],
+      cena: ['La cena caliente la da el tour en el campamento', 'Subir chocolate, maní y algo dulce para la medianoche', 'Un espumante chico (el alcohol pega más a 3.600 m: uno para los dos)', '12 uvas en una bolsa'],
+      llevar: ['Ropa de nieve: bajo 0 °C en la cumbre', 'Frontal con pilas nuevas', 'Bastones (se arriendan en Antigua)', '4 L de agua cada uno'],
+      siFalla: 'Si sigue agotado o el volcán está cerrado, el plan de respaldo es la cena en el cerro y la Plaza Mayor de Antigua.',
       links: [{ t: 'Reservar en Lava Trails', url: 'https://lavatrails.rezdy.com/573187/acatenango-overnight-hike' }],
       calza: 'Calza en todas las rutas cambiando el orden de los días en Antigua.' },
     { id: 'ny-antigua', sello: 'el más fiestero', titulo: 'Cena en el cerro y fuegos en la Plaza Mayor', donde: 'Antigua Guatemala', fotos: ['ny-cerro', 'ny-plaza'],
@@ -547,6 +551,10 @@ const DATOS = {
         ['después', 'A la casa caminando: Antigua es chica']
       ],
       ojo: ['El programa de la muni para el 2027 todavía no sale: revisarlo en diciembre', 'Reservar mesa con tiempo y preguntar si el 31 hacen menú especial (+502 7820-1220)', 'El shuttle del hotel solo corre de viernes a domingo y el 31 es jueves: subir en tuk-tuk o Uber', 'La plaza se repleta: llevar poco en los bolsillos'],
+      costo: [['cena en El Tenedor del Cerro', 23000], ['tuk-tuk o Uber de ida', 3000], ['vino en la plaza', 5000]],
+      cena: ['Menú del 31 en El Tenedor del Cerro (preguntar si hay menú especial)', 'Para la plaza: una botella chica y 12 uvas compradas en el mercado'],
+      llevar: ['Chaqueta liviana: en Antigua refresca de noche', 'Poco en los bolsillos', 'Zapatillas: las calles son de piedra'],
+      siFalla: 'Si llueve, la fiesta igual sigue bajo los portales de la plaza.',
       links: [{ t: 'El Tenedor del Cerro', url: 'https://www.degusta.com.gt/antigua/restaurante/el-tenedor-del-cerro_100559_fecha_3_todos.html' }, { t: 'Año Nuevo en Guatemala', url: 'https://livinginguatemala.com/events/new-years-eve-in-guatemala/' }],
       calza: 'Es el plan de la ruta Clásica + Semuc: ya estamos en Antigua el 30 y 31.' },
     { id: 'ny-atitlan', sello: 'el más romántico', titulo: 'Una pieza colgada en el acantilado del lago', donde: 'La Casa del Mundo · Lago Atitlán', fotos: ['ny-lago'],
@@ -560,6 +568,10 @@ const DATOS = {
         ['1 ene', 'Desayuno con el lago quieto y lancha a San Marcos o San Pedro']
       ],
       ojo: ['Solo se llega en lancha. La última pública sale 19:30 de Panajachel y 17:30 de San Pedro', 'Lo mejor es llegar el 30 y quedarse dos noches', 'La económica (USD 65) es con baño compartido', 'Es chico y se llena: reservar ya (casamundo@gmail.com)'],
+      costo: [['pieza Standard, la mitad', 57000], ['cena familiar', 20000, true], ['lancha ida y vuelta', 5000]],
+      cena: ['Cena familiar del hotel en mesa compartida (reservarla al llegar)', 'Llevar espumante y 12 uvas desde Panajachel'],
+      llevar: ['Linterna para las escaleras del hotel', 'Traje de baño: se nada en el lago', 'Efectivo en quetzales para las lanchas'],
+      siFalla: 'Si el lago se pone bravo en la tarde (el Xocomil), tomar la lancha antes de las 15:00.',
       links: [{ t: 'Reservar en La Casa del Mundo', url: 'https://hotels.cloudbeds.com/reservation/EbWilf' }, { t: 'Cómo es el hotel', url: 'https://www.islands.com/1853329/la-casa-del-mundo-guatemala-most-magical-hotel-breathtaking-hideaway-scenic-lakeside-cliff' }],
       calza: 'Es el plan de la ruta Guatemala + Belice (Año Nuevo en Atitlán). En la Clásica habría que cambiar Antigua por Atitlán el 30 y 31.' }
   ],

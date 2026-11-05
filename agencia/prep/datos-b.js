@@ -9,7 +9,31 @@ const DATOS_B = {
   topePlaya: 800000,
 
   // Black Friday en Chile (Cámara de Comercio de Santiago): vie 27 al lun 30 nov
-  blackFriday: { desde: '2026-11-27', hasta: '2026-11-30' },
+  // Black Friday oficial de la CCS: parte el vie 27 a las 00:00 y termina el lun 30 a las 23:59
+  blackFriday: {
+    desde: '2026-11-27', hasta: '2026-11-30', inicio: '2026-11-27T00:00:00-03:00', fin: '2026-11-30T23:59:00-03:00',
+    descuento: 15, // lo que tiene que bajar vuelo + hotel para comprar en el Black Friday
+    plan: [
+      ['hoy', 'Alertas de precio en Google Vuelos para la playa elegida y para una segunda opción.'],
+      ['esta semana', 'Si hay un hotel chico que nos encanta, reservarlo con cancelación gratis. Así esperamos solo el vuelo.'],
+      ['vie 27 · 00:00', 'Parte el Black Friday: revisar JetSMART, LATAM y los paquetes de Despegar apenas abre.'],
+      ['vie 27 al dom 29', 'Si vuelo + hotel queda bajo el precio objetivo, se compra al tiro.'],
+      ['lun 30', 'Si no bajó, se compra igual ese día: faltan dos semanas para viajar y los precios suben.']
+    ],
+    donde: [
+      { t: 'Sitio oficial (CCS)', url: 'https://www.blackfriday.cl' },
+      { t: 'JetSMART', url: 'https://jetsmart.com/cl/es/' },
+      { t: 'LATAM ofertas', url: 'https://www.latamairlines.com/cl/es/ofertas-vuelos' },
+      { t: 'Paquetes en Despegar', url: 'https://www.despegar.cl/paquetes/' },
+      { t: 'Alertas en Google Vuelos', url: 'https://www.google.com/travel/flights?hl=es&gl=CL&curr=CLP' }
+    ],
+    ojo: [
+      'Comprar solo en los sitios oficiales: en estas fechas aparecen páginas falsas.',
+      'Un "50 % off" puede ser sobre un precio inflado: compararlo con el precio de hoy, que está acá.',
+      'Los paquetes vuelo + hotel a veces bajan más que comprar todo por separado.',
+      'Lo del sur no espera al Black Friday: es temporada alta y quedan pocos autos.'
+    ]
+  },
 
   // ---------- Antes de Navidad: la playa ----------
   // vuelo: ida y vuelta por persona, lun 14 → lun 21 dic (Google Vuelos, 4 nov).
@@ -178,10 +202,10 @@ const DATOS_B = {
       { dias: 'D8 · sáb 2', lugar: 'tortel', titulo: 'Tortel e Isla de los Muertos', detalle: 'Lancha a la isla en la mañana y pasarelas en la tarde.', manejo: 'sin auto' },
       { dias: 'D9 · dom 3', lugar: 'villa-ohiggins', titulo: 'Al fin del camino', detalle: 'Barcaza Yungay → Río Bravo y los últimos 100 km de la Carretera.', manejo: '145 km + barcaza · 4 h' },
       { dias: 'D10 · lun 4', lugar: 'villa-ohiggins', titulo: "Glaciar O'Higgins", detalle: 'Navegación al glaciar si sale ese día. Si no, miradores y el hito del km 1.240.', manejo: 'sin auto' },
-      { dias: 'D11 · mar 5', lugar: 'carretera-austral', titulo: 'De vuelta a Cochrane', detalle: 'Barcaza de vuelta y a Cochrane. Si queda energía, la Reserva Tamango en la tarde.', manejo: '230 km + barcaza · 5 h' },
+      { dias: 'D11 · mar 5', lugar: 'cochrane', titulo: 'De vuelta a Cochrane', detalle: 'Barcaza de vuelta y a Cochrane. Si queda energía, la Reserva Tamango en la tarde.', manejo: '230 km + barcaza · 5 h' },
       { dias: 'D12 · mié 6', lugar: 'chile-chico', titulo: 'Paso Las Llaves a Chile Chico', detalle: 'La vuelta por el otro lado del lago: un camino colgado sobre el General Carrera hasta el pueblo más soleado de Aysén.', manejo: '170 km · 4 h · ripio' },
       { dias: 'D13 · jue 7', lugar: 'chile-chico', titulo: 'Reserva Jeinimeni', detalle: 'Lagunas verdes, la Piedra Clavada y la Cueva de las Manos.', manejo: '60 km por lado · ripio' },
-      { dias: 'D14 · vie 8', lugar: 'cerro-castillo', titulo: 'Cruce del lago y última noche', detalle: 'Barcaza Chile Chico → Puerto Ibáñez (2 h, por confirmar) y a Cerro Castillo. Si no sale, se vuelve por Guadal (6 h).', manejo: '~100 km + barcaza' },
+      { dias: 'D14 · vie 8', lugar: 'puerto-ibanez', titulo: 'Cruce del lago y última noche', detalle: 'Barcaza Chile Chico → Puerto Ibáñez (2 h, por confirmar) y a Cerro Castillo. Si no sale, se vuelve por Guadal (6 h).', manejo: '~100 km + barcaza' },
       { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Salir 07:30, devolver el auto y vuelo 10:17. A mediodía en Santiago.', manejo: '95 km · 1,5 h' }
     ],
     extra: 'Son ~2.100 km. La única pieza por confirmar es la barcaza Chile Chico → Ibáñez: si no está andando, el último día es de 6 h por tierra.'
@@ -204,45 +228,75 @@ const DATOS_B = {
   // fotos: llaves de fotos-panoramas.js o de lugares.js
   anioNuevo: [
     { id: 'nyb-chacabuco', sello: 'el más nuestro', titulo: 'En carpa bajo el cielo del Valle Chacabuco', donde: 'Parque Patagonia · camping West Winds', fotos: ['parque-patagonia'],
-      precio: 'camping ≈ $10 mil c/u',
-      resumen: 'Recibir el año en carpa, con guanacos alrededor y el valle abierto sin una luz. A fin de diciembre el sol se pone pasadas las 21:30 y a medianoche el cielo recién se está poniendo negro: después salen las estrellas del sur.',
+      precio: 'camping ≈ $10 mil c/u + la cena que llevemos', costo: [['camping', 10000], ['picoteo y cena', 25000], ['espumante y uvas', 10000]],
+      resumen: 'Recibir el año en carpa, con guanacos alrededor y el valle abierto sin una luz. El sol se pone como a las 21:50 y a medianoche el cielo recién se está poniendo negro: después sale la Vía Láctea completa.',
       noche: [
-        ['mañana 31', 'Lagunas Altas (6 h) o los miradores cortos si estamos cansados'],
-        ['20:00', 'Cena especial en la cocinilla, comprada en Coyhaique, y un vino'],
-        ['21:45', 'Se pone el sol detrás de los cerros'],
+        ['10:00', 'Lagunas Altas: 6 h de sendero con el valle entero abajo (o los miradores cortos si amanecemos cansados)'],
+        ['16:30', 'Ducha caliente en el camping y siesta'],
+        ['19:00', 'Picoteo con lo comprado en Coyhaique'],
+        ['20:30', 'Cena en la cocinilla y un vino bueno'],
+        ['21:50', 'Se pone el sol detrás de los cerros: la foto del último atardecer del 2026'],
+        ['23:00', 'Cartas al nosotros del 2027'],
+        ['23:59', 'Las 12 uvas'],
         ['00:00', 'Brindis afuera de la carpa'],
-        ['después', 'Estrellas: el valle no tiene luz artificial'],
+        ['00:30', 'Estrellas: el valle no tiene luz artificial'],
         ['1 ene', 'Desayuno con guanacos y bajada a Cochrane']
       ],
-      ojo: ['Hace frío de noche: sacos para bajo 0 °C', 'En el parque no se vende nada: llevar todo desde Coyhaique', 'No se pueden hacer fogatas', 'Preguntar a CONAF (aysen.oirs@conaf.cl) si el camping se reserva para esa noche'],
-      links: [{ t: 'Camping West Winds', url: 'https://www.google.com/search?q=camping+West+Winds+Parque+Nacional+Patagonia' }],
+      cena: ['Picoteo: queso de campo, salame, salmón ahumado y aceitunas', 'Risotto de hongos o pasta con camarones, en la cocinilla', 'Brownies o kuchen de una pastelería de Coyhaique', 'Espumante enfriado en el río', '12 uvas cada uno'],
+      mejora: 'Si queremos darnos un gusto: el restaurant del lodge Explora, en el mismo valle, atiende con reserva de 24 h (cena de 19:00 a 21:00, carnes y verduras a la parrilla). Hay que preguntar si abre el 31 y cuánto sale: +56 22 5830350. Después volvemos a la carpa para las 12.',
+      llevar: ['Sacos para bajo 0 °C y una frazada extra', 'Lucecitas a pilas para la carpa', 'Copas de plástico y sacacorchos', 'Parlante chico con la playlist', 'Papel y lápiz para las cartas', 'Gorro, guantes y termo con agua caliente'],
+      siFalla: 'Si el día viene con lluvia fuerte o mucho viento, tener cotizada una cabaña en Cochrane (a 30 min) y decidir esa mañana.',
+      ojo: ['Hace frío de noche: puede bajar de 0 °C', 'En el parque no se vende nada: todo se compra en Coyhaique o Cochrane', 'No se pueden hacer fogatas: la cena es en cocinilla', 'Preguntar a CONAF (aysen.oirs@conaf.cl) si el camping se reserva para esa noche'],
+      links: [{ t: 'Camping West Winds', url: 'https://www.google.com/search?q=camping+West+Winds+Parque+Nacional+Patagonia' }, { t: 'Restaurant del lodge', url: 'https://explora.com/servicio-de-restaurant-parque-nacional-patagonia-eng' }],
       calza: 'Es el plan del itinerario: el 30 y el 31 en el Valle Chacabuco.' },
-    { id: 'nyb-tinaja', sello: 'el más romántico', titulo: 'Cabaña con el lago al frente', donde: 'Puerto Guadal o Bertrand', fotos: ['general-carrera'],
-      precio: 'Sol de la Patagonia $75.829 la noche (≈ $38 mil c/u) · El Arrayán $182.676 (≈ $91 mil c/u)',
-      resumen: 'Una noche con techo a mitad del viaje: el General Carrera turquesa al frente, ducha caliente, la cena en una cocina de verdad y, si se puede, tinaja al aire libre.',
+    { id: 'nyb-tinaja', sello: 'el más romántico', titulo: 'Cabaña con tinaja y el lago al frente', donde: 'Puerto Guadal o Bertrand', fotos: ['general-carrera', 'confluencia-baker'],
+      precio: 'Sol de la Patagonia $75.829 la noche (≈ $38 mil c/u) · El Arrayán $182.676 (≈ $91 mil c/u)', costo: [['cabaña, la mitad', 38000], ['tinaja si se cobra aparte', 15000, true], ['cena', 25000], ['espumante y uvas', 10000]],
+      resumen: 'Una noche con techo a mitad del viaje: el General Carrera turquesa al frente, ducha larga, la cena en una cocina de verdad y, si la cabaña tiene, tinaja caliente al aire libre mientras se pone el sol.',
       noche: [
-        ['mañana 31', 'Lagunas Altas y bajada a Guadal (1,5 h)'],
-        ['atardecer', 'Tinaja o terraza mirando el lago'],
-        ['cena', 'Algo rico cocinado sin apuro'],
-        ['00:00', 'Brindis con el lago y el cielo todavía claro'],
-        ['1 ene', 'Desayuno y a Cochrane y Tortel (3,5 h)']
+        ['10:00', 'Lagunas Altas temprano o los miradores del valle'],
+        ['15:30', 'Bajamos a Guadal o Bertrand (1 a 1,5 h)'],
+        ['17:00', 'Ducha larga y el lago al frente'],
+        ['19:00', 'Tinaja caliente mirando el lago'],
+        ['20:30', 'Cena sin apuro en la cabaña'],
+        ['21:50', 'Atardecer sobre el General Carrera desde la terraza'],
+        ['23:30', 'Lo mejor del 2026: tres momentos cada uno'],
+        ['23:59', 'Las 12 uvas'],
+        ['00:00', 'Brindis en la terraza, con el cielo todavía claro'],
+        ['1 ene', 'Desayuno con calma y a Cochrane y Tortel (3,5 h)']
       ],
-      ojo: ['Preguntar si la cabaña tiene tinaja y si se paga aparte', 'Cambia el orden: el 31 se duerme en Guadal en vez del valle', 'Es la noche más pedida: reservar apenas compremos'],
-      links: [{ t: 'Ver cabañas para el 31', url: 'https://www.google.com/travel/search?q=alojamiento%20Puerto%20Guadal%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP' }],
+      cena: ['Salmón o lomo comprado en Coyhaique, a la plancha', 'Papas con mantequilla de campo y ensalada chilena', 'Kuchen o torta de mil hojas', 'Espumante y un tinto', '12 uvas cada uno'],
+      llevar: ['Traje de baño y toalla para la tinaja', 'Velas o lucecitas', 'Parlante con la playlist', 'Papel y lápiz para las cartas'],
+      siFalla: 'Sirve con cualquier clima: si llueve, la noche es adentro con la estufa a leña.',
+      ojo: ['Preguntar si la cabaña tiene tinaja y si se paga aparte', 'Cambia el orden: el 31 se duerme en Guadal o Bertrand en vez del valle', 'Es la noche más pedida del verano: reservar apenas compremos los pasajes'],
+      links: [{ t: 'Ver cabañas en Guadal', url: 'https://www.google.com/travel/search?q=caba%C3%B1as%20con%20tinaja%20Puerto%20Guadal%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP' }, { t: 'Ver en Bertrand', url: 'https://www.google.com/travel/search?q=caba%C3%B1as%20Puerto%20Bertrand%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP' }],
       calza: 'Se baja a dormir a Guadal o Bertrand el 31 y el 1 se sigue a Tortel.' },
-    { id: 'nyb-tortel', sello: 'el más distinto', titulo: 'Fin de año en Caleta Tortel', donde: 'Caleta Tortel', fotos: ['tortel'],
-      precio: 'hospedaje familiar ~$40 a 60 mil la noche',
-      resumen: 'Recibir el año en el pueblo de pasarelas sobre el fiordo, en una casa familiar. Es chico y tranquilo: no hay fiesta organizada publicada, es más de pueblo que de fuegos artificiales.',
+    { id: 'nyb-tortel', sello: 'el más distinto', titulo: 'Fin de año sobre las pasarelas de Tortel', donde: 'Caleta Tortel', fotos: ['tortel'],
+      precio: 'hospedaje familiar ≈ $40 a 60 mil la noche', costo: [['hospedaje, la mitad', 25000], ['cena casera', 15000, true], ['espumante y uvas', 10000]],
+      resumen: 'Recibir el año en el pueblo de pasarelas de ciprés sobre el fiordo, en una casa familiar. Es chico y tranquilo: no hay fiesta publicada, es más de pueblo que de fuegos artificiales, y por eso mismo es otra cosa.',
       noche: [
-        ['tarde 31', 'Llegamos desde el Valle Chacabuco (4 h)'],
-        ['atardecer', 'Pasarelas hasta el mirador'],
-        ['cena', 'Cena casera en el hospedaje'],
-        ['00:00', 'Brindis sobre el agua'],
-        ['1 ene', 'Isla de los Muertos si la lancha sale']
+        ['13:00', 'Salimos del Valle Chacabuco y llenamos el estanque en Cochrane'],
+        ['17:00', 'Llegamos a Tortel: el auto queda arriba, el pueblo es todo pasarelas'],
+        ['18:30', 'Caminata por las pasarelas hasta el mirador'],
+        ['20:30', 'Cena casera en el hospedaje'],
+        ['21:50', 'Atardecer sobre el fiordo'],
+        ['23:59', 'Las 12 uvas en la pasarela'],
+        ['00:00', 'Brindis sobre el agua, con lo que haga el pueblo'],
+        ['1 ene', 'Lancha a la Isla de los Muertos si sale']
       ],
+      cena: ['Cena casera del hospedaje: preguntar al reservar si hacen merluza austral o cordero', 'Si no cocinan: algo simple en la cocinilla y queso de Cochrane', 'Espumante comprado en Cochrane (en Tortel hay poco)', '12 uvas cada uno'],
+      llevar: ['Linterna: las pasarelas tienen poca luz', 'Chaqueta de agua: en Tortel llueve seguido', 'Efectivo: no siempre aceptan tarjeta'],
+      siFalla: 'Es la opción más expuesta a la lluvia, pero la noche es adentro de una casa.',
       ojo: ['Nada publica precio en línea: reservar por WhatsApp', 'En Tortel no hay bencina', 'Se corre un día: Valle Chacabuco el 30 y Tortel el 31'],
       links: [{ t: 'Buscar en Tortel', url: 'https://www.google.com/travel/search?q=alojamiento%20Caleta%20Tortel%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP' }],
       calza: 'Se adelanta Tortel un día y queda un día libre en O\'Higgins.' }
+  ],
+  // Lo que hacemos el 31 elijamos lo que elijamos (sirve para los dos planes)
+  rituales: [
+    ['las 12 uvas', 'Una por mes, con un deseo cada una. Se compran antes, en el súper.'],
+    ['cartas al 2027', 'Cada uno escribe una carta al "nosotros" del próximo año. Se guardan y se abren el 31 de diciembre de 2027.'],
+    ['lo mejor del 2026', 'Tres momentos cada uno, sin repetir. El que se ríe primero pierde.'],
+    ['la primera foto', 'La primera foto del 2027, los dos, donde estemos. Va a la pared.'],
+    ['la playlist', 'Una canción por mes del año, elegida a medias. Suena desde las 23:00.']
   ],
 
   // Panoramas que solo están en el plan B (los demás son los de la Austral del plan A)

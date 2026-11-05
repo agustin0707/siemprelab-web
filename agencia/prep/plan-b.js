@@ -68,6 +68,8 @@ const diaSemana = (d) => ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'][new
 const linkVueloPlaya = (o) => `https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20${o.vuelo.codigo}%20on%202026-12-14%20through%202026-12-${diaVueltaPlaya()}&curr=CLP&hl=es&gl=CL`;
 const linkHotel = (h) => busquedaHoteles(`${h.n} 14 al ${diaVueltaPlaya()} de diciembre 2026`);
 const linkLatamB = (o, d, fecha) => `https://www.latamairlines.com/cl/es/ofertas-vuelos?origin=${o}&inbound=null&outbound=${fecha}T15%3A00%3A00.000Z&destination=${d}&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=false&sort=RECOMMENDED`;
+// Las fotos de los hoteles no son libres: se abren en Google Imágenes
+const fotosHotel = (h, o) => `https://www.google.com/search?tbm=isch&hl=es&q=${encodeURIComponent(`${h.n} ${o.vuelo.ciudad || LUGARES[o.lugar].nombre} hotel`)}`;
 const nombreCorto = (o) => o.nombre.replace(' todo incluido', '').replace('Caribe en ', '');
 
 // ---------- Qué plan se ve ----------
@@ -157,6 +159,7 @@ function pintarPlayas() {
               <button type="button" data-hotel="${o.id}:${i}" aria-selected="${i === indiceHotel(o)}">${x.n} <span class="mono">★ ${x.r}</span><b>${CLP(x.p)}</b></button>`).join('')}
             </div>
             <small>${h.tipo} · ${h.zona} · la noche para los dos</small>
+            <a class="link fotos-hotel" href="${fotosHotel(h, o)}" target="_blank" rel="noopener">fotos de ${h.n}, piezas y piscina ↗</a>
           </div>
         </div>
         <div class="playa-cuenta">
@@ -202,25 +205,73 @@ $('#noches-playa').addEventListener('click', (e) => {
 function repintarPlaya() {
   pintarPlayas();
   pintarCuandoComprar();
+  pintarBlackFriday();
   sincronizarSelectsB();
   calcularB();
 }
 
 // ¿Ahora o en el Black Friday?
 function pintarCuandoComprar() {
-  const dias = diasHasta(DATOS_B.blackFriday.desde + 'T12:00:00-03:00');
+  const dias = diasHasta(DATOS_B.blackFriday.inicio); // el mismo momento que la cuenta regresiva
   const o = playaElegida();
   const c = costoPlaya(o);
-  const objetivo = Math.round((c.base * 0.85) / 1000) * 1000;
+  const BF = DATOS_B.blackFriday;
+  const objetivo = Math.round((c.base * (1 - BF.descuento / 100)) / 1000) * 1000;
   const cuando = dias > 1 ? `en ${dias} días` : dias === 1 ? 'mañana' : dias === 0 ? 'hoy' : 'ya pasó';
   $('#cuando-comprar').innerHTML = `
     <div class="aviso fuerte"><span class="etiqueta">la austral larga · el viernes</span>
       <p>Los vuelos del 26 dic y del 9 ene Google los marca <strong>caros</strong>: es temporada alta y no van a bajar. Del auto quedaban 4 en Kayak. <strong>Pasajes, auto y lo que se llena se compran el viernes.</strong></p></div>
     <div class="aviso"><span class="etiqueta">la playa · puede esperar</span>
-      <p>El Black Friday es del vie 27 al lun 30 nov (${cuando}). Hoy los vuelos a Brasil están en precio normal. Si aparece un paquete de vuelo + hotel para ${nombreCorto(o)} bajo <strong>${CLP(objetivo)} c/u</strong> (15 % menos que hoy), se compra. Si no, se compra igual el lunes 30.</p></div>
+      <p>El Black Friday es del vie 27 al lun 30 nov (${cuando}). Hoy los vuelos a Brasil están en precio normal. Si aparece un paquete de vuelo + hotel para ${nombreCorto(o)} bajo <strong>${CLP(objetivo)} c/u</strong> (${BF.descuento} % menos que hoy), se compra. Si no, se compra igual el lunes 30.</p></div>
     <div class="aviso"><span class="etiqueta">el riesgo de esperar</span>
       <p>Entre el Black Friday y el viaje quedan dos semanas y los hoteles chicos se llenan. Si hay uno que nos encanta, <strong>reservarlo ahora con cancelación gratis</strong> y dejar para el Black Friday solo el vuelo.</p></div>`;
 }
+
+// ---------- Black Friday: tabla de objetivos, plan y links ----------
+function pintarBlackFriday() {
+  const BF = DATOS_B.blackFriday;
+  const tope = DATOS_B.topePlaya;
+  const filas = BP.opciones.map((o) => {
+    const h = hotelDe(o);
+    const c = costoPlaya(o, h);
+    const meta = Math.round((c.base * (1 - BF.descuento / 100)) / 1000) * 1000;
+    const hoy = c.base <= tope;
+    const conBF = meta <= tope;
+    const estado = hoy ? '<span class="bf-si">ya entra</span>'
+      : conBF ? '<span class="bf-quizas">entra si baja</span>'
+      : `<span class="bf-no">no entra ni con ${BF.descuento} %</span>`;
+    return `<tr${o.id === opcionesB.playa ? ' class="elegida"' : ''}>
+      <td><strong>${nombreCorto(o)}</strong><small>${h.n}${h.todoIncluido ? ' · todo incluido' : ''}</small></td>
+      <td class="mono">${CLP(c.base)}</td>
+      <td class="mono">${CLP(meta)}</td>
+      <td>${estado}</td></tr>`;
+  }).join('');
+  $('#bf-tabla').innerHTML = `<thead><tr><th>playa y hotel</th><th>hoy</th><th>objetivo (−${BF.descuento} %)</th><th>tope $800 mil</th></tr></thead><tbody>${filas}</tbody>`;
+  $('#bf-plan').innerHTML = BF.plan.map(([cuando, que]) => `<li><span>${cuando}</span>${que}</li>`).join('');
+  $('#bf-links').innerHTML = BF.donde.map((l) => `<a class="link" href="${l.url}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('');
+  $('#bf-ojo').innerHTML = BF.ojo.map((x) => `<li>${x}</li>`).join('');
+}
+
+// Cuenta regresiva al Black Friday (se actualiza cada segundo)
+function pintarCuentaBF() {
+  const BF = DATOS_B.blackFriday;
+  const ahora = Date.now();
+  const ini = new Date(BF.inicio).getTime();
+  const fin = new Date(BF.fin).getTime();
+  const caja = $('#bf-cuenta');
+  if (!caja) return;
+  if (ahora >= fin) { caja.innerHTML = '<p class="bf-estado">El Black Friday ya pasó.</p>'; return; }
+  if (ahora >= ini) { caja.innerHTML = '<p class="bf-estado vivo">Está pasando ahora: hasta el lun 30 a las 23:59.</p>'; return; }
+  let s = Math.floor((ini - ahora) / 1000);
+  const d = Math.floor(s / 86400); s -= d * 86400;
+  const h = Math.floor(s / 3600); s -= h * 3600;
+  const m = Math.floor(s / 60); s -= m * 60;
+  const dos = (n) => String(n).padStart(2, '0');
+  caja.innerHTML = [[d, 'días'], [dos(h), 'horas'], [dos(m), 'min'], [dos(s), 'seg']]
+    .map(([n, t]) => `<div><b>${n}</b><span>${t}</span></div>`).join('');
+}
+pintarCuentaBF();
+setInterval(pintarCuentaBF, 1000);
 
 // ---------- B2. La Austral larga ----------
 function tarjetaTramoB(t, tipo) {
@@ -324,6 +375,7 @@ function pintarRutaB() {
         <p>${p.detalle}</p>
         ${p.manejo ? `<span class="manejo">${p.manejo}</span>` : ''}
       </button>
+      ${fotosParada(p)}
     </li>`).join('');
   mediaB.mostrarLugar('chile-chico', false);
   mediaB.definirRuta(r.mapaRuta, 'ruta: austral larga', 'Ida hasta Villa O\'Higgins y vuelta por Chile Chico y la barcaza a Puerto Ibáñez.');
@@ -365,7 +417,8 @@ function pintarAnioNuevoB() {
           <p>${n.resumen}</p>
           <ol class="noche-horas">${n.noche.map(([h, q]) => `<li><span>${h}</span>${q}</li>`).join('')}</ol>
           <p class="dispo-texto">${n.calza}</p>
-          <details class="actividad-mas"><summary>lo que hay que saber</summary>${bloqueLista('ojo', n.ojo)}</details>
+          ${costoNoche(n)}
+          ${detalleNoche(n)}
           <div class="noche-links">
             <button type="button" class="boton${elegido ? ' elegido' : ''}" data-b-elegir-ny="${n.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir'}</button>
             ${n.links.map((l) => `<a class="link" href="${l.url}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('')}
@@ -373,6 +426,7 @@ function pintarAnioNuevoB() {
         </div>
       </article>`;
   }).join('');
+  pintarRituales('rituales-b');
 }
 $('#b-anio-nuevo').addEventListener('click', (e) => {
   const b = e.target.closest('[data-b-elegir-ny]');
@@ -630,6 +684,7 @@ document.addEventListener('repintar-precios', () => repintarTodoB());
 function repintarTodoB() {
   pintarPlayas();
   pintarCuandoComprar();
+  pintarBlackFriday();
   pintarAustralB();
   pintarAutosB();
   pintarDormirB();
@@ -641,6 +696,7 @@ function repintarTodoB() {
 // ---------- Inicio ----------
 pintarPlayas();
 pintarCuandoComprar();
+pintarBlackFriday();
 pintarAustralB();
 pintarAutosB();
 pintarRutaB();

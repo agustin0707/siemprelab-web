@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=22">
+  <link rel="stylesheet" href="prep.css?v=23">
   <!-- Plan A (Austral + Guatemala) o plan B (playa + Austral larga): se marca antes de pintar para que no parpadee -->
   <script>
     (function () {
@@ -110,6 +110,7 @@
     <a href="#datos" data-solo="a">datos</a>
     <a href="#compra" data-solo="a">junta</a>
     <a href="#playa" data-solo="b">playa</a>
+    <a href="#black-friday" data-solo="b">black friday</a>
     <a href="#austral-larga" data-solo="b">austral larga</a>
     <a href="#presupuesto-b" data-solo="b">presupuesto</a>
     <a href="#datos-b" data-solo="b">datos</a>
@@ -328,6 +329,7 @@
       </div>
       <p class="nota nota-arriba">Tres formas de pasar la noche, cada una con su plan hora a hora. Las fotos se deslizan.</p>
       <div class="anio-nuevo" id="anio-nuevo"></div>
+      <div class="rituales" id="rituales-a"></div>
 
       <div class="sub-cabeza">
         <span class="etiqueta">qué hacer · por persona · cupos vistos el 3 nov</span>
@@ -499,11 +501,26 @@
       <p class="nota" data-playa-descartados></p>
       <p class="nota">Vuelos ida y vuelta por persona del lun 14 al lun 21 en Google Vuelos; con otras noches cambia el día de vuelta y el precio se puede mover. Hoteles: pieza doble por noche en Google Hoteles para esas fechas. Traslados ≈ estimados.</p>
 
-      <div class="sub-cabeza">
-        <span class="etiqueta">¿ahora o en el black friday? · vie 27 al lun 30 nov</span>
-        <h3>Cuándo comprar cada cosa</h3>
+      <!-- Black Friday: cuenta regresiva, precio objetivo por playa y plan de esos días -->
+      <div class="black-friday" id="black-friday">
+        <div class="bf-cabeza">
+          <div>
+            <span class="etiqueta">¿ahora o en el black friday? · vie 27 al lun 30 nov</span>
+            <h3>Black Friday: cuándo comprar cada cosa</h3>
+          </div>
+          <div class="bf-cuenta" id="bf-cuenta"></div>
+        </div>
+        <div class="cuando-comprar" id="cuando-comprar"></div>
+        <span class="etiqueta bf-titulo">precio objetivo de cada playa · por persona</span>
+        <div class="tabla-marco"><table class="tabla bf-tabla" id="bf-tabla"></table></div>
+        <div class="bf-cols">
+          <div><span class="etiqueta">el plan de esos días</span><ol class="bf-plan" id="bf-plan"></ol></div>
+          <div>
+            <span class="etiqueta">dónde mirar</span><div class="noche-links bf-links" id="bf-links"></div>
+            <span class="etiqueta">ojo</span><ul class="bf-ojo" id="bf-ojo"></ul>
+          </div>
+        </div>
       </div>
-      <div class="cuando-comprar" id="cuando-comprar"></div>
     </section>
 
     <!-- ---------- B2. La Austral larga ---------- -->
@@ -571,6 +588,7 @@
       </div>
       <p class="nota nota-arriba">Tres formas de pasar la noche, cada una con su plan hora a hora. Toca "elegir" en la que más te guste.</p>
       <div class="anio-nuevo" id="b-anio-nuevo"></div>
+      <div class="rituales" id="rituales-b"></div>
 
       <div class="sub-cabeza">
         <span class="etiqueta">qué hacer · por persona</span>
@@ -698,11 +716,12 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=22"></script>
-  <script src="datos-b.js?v=22"></script>
-  <script src="lugares.js?v=22"></script>
-  <script src="fotos-panoramas.js?v=22"></script>
-  <script src="prep.js?v=22"></script>
-  <script src="plan-b.js?v=22"></script>
+  <script src="datos.js?v=23"></script>
+  <script src="datos-b.js?v=23"></script>
+  <script src="lugares.js?v=23"></script>
+  <script src="fotos-panoramas.js?v=23"></script>
+  <script src="prep.js?v=23"></script>
+  <script src="plan-b.js?v=23"></script>
+  <script src="visor.js?v=23"></script>
 </body>
 </html>

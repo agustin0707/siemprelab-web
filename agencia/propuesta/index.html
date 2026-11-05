@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="propuesta.css?v=5">
+  <link rel="stylesheet" href="propuesta.css?v=6">
 </head>
 <body>
 
@@ -84,9 +84,38 @@
         <span class="etiqueta" data-a>02 / antes de navidad</span>
         <h2 data-a>Una semana de playa, barata</h2>
         <p class="bajada" data-a>Salimos el lunes 14, con el matrimonio ya pasado. La idea: que vuelo, hotel y traslados no pasen de $800 mil cada uno.</p>
+        <div class="eleccion" data-a>
+          <span class="eleccion-pregunta">¿cuántas noches?</span>
+          <div class="interruptor" data-decision="nochesPlaya">
+            <button data-valor="5">5</button>
+            <button data-valor="6">6</button>
+            <button data-valor="7">7</button>
+            <button data-valor="8">8</button>
+          </div>
+        </div>
         <div class="opciones-ny cinco" id="opciones-playa" data-a></div>
         <div class="noche-elegida" id="playa-elegida" data-a></div>
         <p class="nota-eleccion clara" id="playa-cuando" data-a></p>
+      </div>
+    </section>
+
+    <!-- ---------- 2c. Black Friday (solo plan B) ---------- -->
+    <section class="lamina clara" data-nombre="black friday" data-solo="b">
+      <div class="contenido">
+        <div class="cabeza-fila">
+          <div>
+            <span class="etiqueta" data-a>03 / black friday</span>
+            <h2 data-a>¿Esperamos al Black Friday?</h2>
+          </div>
+          <div class="bf-reloj" id="bf-reloj" data-a></div>
+        </div>
+        <p class="nota-eleccion" data-a>Es del viernes 27 al lunes 30 de noviembre. Lo del sur no espera: es temporada alta y quedan pocos autos. La playa sí puede esperar.</p>
+        <div class="bf-juego" data-a>
+          <label class="bf-pregunta" for="bf-rango">Si vuelo + hotel bajan un <b id="bf-pct">15 %</b>, ¿qué playas entran en los $800 mil?</label>
+          <input type="range" id="bf-rango" min="0" max="40" step="5" value="15">
+          <div class="bf-barras" id="bf-barras"></div>
+        </div>
+        <ol class="bf-pasos" id="bf-pasos" data-a></ol>
       </div>
     </section>
 
@@ -98,6 +127,7 @@
           <span class="etiqueta" data-a data-solo="b">03 / austral larga</span>
           <h2 data-a data-solo="a">Retomamos donde quedamos</h2>
           <h2 data-a data-solo="b">Ahora sí, entera</h2>
+          <p class="susurro" data-a data-solo="b">como te gusta...</p>
           <p class="bajada" data-a data-solo="a">El año pasado llegamos hasta Cerro Castillo. Esta vez seguimos hasta donde se acaba el camino.</p>
           <p class="bajada" data-a data-solo="b">El año pasado llegamos hasta Cerro Castillo. Esta vez bajamos hasta donde se acaba el camino y volvemos por el otro lado del lago, por Chile Chico.</p>
           <div class="cifras chicas" id="cifras-austral" data-a></div>
@@ -244,6 +274,7 @@
         <h2 data-a>¿Dónde recibimos el 2027?</h2>
         <div class="opciones-ny" id="opciones-ny" data-a></div>
         <div class="noche-elegida" id="noche-elegida" data-a></div>
+        <div class="rituales" id="rituales" data-a></div>
       </div>
     </section>
 
@@ -317,10 +348,11 @@
   </div>
 
   <!-- Los datos vienen de la prep: si cambian allá, cambian acá -->
-  <script src="../prep/datos.js?v=22"></script>
-  <script src="../prep/datos-b.js?v=22"></script>
-  <script src="../prep/lugares.js?v=22"></script>
-  <script src="../prep/fotos-panoramas.js?v=22"></script>
-  <script src="propuesta.js?v=6"></script>
+  <script src="../prep/datos.js?v=23"></script>
+  <script src="../prep/datos-b.js?v=23"></script>
+  <script src="../prep/lugares.js?v=23"></script>
+  <script src="../prep/fotos-panoramas.js?v=23"></script>
+  <script src="../prep/visor.js?v=23"></script>
+  <script src="propuesta.js?v=7"></script>
 </body>
 </html>

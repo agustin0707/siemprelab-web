@@ -64,7 +64,7 @@ const totalAuto = (a) => precioDe(esB() ? a.total : decisiones.vuelta === '24' ?
 // La playa del plan B: el hotel y las noches son los de la prep si se eligió la misma playa
 const playaElegida = () => B.playa.opciones.find((o) => o.id === decisiones.playa) || B.playa.opciones[0];
 const nombreCorto = (o) => o.nombre.replace(' todo incluido', '').replace('Caribe en ', '');
-const nochesPlaya = () => (resumenB() && resumenB().noches) || B.playa.noches;
+const nochesPlaya = () => Number(decisiones.nochesPlaya) || (resumenB() && resumenB().noches) || B.playa.noches;
 function hotelPlaya(o) {
   const r = resumenB();
   return (r && r.playaId === o.id && o.hoteles.find((h) => h.n === r.hotel)) || o.hoteles[o.base];
@@ -109,7 +109,8 @@ function fondoRotativo(caja, credito, fotos, cada = 6000) {
 
 // Interruptores de dos opciones (la píldora se mueve a la elegida)
 function pintarInterruptor(caja) {
-  const valor = decisiones[caja.dataset.decision];
+  // Las noches de playa parten en las de la prep aunque aún no se toquen acá
+  const valor = caja.dataset.decision === 'nochesPlaya' ? String(nochesPlaya()) : decisiones[caja.dataset.decision];
   let pildora = $('.pildora', caja);
   if (!pildora) { pildora = document.createElement('i'); pildora.className = 'pildora'; caja.prepend(pildora); }
   $$('button', caja).forEach((b) => {
@@ -198,6 +199,21 @@ function pintarCalendario() {
   $('#cifras-verano').innerHTML = cifras.map(([n, t]) => `<div><b>${n}</b><span>${t}</span></div>`).join('');
 }
 
+// ---------- Fotos que se abren en grande ----------
+// Miniatura liviana de Commons (330 px es un ancho estándar que Wikimedia sí sirve)
+const miniatura = (src) => String(src).replace(/\/(1280|1920)px-/, '/330px-');
+const comillas = (t) => String(t || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+// Las fotos de los hoteles no son libres: se abren en Google Imágenes
+const fotosHotel = (h, o) => `https://www.google.com/search?tbm=isch&hl=es&q=${encodeURIComponent(`${h.n} ${LUGARES[o.lugar].nombre} hotel`)}`;
+function tiraFotos(llaves, titulo, max = 5) {
+  const lista = [].concat(llaves).flatMap((k) => fotosDe(k));
+  if (!lista.length) return '';
+  const resto = lista.length - max;
+  return `<div class="tira-fotos">${lista.slice(0, max).map((f, i) =>
+    `<button type="button" data-visor-lugar="${[].concat(llaves).join(',')}" data-visor-i="${i}" data-visor-titulo="${comillas(titulo)}" aria-label="Ver foto ${i + 1}">
+      <img src="${miniatura(f.src)}" alt="" loading="lazy">${i === max - 1 && resto > 0 ? `<span>+${resto}</span>` : ''}</button>`).join('')}</div>`;
+}
+
 // ---------- 2b. La playa (plan B) ----------
 function pintarPlaya() {
   const n = nochesPlaya();
@@ -224,9 +240,11 @@ function pintarPlaya() {
   $('#playa-elegida').innerHTML = `
     <div class="ne-cabeza"><b>${o.nombre} · ${milCLP(c.base)} c/u</b><span>${dentro ? `dentro de los $800 mil: sobran ${milCLP(B.topePlaya - c.base)}` : `se pasa de los $800 mil por ${milCLP(c.base - B.topePlaya)}`}</span></div>
     <ol class="horas">${filas.map(([h, q], i) => `<li style="animation-delay:${i * 80}ms"><span>${h}</span><p>${q}</p></li>`).join('')}</ol>
-    <p class="ne-pie">${o.resumen}</p>`;
-  const objetivo = Math.round((c.base * 0.85) / 1000) * 1000;
-  $('#playa-cuando').innerHTML = `¿Ahora o en el Black Friday (vie 27 al lun 30 nov)? Si aparece vuelo + hotel bajo <b>${milCLP(objetivo)}</b> c/u, se compra. Si no, se compra igual el lunes 30.`;
+    <p class="ne-pie">${o.resumen}</p>
+    ${tiraFotos(o.lugar, o.nombre, 6)}
+    <a class="link-claro" href="${fotosHotel(c.h, o)}" target="_blank" rel="noopener">las fotos de ${c.h.n} (piezas, piscina y comida) ↗</a>`;
+  const objetivo = Math.round((c.base * (1 - B.blackFriday.descuento / 100)) / 1000) * 1000;
+  $('#playa-cuando').innerHTML = `¿Ahora o en el Black Friday (vie 27 al lun 30 nov)? Si aparece vuelo + hotel bajo <b>${milCLP(objetivo)}</b> c/u, se compra. Si no, se compra igual el lunes 30. <button class="link-claro" data-ir-nombre="black friday">ver el plan →</button>`;
 }
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-playa]');
@@ -242,6 +260,47 @@ document.addEventListener('click', (e) => {
   $$('.cal-tramo').forEach((x) => x.classList.toggle('elegido', x === t));
   $('#detalle-cal').innerHTML = dato.d;
 });
+
+// ---------- 2c. Black Friday (plan B) ----------
+const BF = B.blackFriday;
+function pintarBlackFriday() {
+  const rango = $('#bf-rango');
+  const pct = Number(rango.value);
+  $('#bf-pct').textContent = `${pct} %`;
+  rango.style.setProperty('--lleno', `${(pct / 40) * 100}%`);
+  const n = nochesPlaya();
+  const max = 1600000; // la barra va de $0 a $1,6 M: el tope queda al medio
+  $('#bf-barras').innerHTML = B.playa.opciones.map((o) => {
+    const c = costoPlaya(o, n);
+    const con = Math.round((c.base * (1 - pct / 100)) / 1000) * 1000;
+    const entra = con <= B.topePlaya;
+    return `<div class="bf-fila${entra ? ' entra' : ''}${decisiones.playa === o.id ? ' es-la' : ''}">
+      <span class="bf-nombre">${nombreCorto(o)}</span>
+      <div class="bf-barra"><i style="width:${Math.min(100, (con / max) * 100)}%"></i><b style="left:${(B.topePlaya / max) * 100}%"></b></div>
+      <span class="bf-monto">${milCLP(con)}${pct ? `<s>${milCLP(c.base)}</s>` : ''}</span>
+      <span class="bf-sello">${entra ? 'entra ✓' : `faltan ${milCLP(con - B.topePlaya)}`}</span>
+    </div>`;
+  }).join('');
+}
+$('#bf-rango').addEventListener('input', pintarBlackFriday);
+function pintarPasosBF() {
+  $('#bf-pasos').innerHTML = BF.plan.map(([cuando, que]) => `<li><span>${cuando}</span><p>${que}</p></li>`).join('');
+}
+// Cuenta regresiva (una vez por segundo, solo cuando la lámina está a la vista)
+function relojBF() {
+  const caja = $('#bf-reloj');
+  if (!caja.closest('.lamina').classList.contains('activa')) return;
+  const ini = new Date(BF.inicio).getTime(), fin = new Date(BF.fin).getTime(), ahora = Date.now();
+  if (ahora >= fin) { caja.innerHTML = '<p>ya pasó</p>'; return; }
+  if (ahora >= ini) { caja.innerHTML = '<p>está pasando ahora</p>'; return; }
+  let s = Math.floor((ini - ahora) / 1000);
+  const d = Math.floor(s / 86400); s %= 86400;
+  const h = Math.floor(s / 3600); s %= 3600;
+  const m = Math.floor(s / 60); s %= 60;
+  const dos = (x) => String(x).padStart(2, '0');
+  caja.innerHTML = [[d, 'días'], [dos(h), 'horas'], [dos(m), 'min'], [dos(s), 'seg']].map(([x, t]) => `<div><b>${x}</b><span>${t}</span></div>`).join('');
+}
+setInterval(relojBF, 1000);
 
 // ---------- 3. Mapa de la Austral ----------
 // Coordenadas reales (lat, lon). viejo: lo que hicimos en 2025. soloB: solo en la Austral larga; dB: el texto en el plan B.
@@ -322,8 +381,9 @@ function tocarPunto(id) {
   const pt = PUNTOS[id];
   if (!pt || pt.viejo) return;
   $$('#mapa .punto').forEach((g) => g.classList.toggle('tocado', g.dataset.punto === id));
-  const f = fotosDe(pt.lugar)[0];
-  $('#parada-tocada').innerHTML = `${f ? `<img src="${f.src}" alt="${pt.n}">` : ''}<div><b>${pt.n}</b>${(esB() && pt.dB) || pt.d}</div>`;
+  const fotos = fotosDe(pt.lugar);
+  const f = fotos[0];
+  $('#parada-tocada').innerHTML = `${f ? `<button type="button" class="foto-grande" data-visor-lugar="${pt.lugar}" data-visor-titulo="${comillas(pt.n)}" aria-label="Ver las fotos de ${comillas(pt.n)}"><img src="${f.src}" alt="${pt.n}"><span>⤢ ${fotos.length}</span></button>` : ''}<div><b>${pt.n}</b>${(esB() && pt.dB) || pt.d}</div>`;
 }
 document.addEventListener('click', (e) => { const g = e.target.closest('[data-punto]'); if (g) tocarPunto(g.dataset.punto); });
 
@@ -333,10 +393,14 @@ function pintarDias() {
   const paradas = esB() ? B.ruta.paradas : [...R.paradas, ...R.finales[decisiones.vuelta]];
   $('#titulo-dias').textContent = esB() ? 'Quince días hacia el sur' : decisiones.vuelta === '24' ? 'Doce días hacia el sur' : 'Once días hacia el sur';
   $('#dias').innerHTML = paradas.map((p, i) => {
-    const f = p.lugar ? fotosDe(p.lugar)[0] : null;
+    const fotos = p.lugar ? fotosDe(p.lugar) : [];
+    const f = fotos[0];
     const esFinal = !esB() && i >= R.paradas.length;
+    const foto = f
+      ? `<button type="button" class="dia-foto" data-visor-lugar="${p.lugar}" data-visor-titulo="${comillas(p.titulo)}" aria-label="Ver las fotos de ${comillas(p.titulo)}"><img src="${f.src}" alt="${p.titulo}" loading="lazy"><span class="num">${p.dias.split(' · ')[0]}</span>${fotos.length > 1 ? `<span class="mas-fotos">⤢ ${fotos.length}</span>` : ''}</button>`
+      : `<div class="dia-foto sin-foto">✈<span class="num">${p.dias.split(' · ')[0]}</span></div>`;
     return `<article class="dia${esFinal ? ' nuevo-final' : ''}">
-      <div class="dia-foto${f ? '' : ' sin-foto'}">${f ? `<img src="${f.src}" alt="${p.titulo}" loading="lazy">` : '✈'}<span class="num">${p.dias.split(' · ')[0]}</span></div>
+      ${foto}
       <div class="dia-texto">
         <span class="cuando">${p.dias.split(' · ').slice(1).join(' · ') || p.dias}</span>
         <b>${p.titulo}</b>
@@ -385,6 +449,8 @@ function pintarGlaciar() {
 }
 
 // ---------- 6. Lo que hay en el camino ----------
+// El lugar de cada actividad, para sumar sus fotos en el visor
+const LUGAR_DE = { 'capillas-lancha': 'capillas-marmol', 'capillas-kayak': 'capillas-marmol', ohiggins: 'villa-ohiggins', barcaza: 'villa-ohiggins' };
 function pintarMosaico() {
   const capillas = decisiones.capillas === 'kayak' ? 'capillas-kayak' : 'capillas-lancha';
   const ids = esB()
@@ -394,6 +460,8 @@ function pintarMosaico() {
     const a = actividad(id);
     if (!a) return '';
     const f = fotosDe(id)[0] || fotosDe(a.lugar || '')[0] || fotosDe([].concat(a.fotos || [])[0] || '')[0];
+    // Todas las fotos que hay de la actividad y su lugar (sin repetir llaves)
+    const llaves = [...new Set([id, ...[].concat(a.fotos || []), a.lugar, LUGAR_DE[id]].filter((k) => k && fotosDe(k).length))].slice(0, 2);
     // En la foto va solo lo corto; el precio entero queda atrás
     const precioCorto = { 'confluencia-baker': 'mirador gratis', ohiggins: 'consultar', jeinimeni: 'entrada CONAF' }[id] || a.precio.split(' · ')[0];
     return `<button class="ficha" type="button">
@@ -408,12 +476,17 @@ function pintarMosaico() {
           <b>${a.nombre}</b>
           <p>${a.resumen || a.nota}</p>
           <p>${a.nota}</p>
+          ${llaves.length ? `<span class="ver-fotos" role="button" tabindex="0" data-visor-lugar="${llaves.join(',')}" data-visor-titulo="${comillas(a.nombre)}">ver ${llaves.flatMap((k) => fotosDe(k)).length} fotos ⤢</span>` : ''}
         </div>
       </div>
     </button>`;
   }).join('');
 }
-document.addEventListener('click', (e) => { const f = e.target.closest('.ficha'); if (f) f.classList.toggle('vuelta'); });
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-visor-lugar]')) return; // "ver fotos" abre el visor sin dar vuelta la ficha
+  const f = e.target.closest('.ficha');
+  if (f) f.classList.toggle('vuelta');
+});
 
 // ---------- 7. Vuelos y auto ----------
 function tramoVuelo(v, de, a, titulo) {
@@ -529,12 +602,58 @@ function pintarAnioNuevo() {
     </button>`;
   }).join('');
   const n = ops.find((x) => x.id === elegida);
-  $('#noche-elegida').innerHTML = n
-    ? `<div class="ne-cabeza"><b>Así sería la noche</b><span>${n.precio}</span></div>
-       <ol class="horas">${n.noche.map(([h, q], i) => `<li style="animation-delay:${i * 80}ms"><span>${h}</span><p>${q}</p></li>`).join('')}</ol>
-       <p class="ne-pie">${n.calza}</p>`
-    : '<p class="vacio">Elige una y te muestro cómo sería la noche, hora por hora.</p>';
+  if (!n) {
+    $('#noche-elegida').innerHTML = '<p class="vacio">Elige una y te muestro cómo sería la noche, hora por hora.</p>';
+  } else {
+    const tabs = PESTANAS_NY.filter((t) => t.hay(n));
+    if (!tabs.some((t) => t.id === pestanaNY)) pestanaNY = 'noche';
+    $('#noche-elegida').innerHTML = `
+      <div class="ne-cabeza"><b>${n.titulo}</b><span>${n.precio}</span>
+        <button type="button" class="link-claro" data-visor-lugar="${n.fotos.join(',')}" data-visor-titulo="${comillas(n.titulo)}">ver fotos ⤢</button></div>
+      <div class="ne-pestanas" role="tablist">${tabs.map((t) =>
+        `<button type="button" role="tab" data-pestana-ny="${t.id}" aria-selected="${t.id === pestanaNY}">${t.t}</button>`).join('')}</div>
+      <div class="ne-panel" role="tabpanel">${PESTANAS_NY.find((t) => t.id === pestanaNY).pinta(n)}</div>`;
+  }
+  pintarRituales();
 }
+// Lo que muestra cada pestaña de la noche elegida
+let pestanaNY = 'noche';
+const listaNY = (items) => `<ul class="ne-lista">${items.map((x, i) => `<li style="animation-delay:${i * 60}ms">${x}</li>`).join('')}</ul>`;
+const PESTANAS_NY = [
+  { id: 'noche', t: 'la noche', hay: () => true, pinta: (n) =>
+    `<ol class="horas">${n.noche.map(([h, q], i) => `<li style="animation-delay:${i * 80}ms"><span>${h}</span><p>${q}</p></li>`).join('')}</ol><p class="ne-pie">${n.calza}</p>` },
+  { id: 'cena', t: 'la cena', hay: (n) => n.cena, pinta: (n) =>
+    listaNY(n.cena) + (n.mejora ? `<p class="ne-mejora"><b>Para darse un gusto:</b> ${n.mejora}</p>` : '') },
+  { id: 'llevar', t: 'qué llevar', hay: (n) => n.llevar, pinta: (n) => listaNY(n.llevar) },
+  { id: 'falla', t: 'si llueve', hay: (n) => n.siFalla, pinta: (n) => `<p class="ne-texto">${n.siFalla}</p>${listaNY(n.ojo || [])}` },
+  { id: 'costo', t: 'cuánto sale', hay: (n) => n.costo, pinta: (n) => {
+    const total = n.costo.reduce((t, c) => t + c[1], 0);
+    const aprox = n.costo.some((c) => c[2]) ? '≈ ' : '';
+    return `<div class="ne-costo">${n.costo.map(([q, m, a], i) => `<div style="animation-delay:${i * 70}ms"><span>${q}</span><b>${a ? '≈ ' : ''}${milCLP(m)}</b></div>`).join('')}
+      <div class="total"><span>cada uno</span><b>${aprox}${milCLP(total)}</b></div></div>`;
+  } }
+];
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-pestana-ny]');
+  if (!b) return;
+  pestanaNY = b.dataset.pestanaNy;
+  pintarAnioNuevo();
+});
+// Lo que hacemos a las 12 elijamos lo que elijamos: cartas que se dan vuelta
+function pintarRituales() {
+  const caja = $('#rituales');
+  if (caja.dataset.listo) return;
+  caja.dataset.listo = '1';
+  caja.innerHTML = `<span class="etiqueta">pase lo que pase, a las 12 · toca una</span>
+    <div class="rituales-fila">${B.rituales.map(([t, q], i) => `
+      <button type="button" class="ritual">
+        <div class="ritual-giro">
+          <div class="ritual-cara frente"><span>${String(i + 1).padStart(2, '0')}</span><b>${t}</b></div>
+          <div class="ritual-cara dorso"><p>${q}</p></div>
+        </div>
+      </button>`).join('')}</div>`;
+}
+document.addEventListener('click', (e) => { const r = e.target.closest('.ritual'); if (r) r.classList.toggle('vuelta'); });
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-ny]');
   if (!b) return;
@@ -562,11 +681,15 @@ function cambiosB() {
   const lista = [];
   const oPrep = B.playa.opciones.find((o) => o.id === r.playaId) || B.playa.opciones[0];
   const oHoy = playaElegida();
-  if (oHoy.id !== oPrep.id) {
-    const cp = costoPlaya(oPrep, r.noches), ch = costoPlaya(oHoy, r.noches);
+  const nHoy = nochesPlaya(), nPrep = r.noches || B.playa.noches;
+  if (oHoy.id !== oPrep.id || nHoy !== nPrep) {
+    const cp = costoPlaya(oPrep, nPrep), ch = costoPlaya(oHoy, nHoy);
     const dVuelo = ch.vuelo - cp.vuelo;
     const dPlaya = ch.hotel + ch.traslado + ch.comida - (cp.hotel + cp.traslado + cp.comida);
-    lista.push({ t: `${nombreCorto(oHoy)} en vez de ${nombreCorto(oPrep)}`, d: dVuelo + dPlaya, partes: { pasajes: dVuelo, playa: dPlaya }, aprox: true });
+    const t = oHoy.id !== oPrep.id
+      ? `${nombreCorto(oHoy)} en vez de ${nombreCorto(oPrep)}${nHoy !== nPrep ? `, ${nHoy} noches` : ''}`
+      : `${nHoy} noches de playa en vez de ${nPrep}`;
+    lista.push({ t, d: dVuelo + dPlaya, partes: { pasajes: dVuelo, playa: dPlaya }, aprox: true });
   }
   const aPrep = B.autos.opciones.find((a) => a.id === r.auto) || B.autos.opciones[0];
   const aHoy = autoElegido();
@@ -816,6 +939,7 @@ function repintar() {
   pintarPase();
   pintarCalendario();
   pintarPlaya();
+  pintarBlackFriday();
   pintarDias();
   pintarGlaciar();
   pintarMosaico();
@@ -859,6 +983,7 @@ const alEntrar = {
   'austral 2.0': () => { dibujarRuta(); if (!$('#mapa .tocado')) tocarPunto('castillo'); },
   'día a día': () => { $('#dias').scrollLeft = 0; },
   'cómo nos movemos': pintarTransporte,
+  'black friday': relojBF,
   'la plata': () => pintarPlata(true),
   'hoy': pintarCompras,
   '¿partimos?': pintarActa
@@ -885,6 +1010,17 @@ function ir(n) {
 }
 
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-ir]'); if (b) ir(Number(b.dataset.ir)); });
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-ir-nombre]');
+  if (!b) return;
+  const i = laminas.findIndex((l) => l.dataset.nombre === b.dataset.irNombre);
+  if (i >= 0) ir(i);
+});
+// Si se cambia el número a mano en la dirección (#5), se va a esa lámina
+window.addEventListener('hashchange', () => {
+  const n = (parseInt(location.hash.slice(1), 10) || 1) - 1;
+  if (n !== actual) ir(n);
+});
 $('#anterior').addEventListener('click', () => ir(actual - 1));
 $('#siguiente').addEventListener('click', () => ir(actual + 1));
 $('#pantalla').addEventListener('click', pantallaCompleta);
@@ -893,7 +1029,8 @@ function pantallaCompleta() {
   else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
 }
 document.addEventListener('keydown', (e) => {
-  if (e.target.matches('input, textarea')) return;
+  if (e.target.matches && e.target.matches('input, textarea')) return;
+  if ($('.visor:not([hidden])')) return; // con las fotos abiertas, las flechas son del visor
   if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); ir(actual + 1); }
   else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); ir(actual - 1); }
   else if (e.key === 'Home') ir(0);
@@ -904,7 +1041,7 @@ document.addEventListener('keydown', (e) => {
 // Deslizar con el dedo (menos dentro de lo que ya se desliza solo)
 let toque = null;
 $('#pres').addEventListener('touchstart', (e) => {
-  if (e.target.closest('.carril, .horas')) { toque = null; return; }
+  if (e.target.closest('.carril, .horas, .tira-fotos, .ne-pestanas, input, .visor')) { toque = null; return; }
   toque = { x: e.touches[0].clientX, y: e.touches[0].clientY };
 }, { passive: true });
 $('#pres').addEventListener('touchend', (e) => {
@@ -926,6 +1063,7 @@ pintarCalendario();
 pintarMapa();
 pintarGuatemala();
 pintarAnioNuevo();
+pintarPasosBF();
 pintarPlata(false);
 repintar();
 armarLaminas();

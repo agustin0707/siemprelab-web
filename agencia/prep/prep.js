@@ -354,6 +354,19 @@ function pintarTablero() {
   $('#resumen-au').textContent = `dom 13 → ${diaVuelta() === 24 ? 'jue 24' : 'mié 23'} dic`;
 }
 
+// Miniatura liviana de Commons (330 px es un ancho estándar que Wikimedia sí sirve)
+function miniatura(src) { return String(src).replace(/\/(1280|1920)px-/, '/330px-'); }
+// Tira de fotos bajo cada parada de la ruta: tocar una abre el visor con todas las del lugar
+function fotosParada(p) {
+  const l = p.lugar && typeof LUGARES !== 'undefined' ? LUGARES[p.lugar] : null;
+  if (!l || !l.fotos.length) return '';
+  const max = 4;
+  const resto = l.fotos.length - max;
+  return `<div class="parada-fotos">${l.fotos.slice(0, max).map((f, j) =>
+    `<button type="button" data-visor-lugar="${p.lugar}" data-visor-i="${j}" data-visor-titulo="${atrib(l.nombre)}" aria-label="Ver foto ${j + 1} de ${atrib(l.nombre)}">
+      <img src="${miniatura(f.src)}" alt="" loading="lazy">${j === max - 1 && resto > 0 ? `<span>+${resto}</span>` : ''}</button>`).join('')}</div>`;
+}
+
 // ---------- Componente: panel de fotos + mapa ----------
 // Se usa en las rutas y en las ideas de la Austral.
 function crearMedia(contenedor) {
@@ -444,7 +457,7 @@ function crearMedia(contenedor) {
       $('[data-desc]', contenedor).textContent = l.descripcion;
       pista.innerHTML = l.fotos.map((f, i) => `
         <figure>
-          <img src="${f.src}" alt="${l.nombre}, foto ${i + 1}" loading="lazy" decoding="async">
+          <img src="${f.src}" alt="${l.nombre}, foto ${i + 1}" loading="lazy" decoding="async" ${datosFoto(f)}>
           <figcaption class="carrusel-credito">foto: <a href="${f.pagina}" target="_blank" rel="noopener">${f.credito}</a> · ${f.licencia}</figcaption>
         </figure>`).join('');
       $('[data-puntos]', contenedor).innerHTML = l.fotos.map((_, i) =>
@@ -574,6 +587,7 @@ function pintarRuta() {
         <strong>${p.titulo}</strong>
         <p>${p.detalle}</p>
       </button>
+      ${fotosParada(p)}
     </li>`).join('');
 
   const elegida = opciones.ruta === ruta.id;
@@ -717,6 +731,7 @@ function pintarRutaAustral() {
         <p>${p.detalle}</p>
         ${p.manejo ? `<span class="manejo">${p.manejo}</span>` : ''}
       </button>
+      ${fotosParada(p)}
     </li>`).join('');
   mediaAustral.mostrarLugar(r.paradas[1].lugar, false);
   mediaAustral.definirRuta(r.mapaRuta, 'ruta: austral 2.0', 'Ida hasta Villa O\'Higgins; la vuelta al norte es por el mismo camino.');
@@ -821,14 +836,20 @@ const ETIQUETA_DISPO = { ok: 'sale siempre', ojo: 'reservar o confirmar', agotad
 const insigniaDispo = (d) => (d ? `<span class="dispo ${d.estado}">${ETIQUETA_DISPO[d.estado]}</span>` : '');
 
 // Galería deslizable con las fotos libres de fotos-panoramas.js (una o varias llaves)
+// Datos de la foto que lee el visor (foto grande, nota y licencia)
+// (funciones normales, no const: crearMedia las usa más arriba en el archivo)
+function atrib(t) { return String(t || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+function datosFoto(f) { return `data-grande="${atrib(f.grande)}" data-nota="${atrib(f.nota)}" data-licencia="${atrib(f.licencia)}"`; }
 function galeria(llaves, alt) {
   const banco = typeof FOTOS_PANORAMAS !== 'undefined' ? FOTOS_PANORAMAS : {};
   // Si la actividad no tiene fotos propias, usa las del lugar (lugares.js)
   const fotos = [].concat(llaves || []).flatMap((k) => banco[k] || (typeof LUGARES !== 'undefined' && LUGARES[k] ? LUGARES[k].fotos : []));
   if (!fotos.length) return '';
   const flechas = fotos.length > 1 ? '<button type="button" class="galeria-flecha izq" data-galeria="-1" aria-label="foto anterior">‹</button><button type="button" class="galeria-flecha der" data-galeria="1" aria-label="foto siguiente">›</button>' : '';
-  return `<div class="galeria-caja"><div class="galeria">${fotos.map((f, i) => `
-    <figure><img src="${f.src}" alt="${alt}" loading="lazy">
+  // ⤢ abre el visor a pantalla completa (visor.js)
+  const ampliar = `<button type="button" class="galeria-ampliar" data-ampliar aria-label="Ver las ${fotos.length} fotos en grande">⤢ ${fotos.length} fotos</button>`;
+  return `<div class="galeria-caja">${ampliar}<div class="galeria">${fotos.map((f, i) => `
+    <figure><img src="${f.src}" alt="${atrib(alt)}" loading="lazy" ${datosFoto(f)}>
       <figcaption><span>${i + 1}/${fotos.length}</span><a href="${f.pagina}" target="_blank" rel="noopener">${f.credito} · ${f.licencia}</a></figcaption></figure>`).join('')}</div>${flechas}</div>`;
 }
 
@@ -859,6 +880,29 @@ function tarjetasActividades(lista) {
 }
 
 // ---------- Noche de Año Nuevo ----------
+// Lo que cuesta la noche por persona (sumando lo de "costo") y el detalle de la cena
+function costoNoche(n) {
+  if (!n.costo) return '';
+  const total = n.costo.reduce((t, [, m]) => t + m, 0);
+  const aprox = n.costo.some((c) => c[2]);
+  return `<div class="noche-costo"><span class="etiqueta">cuánto sale c/u</span><ul>${n.costo.map(([q, m, a]) =>
+    `<li><span>${q}</span><b>${a ? '≈ ' : ''}${CLP(m)}</b></li>`).join('')}<li class="total"><span>total</span><b>${aprox ? '≈ ' : ''}${CLP(total)}</b></li></ul></div>`;
+}
+function detalleNoche(n) {
+  const mejora = n.mejora ? `<div class="detalle-bloque"><span class="etiqueta">para darse un gusto</span><p>${n.mejora}</p></div>` : '';
+  const falla = n.siFalla ? `<div class="detalle-bloque"><span class="etiqueta">si el clima no ayuda</span><p>${n.siFalla}</p></div>` : '';
+  return `<details class="actividad-mas"><summary>la cena, qué llevar y lo que hay que saber</summary>
+    ${bloqueLista('la cena', n.cena)}${mejora}${bloqueLista('qué llevar', n.llevar)}${falla}${bloqueLista('ojo', n.ojo)}</details>`;
+}
+// Lo que hacemos el 31 elijamos lo que elijamos (vive en datos-b.js y sirve para los dos planes)
+function pintarRituales(id) {
+  const caja = $('#' + id);
+  if (!caja || typeof DATOS_B === 'undefined' || !DATOS_B.rituales) return;
+  caja.innerHTML = `<span class="etiqueta">pase lo que pase, a las 12</span>
+    <div class="rituales-lista">${DATOS_B.rituales.map(([t, q], i) =>
+      `<div class="ritual"><span class="ritual-n">${String(i + 1).padStart(2, '0')}</span><strong>${t}</strong><p>${q}</p></div>`).join('')}</div>`;
+}
+
 function pintarAnioNuevo() {
   $('#anio-nuevo').innerHTML = DATOS.anioNuevo.map((n, i) => `
     <article class="noche-vieja${i === 0 ? ' destacada' : ''}">
@@ -870,11 +914,13 @@ function pintarAnioNuevo() {
         <p>${n.resumen}</p>
         <ol class="noche-horas">${n.noche.map(([h, q]) => `<li><span>${h}</span>${q}</li>`).join('')}</ol>
         <p class="dispo-texto">${n.calza}</p>
-        <details class="actividad-mas"><summary>lo que hay que saber</summary>${bloqueLista('ojo', n.ojo)}</details>
+        ${costoNoche(n)}
+        ${detalleNoche(n)}
         <div class="noche-links">${n.links.map((l) => `<a class="link" href="${l.url}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('')}</div>
         ${recotizar('ny-' + n.id, n.links[0].url, { clp: false })}
       </div>
     </article>`).join('');
+  pintarRituales('rituales-a');
 }
 
 // Flechas de las galerías (en el computador no se desliza con el dedo)

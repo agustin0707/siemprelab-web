@@ -1141,3 +1141,58 @@ html[data-plan="b"] [data-solo="a"] { display: none !important; }
 .fijos dd { font-family: 'Space Mono', monospace; font-size: 12px; text-align: right; white-space: nowrap; }
 .fijos dd small { display: block; font-size: 10px; color: var(--suave); }
 .medidor-marca.otra { background: #9a9a9a; width: 3px; }
+
+/* ---------- Black Friday (v23) ---------- */
+.black-friday { margin-top: 36px; background: var(--blanco); border: 1px solid var(--borde); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.bf-cabeza { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+.bf-cabeza h3 { font-size: 21px; font-weight: 500; letter-spacing: -0.02em; margin-top: 2px; }
+.bf-cuenta { display: flex; gap: 6px; }
+.bf-cuenta div { background: var(--negro); color: #fff; border-radius: 8px; min-width: 54px; padding: 6px 8px 5px; text-align: center; }
+.bf-cuenta b { display: block; font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 400; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.bf-cuenta span { font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.65); }
+.bf-estado { font-family: 'Space Mono', monospace; font-size: 12px; }
+.bf-estado.vivo { color: var(--acento); }
+.bf-titulo { margin-bottom: -8px; }
+.bf-tabla tr.elegida td { background: rgba(0, 0, 0, 0.03); }
+.bf-tabla tr.elegida td:first-child { box-shadow: inset 3px 0 0 var(--acento); }
+.bf-si, .bf-quizas, .bf-no { font-family: 'Space Mono', monospace; font-size: 11px; white-space: nowrap; padding: 2px 8px; border-radius: 99px; }
+.bf-si { background: #e3f3e6; color: #1f6b33; }
+.bf-quizas { background: #fff3d6; color: #7a5300; }
+.bf-no { background: #f6e1df; color: #8a2a20; }
+.bf-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 18px; }
+.bf-plan { list-style: none; margin: 6px 0 0; padding: 0; border-left: 2px solid var(--acento); }
+.bf-plan li { padding: 0 0 10px 14px; font-size: 14px; color: var(--texto-2); line-height: 1.45; position: relative; }
+.bf-plan li::before { content: ''; position: absolute; left: -5px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--blanco); border: 2px solid var(--acento); }
+.bf-plan li span { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); text-transform: uppercase; letter-spacing: 0.04em; }
+.bf-links { margin: 6px 0 14px; }
+.bf-ojo { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--texto-2); line-height: 1.5; }
+@media (max-width: 600px) {
+  .black-friday { padding: 14px; }
+  .bf-cuenta div { min-width: 0; flex: 1; }
+  .bf-tabla th:nth-child(2), .bf-tabla td:nth-child(2) { display: none; }
+}
+
+/* ---------- Año Nuevo: costo y rituales (v23) ---------- */
+.noche-costo ul { list-style: none; margin: 4px 0 0; padding: 0; font-size: 13px; }
+.noche-costo li { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dotted var(--borde); }
+.noche-costo li b { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 400; white-space: nowrap; }
+.noche-costo li.total { border-bottom: 0; color: var(--negro); font-weight: 500; }
+.noche-costo li.total b { color: var(--acento); font-weight: 700; }
+.detalle-bloque p { margin: 4px 0 0; font-size: 13px; line-height: 1.5; }
+.rituales { margin-top: 18px; }
+.rituales:empty { display: none; }
+.rituales-lista { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 10px; margin-top: 8px; }
+.ritual { background: var(--blanco); border: 1px solid var(--borde); border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--texto-2); }
+.ritual-n { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--acento); }
+.ritual strong { display: block; color: var(--negro); font-weight: 500; font-size: 15px; margin: 2px 0 4px; }
+.ritual p { margin: 0; line-height: 1.45; }
+
+/* Fotos bajo cada parada de la ruta (abren el visor) */
+.parada-fotos { display: flex; gap: 5px; padding: 0 10px 10px 34px; }
+.parada .parada-fotos button { position: relative; flex: 0 0 58px; width: 58px; height: 42px; padding: 0; border: 0; border-radius: 6px; overflow: hidden; background: #e6e6e6; cursor: zoom-in; }
+.parada .parada-fotos button::before { content: none; }
+.parada .parada-fotos button:hover { background: #e6e6e6; opacity: .85; }
+.parada-fotos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.parada-fotos span { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, 0.5); color: #fff; font-family: 'Space Mono', monospace; font-size: 11px; }
+.fotos-hotel { display: inline-block; margin-top: 4px; }
+.bf-tabla th { white-space: nowrap; }

@@ -525,3 +525,108 @@ html[data-plan="b"] [data-solo="a"] { display: none !important; }
   .opciones-ny.cinco .ny:not(:first-child) .ny-texto b { font-size: 15px; }
   .plan-eleccion .interruptor button { padding: 8px 12px; font-size: 11px; }
 }
+
+/* ---------- v6: fotos en grande, Black Friday, Año Nuevo con pestañas ---------- */
+/* "como te gusta..." bajo el título de la Austral larga */
+.susurro { font-family: var(--mono); font-size: 12px; color: var(--acento); margin: -10px 0 16px; letter-spacing: 0.02em; }
+
+/* Links y botones chicos sobre fondo oscuro */
+.link-claro { font-family: var(--mono); font-size: 11px; color: rgba(255, 255, 255, 0.7); text-decoration: underline; text-underline-offset: 3px; display: inline-block; margin-top: 10px; }
+.link-claro:hover { color: #fff; }
+.ne-cabeza .link-claro { margin: 0 0 0 auto; }
+
+/* Tira de miniaturas que abre el visor */
+.tira-fotos { display: flex; gap: 6px; margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
+.tira-fotos::-webkit-scrollbar { display: none; }
+.tira-fotos button { position: relative; flex: 0 0 96px; height: 66px; border-radius: 8px; overflow: hidden; background: #2a2a2a; cursor: zoom-in; transition: transform 0.2s; }
+.tira-fotos button:hover { transform: translateY(-2px); }
+.tira-fotos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tira-fotos span { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 0, 0.55); color: #fff; font-family: var(--mono); font-size: 13px; }
+
+/* Fotos que se abren: mapa, día a día y mosaico */
+.foto-grande { position: relative; flex-shrink: 0; cursor: zoom-in; border-radius: 8px; overflow: hidden; }
+.foto-grande img { display: block; transition: transform 0.4s; }
+.foto-grande:hover img { transform: scale(1.06); }
+.foto-grande span, .mas-fotos { position: absolute; right: 6px; bottom: 6px; font-family: var(--mono); font-size: 10px; background: rgba(0, 0, 0, 0.6); color: #fff; padding: 2px 7px; border-radius: 99px; }
+button.dia-foto { display: block; width: 100%; padding: 0; cursor: zoom-in; overflow: hidden; }
+button.dia-foto img { transition: transform 0.5s; }
+button.dia-foto:hover img { transform: scale(1.05); }
+.mas-fotos { right: 10px; bottom: 10px; }
+.ficha-cara.dorso .ver-fotos { margin-top: auto; align-self: flex-start; font-family: var(--mono); font-size: 11px; color: #fff; background: rgba(255, 255, 255, 0.14); padding: 6px 12px; border-radius: 99px; cursor: zoom-in; }
+.ficha-cara.dorso .ver-fotos:hover { background: var(--acento); }
+
+/* ---------- Black Friday ---------- */
+.bf-reloj { display: flex; gap: 6px; margin-bottom: 18px; }
+.bf-reloj div { background: var(--negro); color: #fff; border-radius: 10px; min-width: 64px; padding: 8px 10px 6px; text-align: center; }
+.bf-reloj b { display: block; font-family: var(--mono); font-size: 26px; font-weight: 400; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.bf-reloj span { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255, 255, 255, 0.6); }
+.bf-reloj p { font-family: var(--mono); font-size: 13px; color: var(--acento); }
+.bf-juego { background: var(--blanco); border: 1px solid var(--borde); border-radius: 16px; padding: 20px 22px; }
+.bf-pregunta { display: block; font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+.bf-pregunta b { color: var(--acento); font-variant-numeric: tabular-nums; }
+#bf-rango { --lleno: 37.5%; -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 99px; margin: 16px 0 18px; background: linear-gradient(90deg, var(--acento) var(--lleno), var(--gris) var(--lleno)); cursor: pointer; }
+#bf-rango::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 3px solid var(--acento); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+#bf-rango::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 3px solid var(--acento); }
+.bf-barras { display: flex; flex-direction: column; gap: 10px; }
+.bf-fila { display: grid; grid-template-columns: 130px 1fr 150px 110px; gap: 14px; align-items: center; font-size: 14px; }
+.bf-fila.es-la .bf-nombre { font-weight: 600; }
+.bf-fila.es-la .bf-nombre::after { content: ' ★'; color: var(--acento); }
+.bf-barra { position: relative; height: 12px; background: var(--fondo); border-radius: 99px; }
+.bf-barra i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: #bdbdbd; transition: width 0.45s cubic-bezier(.2, .7, .2, 1), background 0.3s; }
+.bf-fila.entra .bf-barra i { background: var(--acento); }
+.bf-barra b { position: absolute; top: -5px; bottom: -5px; width: 2px; background: var(--negro); }
+.bf-monto { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+.bf-monto s { margin-left: 8px; font-size: 11px; color: var(--suave); }
+.bf-sello { font-family: var(--mono); font-size: 11px; color: var(--suave); }
+.bf-fila.entra .bf-sello { color: var(--acento); }
+.bf-pasos { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 22px; }
+.bf-pasos li { border-top: 2px solid var(--negro); padding-top: 10px; font-size: 13px; line-height: 1.45; color: #444; }
+.bf-pasos li:nth-child(3) { border-top-color: var(--acento); }
+.bf-pasos li span { display: block; font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--suave); margin-bottom: 4px; }
+.bf-pasos li:nth-child(3) span { color: var(--acento); }
+
+/* ---------- Año Nuevo: pestañas ---------- */
+.ne-pestanas { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.ne-pestanas button { font-family: var(--mono); font-size: 11px; padding: 7px 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.08); color: rgba(255, 255, 255, 0.75); transition: background 0.2s, color 0.2s; }
+.ne-pestanas button:hover { background: rgba(255, 255, 255, 0.16); }
+.ne-pestanas button[aria-selected="true"] { background: var(--acento); color: #fff; }
+.ne-panel { min-height: 120px; }
+.ne-lista { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.ne-lista li { font-size: 14px; line-height: 1.4; color: rgba(255, 255, 255, 0.88); background: rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px; animation: blurFadeUp 0.5s both; }
+.ne-mejora, .ne-texto { margin-top: 12px; font-size: 14px; line-height: 1.5; color: rgba(255, 255, 255, 0.8); max-width: 75ch; }
+.ne-texto { margin: 0 0 12px; }
+.ne-mejora b { color: var(--acento); font-weight: 600; }
+.ne-costo { display: flex; flex-wrap: wrap; gap: 8px; }
+.ne-costo div { background: rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 14px; min-width: 150px; animation: blurFadeUp 0.5s both; }
+.ne-costo span { display: block; font-family: var(--mono); font-size: 10px; color: rgba(255, 255, 255, 0.55); text-transform: uppercase; margin-bottom: 4px; }
+.ne-costo b { font-size: 18px; font-weight: 600; }
+.ne-costo .total { background: var(--acento); }
+.ne-costo .total span { color: rgba(255, 255, 255, 0.85); }
+
+/* Rituales: cartas que se dan vuelta */
+.rituales { margin-top: 26px; }
+.rituales-fila { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
+.ritual { perspective: 900px; height: 108px; text-align: left; }
+.ritual-giro { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(.2, .7, .2, 1); }
+.ritual.vuelta .ritual-giro { transform: rotateY(180deg); }
+.ritual-cara { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; }
+.ritual-cara.frente { border: 1px solid rgba(255, 255, 255, 0.18); justify-content: space-between; transition: border-color 0.2s; }
+.ritual:hover .ritual-cara.frente { border-color: var(--acento); }
+.ritual-cara.frente span { font-family: var(--mono); font-size: 10px; color: var(--acento); }
+.ritual-cara.frente b { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.ritual-cara.dorso { transform: rotateY(180deg); background: var(--acento); color: #fff; justify-content: center; font-size: 12.5px; line-height: 1.4; overflow-y: auto; }
+
+@media (max-width: 860px) {
+  /* En el celu: nombre y monto arriba; barra (todas del mismo largo) y sello abajo */
+  .bf-fila { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 13px; }
+  .bf-nombre { order: 1; flex: 1 0 40%; }
+  .bf-monto { order: 2; white-space: nowrap; }
+  .bf-barra { order: 3; flex: 1 0 calc(100% - 122px); }
+  .bf-sello { order: 4; flex: 0 0 110px; text-align: right; white-space: nowrap; }
+  .bf-pasos { grid-template-columns: 1fr; gap: 8px; }
+  .bf-reloj div { min-width: 0; flex: 1; }
+  .bf-reloj b { font-size: 22px; }
+  .rituales-fila { grid-template-columns: repeat(2, 1fr); }
+  .ritual { height: 96px; }
+  .tira-fotos button { flex-basis: 80px; height: 56px; }
+}
