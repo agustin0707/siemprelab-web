@@ -51,7 +51,7 @@ const DATOS = {
   },
 
   // Fecha en que se vieron los precios
-  precioVisto: '4 nov',
+  precioVisto: '5 nov',
 
   // Tipo de cambio implícito de Avianca el 4 nov ($549.350 = USD 565,60). Lo usa "recotizar" si se anota en dólares.
   usd: 971,
@@ -70,11 +70,11 @@ const DATOS = {
       ida: { dia: 'vie 25', detalle: '16:15 → 00:55 (+1)', dur: '11 h 40 min', escalas: '1 escala en Bogotá' },
       vuelta: { dia: 'sáb 9 ene', detalle: '09:20 → 01:05 (+1)', dur: '12 h 45 min', escalas: '1 escala en Bogotá' },
       precio: 555419,
-      // Visto en avianca.com el 4 nov: Light USD 265 + 300,60 (trae mano de 10 kg); Classic USD 345 + 380,60 (suma bodega de 23 kg).
+      // Visto en avianca.com el 5 nov: Light USD 519 + 300,60 (trae mano de 10 kg); Classic USD 599 + 380,60 (suma bodega de 23 kg).
       // Classic cuesta USD 160 más ida y vuelta ≈ $155 mil.
       extraMano: 0,
       extraBodega: { monto: 155000 },
-      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Volvemos el sáb 9 y llegamos el dom 10 a la 01:05, así la Jo tiene el domingo entero para preparar sus cosas y dormir bien antes del internado. La tarifa Light ya trae mochila de mano de 10 kg; para la mochila scout en bodega va Classic (USD 160 más ida y vuelta, visto en avianca.com). El 4 nov quedaban 4 asientos a este precio en la ida.',
+      nota: 'Salimos el 25 después del almuerzo de Navidad y llegamos 00:55. Volvemos el sáb 9 y llegamos el dom 10 a la 01:05, así la Jo tiene el domingo entero para preparar sus cosas y dormir bien antes del internado. La tarifa Light ya trae mochila de mano de 10 kg; para la mochila scout en bodega va Classic (USD 160 más ida y vuelta, visto en avianca.com). El 5 nov la ida ya había subido de USD 265 a USD 519 en Light y quedaba 1 asiento a ese precio.',
       link: 'https://booking.avianca.com/av/booking/avail?departureDate=2026-12-25&tripType=round-trip&platform=WEBB2C&from=SCL&to=GUA&nbAdults=1&nbYoungs=0&nbChildren=0&nbInfants=0&language=ES&pointOfSale=CL&returnDate=2027-01-09&promoCode=&selectedCabin=ECO&accessMethod=default&backend=PRD'
     },
     {
@@ -354,7 +354,7 @@ const DATOS = {
         traccion: '4x2 (probable)', despeje: 193, maletero: 442, consumo: 12, combustible: 'bencina',
         foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/Mazda_CX-5_%28KF%29_Facelift_1X7A0331_%282%29.jpg/960px-Mazda_CX-5_%28KF%29_Facelift_1X7A0331_%282%29.jpg', credito: 'Alexander Migl · CC BY-SA 4.0' },
         nota: 'Punto medio: el maletero más grande de los SUV por poco más que el Sonet.' },
-      { id: 'lucano-tucson', agencia: 'Lucano', modelo: 'Hyundai Tucson o similar', tipo: 'SUV compacto · automático', recogida: 'coordinar por teléfono', total: 379170, total24: 417307,
+      { id: 'lucano-tucson', agencia: 'Lucano', modelo: 'Hyundai Tucson o similar', tipo: 'SUV compacto · automático', recogida: 'coordinar por teléfono', total: 372643, total24: 410124,
         traccion: '4x2', despeje: 170, maletero: 539, consumo: 11, combustible: 'bencina',
         foto: { src: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Hyundai_Tucson_%28NX4%29_1X7A0424.jpg/960px-Hyundai_Tucson_%28NX4%29_1X7A0424.jpg', credito: 'Alexander Migl · CC BY-SA 4.0' },
         nota: 'Empresa local con buena nota y mucho maletero, pero el más bajo de todos. Hay que coordinar la entrega.' },
