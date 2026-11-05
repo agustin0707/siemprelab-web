@@ -16,7 +16,8 @@ const OPCIONES_B = {
   ida: BAU.idas.find((v) => v.recomendado).id,
   vuelta: BAU.vueltas.find((v) => v.recomendado).id,
   auto: BAUTO.opciones.find((a) => a.recomendado).id,
-  anioNuevo: DATOS_B.anioNuevo[0].id
+  anioNuevo: DATOS_B.anioNuevo[0].id,
+  ruta: DATOS_B.rutas[0].id
 };
 let opcionesB = Object.assign({}, OPCIONES_B, guardado.leer('opciones-b', {}));
 // Por si quedó guardado algo que ya no existe
@@ -25,6 +26,8 @@ if (!BAU.idas.some((v) => v.id === opcionesB.ida)) opcionesB.ida = OPCIONES_B.id
 if (!BAU.vueltas.some((v) => v.id === opcionesB.vuelta)) opcionesB.vuelta = OPCIONES_B.vuelta;
 if (!BAUTO.opciones.some((a) => a.id === opcionesB.auto)) opcionesB.auto = OPCIONES_B.auto;
 if (!DATOS_B.anioNuevo.some((n) => n.id === opcionesB.anioNuevo)) opcionesB.anioNuevo = OPCIONES_B.anioNuevo;
+if (!DATOS_B.rutas.some((r) => r.id === opcionesB.ruta)) opcionesB.ruta = OPCIONES_B.ruta;
+DATOS_B.rutaId = opcionesB.ruta; // desde acá, DATOS_B.ruta, .dormir y autos.km son los de la ruta elegida
 if (![5, 6, 7, 8].includes(Number(opcionesB.noches))) opcionesB.noches = OPCIONES_B.noches;
 if (!opcionesB.hoteles || typeof opcionesB.hoteles !== 'object') opcionesB.hoteles = {};
 const guardarOpcionesB = () => guardado.escribir('opciones-b', opcionesB);
@@ -273,6 +276,73 @@ function pintarCuentaBF() {
 pintarCuentaBF();
 setInterval(pintarCuentaBF, 1000);
 
+// ---------- B2b. Tres rutas para la Austral larga ----------
+const TRAMO_RUTA = {
+  'fin-del-camino': "Cerro Castillo → Villa O'Higgins → Chile Chico",
+  'sin-apuro': 'Cerro Castillo → Bertrand → Tortel → Guadal → Chile Chico',
+  'dos-paises': 'Cerro Castillo → Paso Roballos → El Chaltén → Chile Chico'
+};
+// Lo que cambia la plata entre rutas, por persona: tours, alojamiento, barcaza, permiso y bencina
+function costoRutaB(r, a = autoB()) {
+  const bencina = Math.round((r.km / a.consumo) * DATOS.autos.litro[a.combustible]);
+  return r.costos.actividades + (r.costos.aloj * 14 + r.costos.barcaza + r.costos.permiso + bencina) / 2;
+}
+const puntosGusto = (n) => '●'.repeat(n) + '○'.repeat(3 - n);
+function pintarRutasB() {
+  const base = costoRutaB(DATOS_B.rutas[0]);
+  $('#b-rutas').innerHTML = DATOS_B.rutas.map((r) => {
+    const elegida = r.id === opcionesB.ruta;
+    const dif = Math.round((costoRutaB(r) - base) / 1000) * 1000;
+    return `
+      <article class="ruta-b${elegida ? ' elegida' : ''}" style="--color-ruta:${r.color}">
+        <div class="sellos"><span class="sello">${r.sello}</span>${elegida ? '<span class="sello acento">elegida</span>' : ''}</div>
+        ${galeria(r.fotos, r.nombre)}
+        <h4>${r.nombre}</h4>
+        <p class="ruta-gancho">${r.gancho}</p>
+        <div class="ruta-cifras">
+          <div><b>~${r.km.toLocaleString('es-CL')}</b><span>km</span></div>
+          <div><b>${String(r.horasMax).replace('.', ',')} h</b><span>el día más largo</span></div>
+          <div><b>${r.nochesTecho}</b><span>noches con techo</span></div>
+          <div><b>${dif === 0 ? 'base' : (dif > 0 ? '+' : '−') + CLP(Math.abs(dif))}</b><span>c/u vs la completa</span></div>
+        </div>
+        <div class="ruta-listas">
+          <div><span class="etiqueta">a favor</span><ul>${r.pros.map((x) => `<li>${x}</li>`).join('')}</ul></div>
+          <div><span class="etiqueta">en contra</span><ul>${r.contras.map((x) => `<li>${x}</li>`).join('')}</ul></div>
+        </div>
+        <div class="acciones">
+          <button type="button" class="boton${elegida ? ' elegido' : ''}" data-elegir-ruta-b="${r.id}" aria-pressed="${elegida}">${elegida ? 'elegida ✓' : 'elegir esta ruta'}</button>
+        </div>
+      </article>`;
+  }).join('');
+  // Tabla: qué tanto cumple cada ruta con cada gusto
+  $('#b-rutas-tabla').innerHTML = `<thead><tr><th>lo que nos gusta</th>${DATOS_B.rutas.map((r) => `<th>${r.sello}</th>`).join('')}</tr></thead>
+    <tbody>${DATOS_B.gustos.map((g) => `<tr><td>${g.t}</td>${DATOS_B.rutas.map((r) =>
+      `<td class="mono puntos" title="${r.gustos[g.id]} de 3">${puntosGusto(r.gustos[g.id])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+// Al elegir ruta, sus tours, alojamiento, barcaza y permiso pasan al presupuesto
+function aplicarRutaAlPresupuesto() {
+  const c = DATOS_B.ruta.costos;
+  valoresB['ab-activ'] = { unitario: c.actividades, cantidad: 1 };
+  valoresB['ab-aloj'] = { unitario: c.aloj, cantidad: 14 };
+  valoresB['ab-barcaza'] = { unitario: c.barcaza, cantidad: 1 };
+  valoresB['ab-permiso'] = { unitario: c.permiso, cantidad: 1 };
+  guardado.escribir('valores-b', valoresB);
+  pintarLineasB('#b-calc-au', PB.austral);
+}
+$('#b-rutas').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-elegir-ruta-b]');
+  if (!b) return;
+  opcionesB.ruta = b.dataset.elegirRutaB;
+  DATOS_B.rutaId = opcionesB.ruta;
+  guardarOpcionesB();
+  aplicarRutaAlPresupuesto();
+  pintarRutasB();
+  pintarRutasB();
+pintarRutaB();
+  pintarAnioNuevoB();
+  repintarTodoB();
+});
+
 // ---------- B2. La Austral larga ----------
 function tarjetaTramoB(t, tipo) {
   const elegido = (tipo === 'ida' ? opcionesB.ida : opcionesB.vuelta) === t.id;
@@ -365,6 +435,9 @@ const exploradorB = $('#b-explorador-austral');
 const mediaB = crearMedia($('[data-media]', exploradorB));
 function pintarRutaB() {
   const r = DATOS_B.ruta;
+  $('[data-b-ruta-titulo]').textContent = r.nombre;
+  $('[data-b-ruta-tramo]').textContent = TRAMO_RUTA[r.id];
+  $$('[data-b-km]').forEach((el) => { el.textContent = '~' + r.km.toLocaleString('es-CL'); });
   $('[data-ruta-resumen]', exploradorB).textContent = r.resumen;
   $('[data-ruta-extra]', exploradorB).textContent = r.extra;
   $('[data-paradas]', exploradorB).innerHTML = r.paradas.map((p, i) => `
@@ -378,7 +451,7 @@ function pintarRutaB() {
       ${fotosParada(p)}
     </li>`).join('');
   mediaB.mostrarLugar('chile-chico', false);
-  mediaB.definirRuta(r.mapaRuta, 'ruta: austral larga', 'Ida hasta Villa O\'Higgins y vuelta por Chile Chico y la barcaza a Puerto Ibáñez.');
+  mediaB.definirRuta(r.mapaRuta, 'ruta: ' + r.nombre.toLowerCase(), r.extra);
 }
 $('[data-paradas]', exploradorB).addEventListener('click', (e) => {
   const b = e.target.closest('[data-parada]');
@@ -396,7 +469,7 @@ function pintarDormirB() {
       <td data-col="dónde"><strong>${d.donde}</strong>${d.extra ? `<small>${d.extra}</small>` : ''}</td>
       <td data-col="camping">${CLP(d.camping)} p/p${d.campingNota ? `<small>${d.campingNota}</small>` : ''}</td>
       <td data-col="con techo">${d.techo.length
-        ? d.techo.map((t) => `<span class="opcion">${t.n} <span class="mono">★ ${t.r}</span> <b>${CLP(t.p)}</b></span>`).join('')
+        ? d.techo.map((t) => `<span class="opcion">${t.n}${t.r ? ` <span class="mono">★ ${t.r}</span>` : ''} <b>${t.estimado ? '≈ ' : ''}${CLP(t.p)}</b></span>`).join('')
         : '<span class="suave">sin precio en línea</span>'}</td>
       <td data-col=""><a class="link" href="${busquedaHoteles(d.busca)}" target="_blank" rel="noopener">ver más ↗</a>
         ${recotizar('dormir-b-' + d.noche, busquedaHoteles(d.busca), { clp: false })}</td>
@@ -405,10 +478,12 @@ function pintarDormirB() {
 
 // Año Nuevo en la Patagonia: el mismo formato que el de Guatemala, con botón para elegir
 function pintarAnioNuevoB() {
+  if (!deLaRutaB(DATOS_B.anioNuevo.find((n) => n.id === opcionesB.anioNuevo))) opcionesB.anioNuevo = DATOS_B.anioNuevo[0].id;
   $('#b-anio-nuevo').innerHTML = DATOS_B.anioNuevo.map((n) => {
     const elegido = opcionesB.anioNuevo === n.id;
+    const calza = deLaRutaB(n);
     return `
-      <article class="noche-vieja${elegido ? ' destacada' : ''}">
+      <article class="noche-vieja${elegido ? ' destacada' : ''}${calza ? '' : ' no-calza'}">
         ${galeria(n.fotos, n.titulo)}
         <div class="noche-cuerpo">
           <div class="actividad-cabeza"><span class="etiqueta">${n.donde}</span><span class="sello-mini">${n.sello}</span></div>
@@ -416,11 +491,11 @@ function pintarAnioNuevoB() {
           <p class="actividad-precio">${n.precio}</p>
           <p>${n.resumen}</p>
           <ol class="noche-horas">${n.noche.map(([h, q]) => `<li><span>${h}</span>${q}</li>`).join('')}</ol>
-          <p class="dispo-texto">${n.calza}</p>
+          <p class="dispo-texto">${calza ? n.calza : `Solo calza con la ruta "${DATOS_B.rutas.find((r) => r.id === n.rutas[0]).nombre}".`}</p>
           ${costoNoche(n)}
           ${detalleNoche(n)}
           <div class="noche-links">
-            <button type="button" class="boton${elegido ? ' elegido' : ''}" data-b-elegir-ny="${n.id}" aria-pressed="${elegido}">${elegido ? 'elegido ✓' : 'elegir'}</button>
+            <button type="button" class="boton${elegido ? ' elegido' : ''}" data-b-elegir-ny="${n.id}" aria-pressed="${elegido}"${calza ? '' : ' disabled'}>${elegido ? 'elegido ✓' : 'elegir'}</button>
             ${n.links.map((l) => `<a class="link" href="${l.url}" target="_blank" rel="noopener">${l.t} ↗</a>`).join('')}
           </div>
         </div>
@@ -440,9 +515,12 @@ const FECHAS_B = {
   'exploradores-hielo': 'Viajero Austral y Huente-Có lo hacen a $150 mil: confirmar que salen el 28 o 29 dic y reservar apenas cerremos.',
   ohiggins: 'Escribir antes a Robinson Crusoe o Turismo Las Ruedas con la fecha: lun 4 ene.'
 };
+// Las actividades del plan A que una ruta no visita
+const SIN_ACTIVIDADES = { 'sin-apuro': ['ohiggins', 'barcaza'], 'dos-paises': ['tortel', 'ohiggins', 'barcaza'] };
 function pintarActividadesB() {
   const deA = DATOS.actividadesAustral.map((a) => (FECHAS_B[a.id] ? { ...a, dispo: { ...a.dispo, texto: FECHAS_B[a.id] } } : a));
-  $('#b-lista-actividades').innerHTML = tarjetasActividades([...deA, ...DATOS_B.actividades]);
+  const fuera = SIN_ACTIVIDADES[DATOS_B.rutaId] || [];
+  $('#b-lista-actividades').innerHTML = tarjetasActividades([...deA.filter((a) => !fuera.includes(a.id)), ...DATOS_B.actividades.filter(deLaRutaB)]);
   const b = DATOS.barcaza;
   $('[data-b-barcaza]').innerHTML = `Desde Yungay: <strong>${b.ida.join(' · ')}</strong>. Desde Río Bravo: <strong>${b.vuelta.join(' · ')}</strong>. Son los horarios de diciembre: en enero es temporada alta y suelen sumar salidas.`;
 }
@@ -554,7 +632,7 @@ function calcularB() {
   // La presentación (/agencia/propuesta) lee este resumen
   guardado.escribir('resumen-b', {
     persona, pasajes, playa: enPlaya, austral: enAustral, playaId: o.id, hotel: h.n, noches: Number(opcionesB.noches),
-    auto: a.id, ida: opcionesB.ida, vuelta: opcionesB.vuelta, anioNuevo: opcionesB.anioNuevo, visto: new Date().toISOString()
+    auto: a.id, ida: opcionesB.ida, vuelta: opcionesB.vuelta, anioNuevo: opcionesB.anioNuevo, ruta: opcionesB.ruta, visto: new Date().toISOString()
   });
 }
 
@@ -634,7 +712,7 @@ function pintarReservasB() {
     { id: vuelta.id, antes: precioTramoB(vuelta), que: `Vuelta de Balmaceda · ${vuelta.aerolinea}`, detalle: `${vuelta.dia} · ${vuelta.sale} → ${vuelta.llega}`, precio: CLP(precioTramoB(vuelta)) + ' c/u', link: linkLatamB('BBA', 'SCL', '2027-01-09') },
     { id: a.id, antes: totalAutoB(a), que: `Auto en Balmaceda · ${a.modelo}`, detalle: `${a.agencia} · ${BAUTO.dias} días · cancelación gratis`, precio: CLP(totalAutoB(a)) + ' los dos', link: BAUTO.link }
   ];
-  const sueltas = DATOS_B.reservas.map((r) => {
+  const sueltas = DATOS_B.reservas.filter(deLaRutaB).map((r) => {
     const x = recotizadoDe(r.id);
     const detalle = r.id === 'rb-anio-nuevo' && ny ? `Elegido: ${ny.titulo.toLowerCase()}. ${r.detalle}` : r.detalle;
     return { ...r, detalle, clp: false, precio: x ? x.texto : r.precio };
@@ -683,6 +761,7 @@ document.addEventListener('repintar-precios', () => repintarTodoB());
 
 function repintarTodoB() {
   pintarPlayas();
+  pintarRutasB();
   pintarCuandoComprar();
   pintarBlackFriday();
   pintarAustralB();

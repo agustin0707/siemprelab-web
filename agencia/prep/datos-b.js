@@ -166,8 +166,7 @@ const DATOS_B = {
 
   // Auto en Balmaceda, sáb 26 dic 17:00 → sáb 9 ene 08:00 (14 días). Kayak, 4 nov: solo quedaban 4 autos y todos de Rentcars.
   autos: {
-    dias: 14,
-    km: 2100,
+    dias: 14, // los km salen de la ruta elegida (abajo)
     link: 'https://www.kayak.cl/cars/BBA/2026-12-26-17h/2027-01-09-08h?sort=price_a',
     opciones: [
       { id: 'b-tucson', agencia: 'Rentcars', modelo: 'Hyundai Tucson o similar', tipo: 'SUV compacto · automático', total: 585298, consumo: 11, combustible: 'bencina', recomendado: true, sello: 'la mejor que queda',
@@ -187,41 +186,151 @@ const DATOS_B = {
   },
 
   // ---------- La ruta: 14 noches ----------
-  ruta: {
-    nombre: 'Austral larga',
-    resumen: 'De Cerro Castillo al fin del camino y la vuelta por el otro lado del lago. Sin días eternos: el más largo es de 5 h.',
-    mapaRuta: ['Aeropuerto Balmaceda', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Puerto Bertrand', 'Cochrane', 'Caleta Tortel', "Villa O'Higgins", 'Cochrane', 'Chile Chico', 'Puerto Ibáñez', 'Aeropuerto Balmaceda'],
-    paradas: [
-      { dias: 'D1 · sáb 26 dic', lugar: 'cerro-castillo', titulo: 'Balmaceda → Cerro Castillo', detalle: 'Llegamos 16:15 con la Navidad recién comida. Auto en el aeropuerto, súper en el camino y a la primera carpa.', manejo: '95 km · 1,5 h · pavimento' },
-      { dias: 'D2 · dom 27', lugar: 'general-carrera', titulo: 'Rumbo a Río Tranquilo', detalle: 'El primer tramo nuevo, bordeando el General Carrera, con parada en Bahía Murta.', manejo: '125 km · 2,5 h · ripio' },
-      { dias: 'D3 · lun 28', lugar: 'capillas-marmol', titulo: 'Capillas de Mármol', detalle: 'Kayak o lancha temprano, con el lago quieto. Tarde libre.', manejo: 'sin auto' },
-      { dias: 'D4 · mar 29', lugar: 'exploradores', titulo: 'Glaciar Exploradores', detalle: 'Caminata sobre el hielo, día completo. Si amanece lloviendo, se cambia con el día de las Capillas.', manejo: '52 km por lado · ripio' },
-      { dias: 'D5 · mié 30', lugar: 'confluencia-baker', titulo: 'Bertrand y el Baker', detalle: 'La confluencia, rafting si hay ganas y a dormir al Valle Chacabuco.', manejo: '140 km · 3 h · ripio' },
-      { dias: 'D6 · jue 31', lugar: 'parque-patagonia', titulo: 'Año Nuevo en el Parque Patagonia', detalle: 'Lagunas Altas en la mañana, con guanacos. En la noche, lo que elijamos para recibir el 2027.', manejo: 'sin auto' },
-      { dias: 'D7 · vie 1 ene', lugar: 'tortel', titulo: 'Rumbo a Caleta Tortel', detalle: 'El 1 de enero sin apuro: Cochrane a llenar el estanque y bajada a Tortel.', manejo: '145 km · 3 h · ripio' },
-      { dias: 'D8 · sáb 2', lugar: 'tortel', titulo: 'Tortel e Isla de los Muertos', detalle: 'Lancha a la isla en la mañana y pasarelas en la tarde.', manejo: 'sin auto' },
-      { dias: 'D9 · dom 3', lugar: 'villa-ohiggins', titulo: 'Al fin del camino', detalle: 'Barcaza Yungay → Río Bravo y los últimos 100 km de la Carretera.', manejo: '145 km + barcaza · 4 h' },
-      { dias: 'D10 · lun 4', lugar: 'villa-ohiggins', titulo: "Glaciar O'Higgins", detalle: 'Navegación al glaciar si sale ese día. Si no, miradores y el hito del km 1.240.', manejo: 'sin auto' },
-      { dias: 'D11 · mar 5', lugar: 'cochrane', titulo: 'De vuelta a Cochrane', detalle: 'Barcaza de vuelta y a Cochrane. Si queda energía, la Reserva Tamango en la tarde.', manejo: '230 km + barcaza · 5 h' },
-      { dias: 'D12 · mié 6', lugar: 'chile-chico', titulo: 'Paso Las Llaves a Chile Chico', detalle: 'La vuelta por el otro lado del lago: un camino colgado sobre el General Carrera hasta el pueblo más soleado de Aysén.', manejo: '170 km · 4 h · ripio' },
-      { dias: 'D13 · jue 7', lugar: 'chile-chico', titulo: 'Reserva Jeinimeni', detalle: 'Lagunas verdes, la Piedra Clavada y la Cueva de las Manos.', manejo: '60 km por lado · ripio' },
-      { dias: 'D14 · vie 8', lugar: 'puerto-ibanez', titulo: 'Cruce del lago y última noche', detalle: 'Barcaza Chile Chico → Puerto Ibáñez (2 h, por confirmar) y a Cerro Castillo. Si no sale, se vuelve por Guadal (6 h).', manejo: '~100 km + barcaza' },
-      { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Salir 07:30, devolver el auto y vuelo 10:17. A mediodía en Santiago.', manejo: '95 km · 1,5 h' }
-    ],
-    extra: 'Son ~2.100 km. La única pieza por confirmar es la barcaza Chile Chico → Ibáñez: si no está andando, el último día es de 6 h por tierra.'
-  },
+  // ---------- Tres rutas para la Austral larga (6 nov) ----------
+  // Las tres parten y terminan en Balmaceda (26 dic al 9 ene) y pasan el 31 en el Valle Chacabuco.
+  // gustos: de 1 a 3, cuánto cumple cada ruta con cada cosa (para la lámina "según gustos").
+  // costos: actividades c/u, alojamiento promedio por noche (la pieza), barcaza y permiso del auto (totales).
+  // techo: las filas de "dormir" que van con techo en la cuenta base.
+  gustos: [
+    { id: 'lejos', t: 'llegar al fin del camino' },
+    { id: 'caminar', t: 'caminar harto' },
+    { id: 'pocoAuto', t: 'manejar poco' },
+    { id: 'techo', t: 'dormir más con techo' },
+    { id: 'pais', t: 'cruzar a otro país' },
+    { id: 'glaciares', t: 'glaciares' },
+    { id: 'pueblos', t: 'pueblos chicos y remotos' },
+    { id: 'barato', t: 'gastar menos' }
+  ],
+  rutas: [
+    { id: 'fin-del-camino', nombre: 'Hasta el fin del camino', sello: 'la completa', color: '#c4552d',
+      gancho: 'La Carretera Austral entera: Tortel, la barcaza de Yungay y Villa O\'Higgins, y la vuelta por Chile Chico.',
+      km: 2100, horasMax: 5, nochesTecho: 4,
+      fotos: ['villa-ohiggins', 'tortel', 'capillas-marmol', 'chile-chico'],
+      gustos: { lejos: 3, caminar: 2, pocoAuto: 1, techo: 1, pais: 1, glaciares: 3, pueblos: 3, barato: 2 },
+      pros: ['Llegamos al km 1.240: el fin del camino', 'Dos glaciares: Exploradores y O\'Higgins', 'Tortel y O\'Higgins, los pueblos más remotos de Chile'],
+      contras: ['Es la que más se maneja de Chile: 2.100 km', 'Días seguidos de auto entre el 1 y el 6 de enero', 'Dos barcazas que dependen del clima'],
+      costos: { actividades: 270000, aloj: 30000, barcaza: 40000, permiso: 0 },
+      techo: [1, 8],
+      mosaico: ['parque-patagonia', 'tortel', 'ohiggins', 'paso-las-llaves', 'jeinimeni'],
+      cifras: [['~2.100', 'km de ruta'], ['8', 'pueblos nuevos'], ['2', 'barcazas']],
+      resumen: 'De Cerro Castillo al fin del camino y la vuelta por el otro lado del lago. Sin días eternos: el más largo es de 5 h.',
+      mapaRuta: ['Aeropuerto Balmaceda', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Puerto Bertrand', 'Cochrane', 'Caleta Tortel', "Villa O'Higgins", 'Cochrane', 'Chile Chico', 'Puerto Ibáñez', 'Aeropuerto Balmaceda'],
+      paradas: [
+        { dias: 'D1 · sáb 26 dic', lugar: 'cerro-castillo', titulo: 'Balmaceda → Cerro Castillo', detalle: 'Llegamos 16:15 con la Navidad recién comida. Auto en el aeropuerto, súper en el camino y a la primera carpa.', manejo: '95 km · 1,5 h · pavimento' },
+        { dias: 'D2 · dom 27', lugar: 'general-carrera', titulo: 'Rumbo a Río Tranquilo', detalle: 'El primer tramo nuevo, bordeando el General Carrera, con parada en Bahía Murta.', manejo: '125 km · 2,5 h · ripio' },
+        { dias: 'D3 · lun 28', lugar: 'capillas-marmol', titulo: 'Capillas de Mármol', detalle: 'Kayak o lancha temprano, con el lago quieto. Tarde libre.', manejo: 'sin auto' },
+        { dias: 'D4 · mar 29', lugar: 'exploradores', titulo: 'Glaciar Exploradores', detalle: 'Caminata sobre el hielo, día completo. Si amanece lloviendo, se cambia con el día de las Capillas.', manejo: '52 km por lado · ripio' },
+        { dias: 'D5 · mié 30', lugar: 'confluencia-baker', titulo: 'Bertrand y el Baker', detalle: 'La confluencia, rafting si hay ganas y a dormir al Valle Chacabuco.', manejo: '140 km · 3 h · ripio' },
+        { dias: 'D6 · jue 31', lugar: 'parque-patagonia', titulo: 'Año Nuevo en el Parque Patagonia', detalle: 'Lagunas Altas en la mañana, con guanacos. En la noche, lo que elijamos para recibir el 2027.', manejo: 'sin auto' },
+        { dias: 'D7 · vie 1 ene', lugar: 'tortel', titulo: 'Rumbo a Caleta Tortel', detalle: 'El 1 de enero sin apuro: Cochrane a llenar el estanque y bajada a Tortel.', manejo: '145 km · 3 h · ripio' },
+        { dias: 'D8 · sáb 2', lugar: 'tortel', titulo: 'Tortel e Isla de los Muertos', detalle: 'Lancha a la isla en la mañana y pasarelas en la tarde.', manejo: 'sin auto' },
+        { dias: 'D9 · dom 3', lugar: 'villa-ohiggins', titulo: 'Al fin del camino', detalle: 'Barcaza Yungay → Río Bravo y los últimos 100 km de la Carretera.', manejo: '145 km + barcaza · 4 h' },
+        { dias: 'D10 · lun 4', lugar: 'villa-ohiggins', titulo: "Glaciar O'Higgins", detalle: 'Navegación al glaciar si sale ese día. Si no, miradores y el hito del km 1.240.', manejo: 'sin auto' },
+        { dias: 'D11 · mar 5', lugar: 'cochrane', titulo: 'De vuelta a Cochrane', detalle: 'Barcaza de vuelta y a Cochrane. Si queda energía, la Reserva Tamango en la tarde.', manejo: '230 km + barcaza · 5 h' },
+        { dias: 'D12 · mié 6', lugar: 'chile-chico', titulo: 'Paso Las Llaves a Chile Chico', detalle: 'La vuelta por el otro lado del lago: un camino colgado sobre el General Carrera hasta el pueblo más soleado de Aysén.', manejo: '170 km · 4 h · ripio' },
+        { dias: 'D13 · jue 7', lugar: 'chile-chico', titulo: 'Reserva Jeinimeni', detalle: 'Lagunas verdes, la Piedra Clavada y la Cueva de las Manos.', manejo: '60 km por lado · ripio' },
+        { dias: 'D14 · vie 8', lugar: 'puerto-ibanez', titulo: 'Cruce del lago y última noche', detalle: 'Barcaza Chile Chico → Puerto Ibáñez (2 h, por confirmar) y a Cerro Castillo. Si no sale, se vuelve por Guadal (6 h).', manejo: '~100 km + barcaza' },
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Salir 07:30, devolver el auto y vuelo 10:17. A mediodía en Santiago.', manejo: '95 km · 1,5 h' }
+      ],
+      extra: 'Son ~2.100 km. La única pieza por confirmar es la barcaza Chile Chico → Ibáñez: si no está andando, el último día es de 6 h por tierra.',
+      dormir: [
+        { noche: 'sáb 26', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'Precio visto para diciembre: confirmar.', busca: 'alojamiento Villa Cerro Castillo 26 al 27 de diciembre 2026' },
+        { noche: 'dom 27 a lun 29', donde: 'Puerto Río Tranquilo (3 noches)', camping: 10000, techo: [{ n: 'Rimaya Hostel', p: 69360, r: '4,7' }, { n: 'Cabañas Siempre Verde', p: 98808, r: '4,8' }, { n: 'Patagonia Acres Lodge', p: 173790, r: '4,7' }], busca: 'alojamiento Puerto Río Tranquilo 27 al 30 de diciembre 2026' },
+        { noche: 'mié 30', donde: 'Valle Chacabuco (Parque Patagonia)', camping: 10000, campingNota: 'Camping West Winds', techo: [{ n: 'Cabañas Buena Vista (Bertrand)', p: 122097, r: '4,3' }], busca: 'alojamiento Puerto Bertrand 30 al 31 de diciembre 2026' },
+        { noche: 'jue 31 · Año Nuevo', donde: 'Según lo que elijamos', camping: 10000, campingNota: 'West Winds', techo: [{ n: 'Cabañas Sol de la Patagonia (Guadal)', p: 75829, r: '4,9' }, { n: 'Patagonia 47g', p: 129882, r: '4,7' }, { n: 'El Arrayán', p: 182676, r: '4,9' }], busca: 'alojamiento Puerto Bertrand 31 de diciembre 2026 al 1 de enero 2027' },
+        { noche: 'vie 1 y sáb 2', donde: 'Caleta Tortel (2 noches)', camping: 8000, techo: [], extra: 'Nada publica precio en línea: hospedajes familiares (~$40 a 60 mil) por WhatsApp.', busca: 'alojamiento Caleta Tortel 1 al 3 de enero 2027' },
+        { noche: 'dom 3 y lun 4', donde: "Villa O'Higgins (2 noches)", camping: 10000, techo: [{ n: 'Hostal Puesto Canogas', p: 116834, r: '4,6' }, { n: 'Rumbo Sur Hotel', p: 257032, r: '4,6' }], extra: 'Precio de diciembre. Hay poco y se llena.', busca: "alojamiento Villa O'Higgins 3 al 5 de enero 2027" },
+        { noche: 'mar 5', donde: 'Cochrane', camping: 8000, techo: [{ n: 'SURí refugios', p: 39566, r: '5,0' }, { n: 'Mate Sur Hostel', p: 63242, r: '4,4' }], busca: 'alojamiento Cochrane 5 al 6 de enero 2027' },
+        { noche: 'mié 6 y jue 7', donde: 'Chile Chico (2 noches)', camping: 10000, techo: [{ n: 'Hotel Austral', p: 65450, r: '4,0' }, { n: 'Cabañas Rincón Soleado', p: 67061, r: '4,9' }, { n: 'Casona Belga', p: 132123, r: '4,7' }], busca: 'alojamiento Chile Chico 6 al 8 de enero 2027' },
+        { noche: 'vie 8', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'La última, con techo para salir temprano al aeropuerto.', busca: 'alojamiento Villa Cerro Castillo 8 al 9 de enero 2027' }
+      ] },
 
-  // Noche por noche (pieza doble por noche para los dos, Google Hoteles 4 nov; las de enero con fechas de enero)
-  dormir: [
-    { noche: 'sáb 26', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'Precio visto para diciembre: confirmar.', busca: 'alojamiento Villa Cerro Castillo 26 al 27 de diciembre 2026' },
-    { noche: 'dom 27 a lun 29', donde: 'Puerto Río Tranquilo (3 noches)', camping: 10000, techo: [{ n: 'Rimaya Hostel', p: 69360, r: '4,7' }, { n: 'Cabañas Siempre Verde', p: 98808, r: '4,8' }, { n: 'Patagonia Acres Lodge', p: 173790, r: '4,7' }], busca: 'alojamiento Puerto Río Tranquilo 27 al 30 de diciembre 2026' },
-    { noche: 'mié 30', donde: 'Valle Chacabuco (Parque Patagonia)', camping: 10000, campingNota: 'Camping West Winds', techo: [{ n: 'Cabañas Buena Vista (Bertrand)', p: 122097, r: '4,3' }], busca: 'alojamiento Puerto Bertrand 30 al 31 de diciembre 2026' },
-    { noche: 'jue 31 · Año Nuevo', donde: 'Según lo que elijamos', camping: 10000, campingNota: 'West Winds', techo: [{ n: 'Cabañas Sol de la Patagonia (Guadal)', p: 75829, r: '4,9' }, { n: 'Patagonia 47g', p: 129882, r: '4,7' }, { n: 'El Arrayán', p: 182676, r: '4,9' }], busca: 'alojamiento Puerto Bertrand 31 de diciembre 2026 al 1 de enero 2027' },
-    { noche: 'vie 1 y sáb 2', donde: 'Caleta Tortel (2 noches)', camping: 8000, techo: [], extra: 'Nada publica precio en línea: hospedajes familiares (~$40 a 60 mil) por WhatsApp.', busca: 'alojamiento Caleta Tortel 1 al 3 de enero 2027' },
-    { noche: 'dom 3 y lun 4', donde: "Villa O'Higgins (2 noches)", camping: 10000, techo: [{ n: 'Hostal Puesto Canogas', p: 116834, r: '4,6' }, { n: 'Rumbo Sur Hotel', p: 257032, r: '4,6' }], extra: 'Precio de diciembre. Hay poco y se llena.', busca: "alojamiento Villa O'Higgins 3 al 5 de enero 2027" },
-    { noche: 'mar 5', donde: 'Cochrane', camping: 8000, techo: [{ n: 'SURí refugios', p: 39566, r: '5,0' }, { n: 'Mate Sur Hostel', p: 63242, r: '4,4' }], busca: 'alojamiento Cochrane 5 al 6 de enero 2027' },
-    { noche: 'mié 6 y jue 7', donde: 'Chile Chico (2 noches)', camping: 10000, techo: [{ n: 'Hotel Austral', p: 65450, r: '4,0' }, { n: 'Cabañas Rincón Soleado', p: 67061, r: '4,9' }, { n: 'Casona Belga', p: 132123, r: '4,7' }], busca: 'alojamiento Chile Chico 6 al 8 de enero 2027' },
-    { noche: 'vie 8', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'La última, con techo para salir temprano al aeropuerto.', busca: 'alojamiento Villa Cerro Castillo 8 al 9 de enero 2027' }
+    { id: 'sin-apuro', nombre: 'Lagos y caminatas, sin apuro', sello: 'la tranquila', color: '#3f7f8c',
+      gancho: 'Sin Villa O\'Higgins: más noches en cada lugar, rafting en el Baker, Lagunas Altas con calma y dos días de cabaña en Guadal.',
+      km: 1550, horasMax: 4.5, nochesTecho: 7,
+      fotos: ['puerto-bertrand', 'parque-patagonia', 'general-carrera', 'cochrane'],
+      gustos: { lejos: 1, caminar: 3, pocoAuto: 3, techo: 3, pais: 1, glaciares: 2, pueblos: 2, barato: 2 },
+      pros: ['La que menos se maneja: ~1.550 km', 'Dos noches en cada lugar: se deshace la mochila', 'Huemules en el Tamango y rafting en el Baker'],
+      contras: ['No llegamos a Villa O\'Higgins ni al fin del camino', 'Un solo glaciar (Exploradores)', 'Más noches con techo: el alojamiento sale más caro'],
+      costos: { actividades: 235000, aloj: 38000, barcaza: 40000, permiso: 0 },
+      techo: [2, 6, 8],
+      mosaico: ['rafting-baker', 'parque-patagonia', 'tamango', 'tortel', 'paso-las-llaves'],
+      cifras: [['~1.550', 'km de ruta'], ['7', 'noches con techo'], ['4,5 h', 'el día más largo']],
+      resumen: 'Lo mejor del sur sin correr: dos o tres noches por lugar, caminatas largas y días sin auto.',
+      mapaRuta: ['Aeropuerto Balmaceda', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Puerto Bertrand', 'Parque Patagonia, Valle Chacabuco', 'Cochrane', 'Caleta Tortel', 'Puerto Guadal', 'Chile Chico', 'Puerto Ibáñez', 'Aeropuerto Balmaceda'],
+      paradas: [
+        { dias: 'D1 · sáb 26 dic', lugar: 'cerro-castillo', titulo: 'Balmaceda → Cerro Castillo', detalle: 'Llegamos 16:15 con la Navidad recién comida. Auto en el aeropuerto, súper en el camino y a la primera carpa.', manejo: '95 km · 1,5 h · pavimento' },
+        { dias: 'D2 · dom 27', lugar: 'general-carrera', titulo: 'Rumbo a Río Tranquilo', detalle: 'El primer tramo nuevo, bordeando el General Carrera, con parada en Bahía Murta.', manejo: '125 km · 2,5 h · ripio' },
+        { dias: 'D3 · lun 28', lugar: 'capillas-marmol', titulo: 'Capillas de Mármol', detalle: 'Kayak o lancha temprano, con el lago quieto. Tarde libre.', manejo: 'sin auto' },
+        { dias: 'D4 · mar 29', lugar: 'exploradores', titulo: 'Glaciar Exploradores', detalle: 'Caminata sobre el hielo, día completo. Si amanece lloviendo, se cambia con el día de las Capillas.', manejo: '52 km por lado · ripio' },
+        { dias: 'D5 · mié 30', lugar: 'puerto-bertrand', titulo: 'Puerto Bertrand y el Baker', detalle: 'Llegamos a almorzar y en la tarde rafting por el Baker o kayak por el lago. Noche en cabaña frente al agua.', manejo: '115 km · 2,5 h · ripio' },
+        { dias: 'D6 · jue 31', lugar: 'parque-patagonia', titulo: 'Año Nuevo en el Parque Patagonia', detalle: 'La confluencia del Baker en la mañana y al Valle Chacabuco. En la noche, lo que elijamos para recibir el 2027.', manejo: '60 km · 1 h · ripio' },
+        { dias: 'D7 · vie 1 ene', lugar: 'parque-patagonia', titulo: 'Lagunas Altas con calma', detalle: 'El 1 de enero caminando: Lagunas Altas (20 km, 6 a 7 h) o el Valle Avilés si queremos algo más corto.', manejo: 'sin auto' },
+        { dias: 'D8 · sáb 2', lugar: 'cochrane', titulo: 'Reserva Tamango', detalle: 'Los huemules del Tamango en la mañana y el río Cochrane turquesa en la tarde. Súper y bencina para Tortel.', manejo: '20 km · 30 min' },
+        { dias: 'D9 · dom 3', lugar: 'tortel', titulo: 'Rumbo a Caleta Tortel', detalle: 'El camino a Tortel entre bosques y el Baker. Llegamos a las pasarelas con la tarde entera.', manejo: '125 km · 2,5 h · ripio' },
+        { dias: 'D10 · lun 4', lugar: 'tortel', titulo: 'Tortel e Isla de los Muertos', detalle: 'Lancha a la isla en la mañana y pasarelas en la tarde.', manejo: 'sin auto' },
+        { dias: 'D11 · mar 5', lugar: 'general-carrera', titulo: 'Tortel → Puerto Guadal', detalle: 'El tramo más largo de esta ruta, con almuerzo en Cochrane. Llegamos a la cabaña con tinaja frente al lago.', manejo: '235 km · 4,5 h · ripio' },
+        { dias: 'D12 · mié 6', lugar: 'general-carrera', titulo: 'Un día sin nada en Guadal', detalle: 'Sin auto: playa del lago, kayak, tinaja y leer. El día de descanso del viaje.', manejo: 'sin auto' },
+        { dias: 'D13 · jue 7', lugar: 'chile-chico', titulo: 'Paso Las Llaves a Chile Chico', detalle: 'El camino colgado sobre el lago hasta el pueblo del sol. En la tarde, la Piedra Clavada.', manejo: '110 km · 3 h · ripio' },
+        { dias: 'D14 · vie 8', lugar: 'puerto-ibanez', titulo: 'Cruce del lago y última noche', detalle: 'Barcaza Chile Chico → Puerto Ibáñez (2 h, por confirmar) y a Cerro Castillo. Si no sale, se vuelve por Guadal (6 h).', manejo: '~100 km + barcaza' },
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Salir 07:30, devolver el auto y vuelo 10:17. A mediodía en Santiago.', manejo: '95 km · 1,5 h' }
+      ],
+      extra: 'Son ~1.550 km y ningún día pasa de 4,5 h de auto. Igual que en la completa, la pieza por confirmar es la barcaza Chile Chico → Ibáñez.',
+      dormir: [
+        { noche: 'sáb 26', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], busca: 'alojamiento Villa Cerro Castillo 26 al 27 de diciembre 2026' },
+        { noche: 'dom 27 a lun 29', donde: 'Puerto Río Tranquilo (3 noches)', camping: 10000, techo: [{ n: 'Rimaya Hostel', p: 69360, r: '4,7' }, { n: 'Cabañas Siempre Verde', p: 98808, r: '4,8' }], busca: 'alojamiento Puerto Río Tranquilo 27 al 30 de diciembre 2026' },
+        { noche: 'mié 30', donde: 'Puerto Bertrand', camping: 10000, techo: [{ n: 'Cabañas Buena Vista', p: 122097, r: '4,3' }], extra: 'Buena Vista es también donde parte el rafting.', busca: 'alojamiento Puerto Bertrand 30 al 31 de diciembre 2026' },
+        { noche: 'jue 31 y vie 1', donde: 'Valle Chacabuco (2 noches)', camping: 10000, campingNota: 'Camping West Winds', techo: [{ n: 'SURí refugios (Cochrane, a 30 min)', p: 39566, r: '5,0' }], busca: 'alojamiento Cochrane 31 de diciembre 2026 al 2 de enero 2027' },
+        { noche: 'sáb 2', donde: 'Cochrane', camping: 8000, techo: [{ n: 'SURí refugios', p: 39566, r: '5,0' }, { n: 'Mate Sur Hostel', p: 63242, r: '4,4' }], busca: 'alojamiento Cochrane 2 al 3 de enero 2027' },
+        { noche: 'dom 3 y lun 4', donde: 'Caleta Tortel (2 noches)', camping: 8000, techo: [], extra: 'Nada publica precio en línea: hospedajes familiares (~$40 a 60 mil) por WhatsApp.', busca: 'alojamiento Caleta Tortel 3 al 5 de enero 2027' },
+        { noche: 'mar 5 y mié 6', donde: 'Puerto Guadal (2 noches)', camping: 10000, techo: [{ n: 'Cabañas Sol de la Patagonia', p: 75829, r: '4,9' }, { n: 'El Arrayán', p: 182676, r: '4,9' }], extra: 'Precio visto para el 31 dic: confirmar para enero.', busca: 'cabañas con tinaja Puerto Guadal 5 al 7 de enero 2027' },
+        { noche: 'jue 7', donde: 'Chile Chico', camping: 10000, techo: [{ n: 'Hotel Austral', p: 65450, r: '4,0' }, { n: 'Cabañas Rincón Soleado', p: 67061, r: '4,9' }], busca: 'alojamiento Chile Chico 7 al 8 de enero 2027' },
+        { noche: 'vie 8', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'La última, con techo para salir temprano al aeropuerto.', busca: 'alojamiento Villa Cerro Castillo 8 al 9 de enero 2027' }
+      ] },
+
+    { id: 'dos-paises', nombre: 'Dos países: el Fitz Roy', sello: 'la aventura', color: '#6b5aa6',
+      gancho: 'Del Valle Chacabuco cruzamos por Paso Roballos a Argentina: Cueva de las Manos, tres noches en El Chaltén y la vuelta por Los Antiguos.',
+      km: 2500, horasMax: 6.5, nochesTecho: 5,
+      fotos: ['el-chalten', 'cueva-manos', 'paso-roballos', 'los-antiguos'],
+      gustos: { lejos: 2, caminar: 3, pocoAuto: 1, techo: 2, pais: 3, glaciares: 2, pueblos: 1, barato: 1 },
+      pros: ['El Fitz Roy y la Laguna de los Tres: de los trekkings más lindos del mundo', 'La Cueva de las Manos, Patrimonio de la Humanidad', 'Un viaje que da la vuelta completa, sin repetir camino'],
+      contras: ['Dos días largos de Ruta 40 (6,5 y 5 h)', 'El auto necesita permiso para salir de Chile: hay que pedirlo a la arrendadora', 'No pasamos por Tortel ni O\'Higgins'],
+      costos: { actividades: 220000, aloj: 35000, barcaza: 40000, permiso: 120000 },
+      techo: [1, 4, 9],
+      mosaico: ['laguna-de-los-tres', 'cueva-manos', 'paso-roballos', 'parque-patagonia', 'jeinimeni'],
+      cifras: [['~2.500', 'km de ruta'], ['2', 'países'], ['3', 'noches en El Chaltén']],
+      resumen: 'Lo mejor de los dos lados de la cordillera: el sur de Aysén, la estepa por la Ruta 40 y el Fitz Roy.',
+      mapaRuta: ['Aeropuerto Balmaceda', 'Villa Cerro Castillo', 'Puerto Río Tranquilo', 'Parque Patagonia, Valle Chacabuco', 'Paso Roballos', 'Cueva de las Manos', 'El Chaltén', 'Gobernador Gregores', 'Los Antiguos', 'Chile Chico', 'Puerto Ibáñez', 'Aeropuerto Balmaceda'],
+      paradas: [
+        { dias: 'D1 · sáb 26 dic', lugar: 'cerro-castillo', titulo: 'Balmaceda → Cerro Castillo', detalle: 'Llegamos 16:15 con la Navidad recién comida. Auto en el aeropuerto, súper en el camino y a la primera carpa.', manejo: '95 km · 1,5 h · pavimento' },
+        { dias: 'D2 · dom 27', lugar: 'general-carrera', titulo: 'Rumbo a Río Tranquilo', detalle: 'El primer tramo nuevo, bordeando el General Carrera, con parada en Bahía Murta.', manejo: '125 km · 2,5 h · ripio' },
+        { dias: 'D3 · lun 28', lugar: 'capillas-marmol', titulo: 'Capillas de Mármol', detalle: 'Kayak o lancha temprano, con el lago quieto. Tarde libre.', manejo: 'sin auto' },
+        { dias: 'D4 · mar 29', lugar: 'exploradores', titulo: 'Glaciar Exploradores', detalle: 'Caminata sobre el hielo, día completo. Si amanece lloviendo, se cambia con el día de las Capillas.', manejo: '52 km por lado · ripio' },
+        { dias: 'D5 · mié 30', lugar: 'confluencia-baker', titulo: 'Bertrand y el Baker', detalle: 'La confluencia y a dormir al Valle Chacabuco.', manejo: '140 km · 3 h · ripio' },
+        { dias: 'D6 · jue 31', lugar: 'parque-patagonia', titulo: 'Año Nuevo en el Parque Patagonia', detalle: 'Lagunas Altas en la mañana, con guanacos. En la noche, lo que elijamos para recibir el 2027.', manejo: 'sin auto' },
+        { dias: 'D7 · vie 1 ene', lugar: 'paso-roballos', titulo: 'Paso Roballos y la Cueva de las Manos', detalle: 'Del valle directo a la frontera: estepa, lagunas con flamencos y casi nadie. En la tarde, la visita guiada a la Cueva de las Manos.', manejo: '~190 km · 5 h · ripio' },
+        { dias: 'D8 · sáb 2', lugar: 'ruta-40', titulo: 'La Ruta 40 hasta El Chaltén', detalle: 'El día más largo del viaje: estepa, guanacos y de repente el Fitz Roy al fondo. Bencina en Bajo Caracoles y Gregores.', manejo: '~560 km · 6,5 h · casi todo pavimento' },
+        { dias: 'D9 · dom 3', lugar: 'el-chalten', titulo: 'Laguna de los Tres', detalle: 'El trekking al pie del Fitz Roy: 20 km ida y vuelta, 8 a 9 h, con la última hora en subida fuerte.', manejo: 'sin auto' },
+        { dias: 'D10 · lun 4', lugar: 'el-chalten', titulo: 'Laguna Torre o descanso', detalle: 'Laguna Torre (18 km, 6 h) si quedan piernas. Si no, el Chorrillo del Salto y cerveza artesanal en el pueblo.', manejo: 'sin auto' },
+        { dias: 'D11 · mar 5', lugar: 'ruta-40', titulo: 'El Chaltén → Gobernador Gregores', detalle: 'De vuelta al norte por la 40, pasando el Lago Cardiel. Noche en Gregores para no hacer todo en un día.', manejo: '~350 km · 4 h · pavimento' },
+        { dias: 'D12 · mié 6', lugar: 'los-antiguos', titulo: 'Hasta Los Antiguos', detalle: 'Por Bajo Caracoles y Perito Moreno hasta el pueblo de las cerezas, a orillas del mismo lago.', manejo: '~420 km · 5 h · pavimento' },
+        { dias: 'D13 · jue 7', lugar: 'chile-chico', titulo: 'De vuelta a Chile y Jeinimeni', detalle: 'La frontera está a 10 min. Volvemos a Chile y en la tarde las lagunas de Jeinimeni.', manejo: '~80 km · ripio' },
+        { dias: 'D14 · vie 8', lugar: 'puerto-ibanez', titulo: 'Cruce del lago y última noche', detalle: 'Barcaza Chile Chico → Puerto Ibáñez (2 h, por confirmar) y a Cerro Castillo. Si no sale, se vuelve por Guadal (6 h).', manejo: '~100 km + barcaza' },
+        { dias: 'D15 · sáb 9', lugar: null, titulo: 'Vuelta', detalle: 'Salir 07:30, devolver el auto y vuelo 10:17. A mediodía en Santiago.', manejo: '95 km · 1,5 h' }
+      ],
+      extra: 'Son ~2.500 km. Hay que confirmar dos cosas: que la arrendadora deje cruzar el auto (se pide con días de anticipación) y el horario de Paso Roballos.',
+      dormir: [
+        { noche: 'sáb 26', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], busca: 'alojamiento Villa Cerro Castillo 26 al 27 de diciembre 2026' },
+        { noche: 'dom 27 a lun 29', donde: 'Puerto Río Tranquilo (3 noches)', camping: 10000, techo: [{ n: 'Rimaya Hostel', p: 69360, r: '4,7' }, { n: 'Cabañas Siempre Verde', p: 98808, r: '4,8' }], busca: 'alojamiento Puerto Río Tranquilo 27 al 30 de diciembre 2026' },
+        { noche: 'mié 30', donde: 'Valle Chacabuco (Parque Patagonia)', camping: 10000, campingNota: 'Camping West Winds', techo: [{ n: 'Cabañas Buena Vista (Bertrand)', p: 122097, r: '4,3' }], busca: 'alojamiento Puerto Bertrand 30 al 31 de diciembre 2026' },
+        { noche: 'jue 31 · Año Nuevo', donde: 'Según lo que elijamos', camping: 10000, campingNota: 'West Winds', techo: [{ n: 'Cabañas Sol de la Patagonia (Guadal)', p: 75829, r: '4,9' }, { n: 'Patagonia 47g', p: 129882, r: '4,7' }], busca: 'alojamiento Puerto Bertrand 31 de diciembre 2026 al 1 de enero 2027' },
+        { noche: 'vie 1', donde: 'Cueva de las Manos o Bajo Caracoles', camping: 10000, campingNota: 'camping de la hostería (confirmar)', techo: [{ n: 'Hostería Cueva de las Manos', p: 70000, estimado: true }], extra: 'Sin precio en línea: estimado. Bajo Caracoles tiene un hotel muy simple.', busca: 'Hostería Cueva de las Manos 1 de enero 2027' },
+        { noche: 'sáb 2 a lun 4', donde: 'El Chaltén (3 noches)', camping: 12000, campingNota: 'campings del pueblo (estimado)', techo: [{ n: 'Hostal doble en enero', p: 100000, estimado: true }], extra: 'Estimado: en enero se llena, reservar apenas compremos.', busca: 'alojamiento El Chaltén 2 al 5 de enero 2027' },
+        { noche: 'mar 5', donde: 'Gobernador Gregores', camping: 6000, campingNota: 'camping municipal (estimado)', techo: [{ n: 'Hotel o cabaña', p: 55000, estimado: true }], busca: 'alojamiento Gobernador Gregores 5 de enero 2027' },
+        { noche: 'mié 6', donde: 'Los Antiguos', camping: 8000, campingNota: 'camping municipal (estimado)', techo: [{ n: 'Cabaña o hostería', p: 60000, estimado: true }], busca: 'alojamiento Los Antiguos 6 de enero 2027' },
+        { noche: 'jue 7', donde: 'Chile Chico', camping: 10000, techo: [{ n: 'Hotel Austral', p: 65450, r: '4,0' }, { n: 'Cabañas Rincón Soleado', p: 67061, r: '4,9' }], busca: 'alojamiento Chile Chico 7 al 8 de enero 2027' },
+        { noche: 'vie 8', donde: 'Villa Cerro Castillo', camping: 10000, techo: [{ n: 'Refugio Casa Piedra', p: 39585, r: '4,2' }, { n: 'Vientos del Sur', p: 46988, r: '4,9' }], extra: 'La última, con techo para salir temprano al aeropuerto.', busca: 'alojamiento Villa Cerro Castillo 8 al 9 de enero 2027' }
+      ] }
   ],
 
   // ---------- Año Nuevo en la Austral (jueves 31 dic) ----------
@@ -270,7 +379,7 @@ const DATOS_B = {
       ojo: ['Preguntar si la cabaña tiene tinaja y si se paga aparte', 'Cambia el orden: el 31 se duerme en Guadal o Bertrand en vez del valle', 'Es la noche más pedida del verano: reservar apenas compremos los pasajes'],
       links: [{ t: 'Ver cabañas en Guadal', url: 'https://www.google.com/travel/search?q=caba%C3%B1as%20con%20tinaja%20Puerto%20Guadal%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP' }, { t: 'Ver en Bertrand', url: 'https://www.google.com/travel/search?q=caba%C3%B1as%20Puerto%20Bertrand%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP' }],
       calza: 'Se baja a dormir a Guadal o Bertrand el 31 y el 1 se sigue a Tortel.' },
-    { id: 'nyb-tortel', sello: 'el más distinto', titulo: 'Fin de año sobre las pasarelas de Tortel', donde: 'Caleta Tortel', fotos: ['tortel'],
+    { id: 'nyb-tortel', rutas: ['fin-del-camino'], sello: 'el más distinto', titulo: 'Fin de año sobre las pasarelas de Tortel', donde: 'Caleta Tortel', fotos: ['tortel'],
       precio: 'hospedaje familiar ≈ $40 a 60 mil la noche', costo: [['hospedaje, la mitad', 25000], ['cena casera', 15000, true], ['espumante y uvas', 10000]],
       resumen: 'Recibir el año en el pueblo de pasarelas de ciprés sobre el fiordo, en una casa familiar. Es chico y tranquilo: no hay fiesta publicada, es más de pueblo que de fuegos artificiales, y por eso mismo es otra cosa.',
       noche: [
@@ -301,6 +410,21 @@ const DATOS_B = {
 
   // Panoramas que solo están en el plan B (los demás son los de la Austral del plan A)
   actividades: [
+    { id: 'rafting-baker', rutas: ['sin-apuro'], fotos: 'puerto-bertrand', nombre: 'Rafting en el río Baker', donde: 'Puerto Bertrand', precio: '≈ $45 mil c/u (confirmar)', nota: 'Medio día, con traje y guía. Sale de Cabañas Buena Vista.',
+      resumen: 'El Baker es el río más caudaloso de Chile y sale turquesa del Lago Bertrand. El tramo de rafting es corto y sin rápidos difíciles: más para mirar que para asustarse.',
+      dispo: { estado: 'ojo', texto: 'Preguntar si sale el mié 30 dic.' } },
+    { id: 'tamango', rutas: ['sin-apuro'], fotos: 'cochrane', nombre: 'Reserva Tamango y los huemules', donde: 'Cochrane', precio: 'entrada CONAF ≈ $5 mil', nota: 'A 6 km de Cochrane. Senderos de 2 a 6 h.',
+      resumen: 'Una de las pocas reservas donde es fácil ver huemules, el ciervo del escudo. Los senderos suben por bosque de lenga con el río Cochrane turquesa abajo.',
+      dispo: { estado: 'ok', texto: 'Por nuestra cuenta, cualquier día.' } },
+    { id: 'laguna-de-los-tres', rutas: ['dos-paises'], fotos: 'el-chalten', nombre: 'Laguna de los Tres', donde: 'El Chaltén · Argentina', precio: 'entrada al Parque Los Glaciares (confirmar)', nota: '20 km ida y vuelta, 8 a 9 h. Sale del mismo pueblo, sin guía.',
+      resumen: 'El trekking más famoso de El Chaltén: bosque, ríos y una última hora en subida fuerte hasta una laguna al pie del Fitz Roy.',
+      dispo: { estado: 'ok', texto: 'Por nuestra cuenta, cualquier día con buen tiempo.' } },
+    { id: 'cueva-manos', rutas: ['dos-paises'], fotos: 'cueva-manos', nombre: 'Cueva de las Manos', donde: 'Santa Cruz · Argentina', precio: 'entrada extranjeros (ARS 12.000 en 2024: confirmar)', nota: 'Visitas guiadas cada hora, de 9 a 19 h, máximo 20 personas.',
+      resumen: 'Un alero de roca sobre el cañadón del río Pinturas con cientos de manos pintadas hace hasta 9.000 años. Es Patrimonio de la Humanidad.',
+      dispo: { estado: 'ok', texto: 'Se llega por nuestra cuenta: no hay transporte público.' } },
+    { id: 'paso-roballos', rutas: ['dos-paises'], fotos: 'paso-roballos', nombre: 'Paso Roballos', donde: 'Valle Chacabuco → Argentina', precio: 'gratis', nota: 'Ripio de los dos lados. Abierto de 8 a 20 h (en verano puede ser hasta las 22: confirmar).',
+      resumen: 'El paso fronterizo más tranquilo de Aysén: sale del mismo Valle Chacabuco, cruza estepa y lagunas con flamencos y llega a la Ruta 40.',
+      dispo: { estado: 'ojo', texto: 'Llevar el permiso del auto y la cédula.' } },
     { id: 'jeinimeni', fotos: 'chile-chico', nombre: 'Reserva Jeinimeni y la Cueva de las Manos', donde: 'Chile Chico', precio: 'entrada CONAF: confirmar', nota: 'Día completo desde Chile Chico, por nuestra cuenta en el auto.',
       resumen: 'Al sur de Chile Chico, un valle de estepa con lagunas verdes y turquesa. En el camino está la Piedra Clavada, una columna de roca enorme, y un sendero lleva a pinturas tehuelches de manos en un alero de roca.',
       consta: ['60 km de ripio al sur de Chile Chico, cruzando esteros', 'Laguna Verde y Lago Jeinimeni', 'Sendero a la Cueva de las Manos (Valle Lebrel)', 'Piedra Clavada a la vuelta'],
@@ -327,8 +451,9 @@ const DATOS_B = {
       { id: 'ab-aloj', nombre: 'Alojamiento (casi todo carpa, 4 noches con techo)', unitario: 30000, cantidad: 14, unidad: 'noches', tipo: 'mitad' },
       { id: 'ab-comida', nombre: 'Comida (cocinamos casi siempre)', unitario: 10000, cantidad: 15, unidad: 'días', tipo: 'cada' },
       { id: 'ab-equipo', nombre: 'Gas y lo que falte del equipo', unitario: 30000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
-      { id: 'ab-activ', nombre: "Tours y entradas (Capillas, Exploradores, Tortel, O'Higgins)", unitario: 270000, cantidad: 1, unidad: 'total', tipo: 'cada' },
-      { id: 'ab-barcaza', nombre: 'Barcaza Chile Chico → Ibáñez con el auto (estimado)', unitario: 40000, cantidad: 1, unidad: 'total', tipo: 'mitad' }
+      { id: 'ab-activ', nombre: 'Tours y entradas de la ruta', unitario: 270000, cantidad: 1, unidad: 'total', tipo: 'cada' },
+      { id: 'ab-barcaza', nombre: 'Barcaza Chile Chico → Ibáñez con el auto (estimado)', unitario: 40000, cantidad: 1, unidad: 'total', tipo: 'mitad' },
+      { id: 'ab-permiso', nombre: 'Permiso del auto para Argentina (solo ruta dos países)', unitario: 0, cantidad: 1, unidad: 'total', tipo: 'mitad' }
     ]
   },
 
@@ -337,7 +462,11 @@ const DATOS_B = {
     { id: 'rb-exploradores', que: 'Glaciar Exploradores sobre el hielo · Viajero Austral', detalle: 'El mar 29 dic, con el lun 28 de respaldo. Preguntar por WhatsApp si salen esos días.', precio: '$150 mil c/u', link: 'https://www.viajeroaustral.com/tour-glaciar-exploradores' },
     { id: 'rb-tranquilo', que: 'Alojamiento en Río Tranquilo', detalle: '27 al 30 dic. Fin de año es temporada alta.', precio: 'desde $69 mil la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20Puerto%20R%C3%ADo%20Tranquilo%2027%20al%2030%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
     { id: 'rb-anio-nuevo', que: 'Año Nuevo · lo que elijamos', detalle: 'Camping West Winds (preguntar a CONAF) o cabaña en Guadal o Bertrand.', precio: 'según la opción', link: 'https://www.google.com/travel/search?q=alojamiento%20Puerto%20Guadal%2031%20de%20diciembre%202026&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
-    { id: 'rb-ohiggins', que: "Alojamiento en Villa O'Higgins y navegación al glaciar", detalle: '3 al 5 ene. Preguntar por la navegación del lun 4.', precio: 'desde $117 mil la noche', link: "https://www.google.com/travel/search?q=alojamiento%20Villa%20O'Higgins%203%20al%205%20de%20enero%202027&hl=es&gl=CL&curr=CLP", boton: 'buscar' },
+    { id: 'rb-ohiggins', rutas: ['fin-del-camino'], que: "Alojamiento en Villa O'Higgins y navegación al glaciar", detalle: '3 al 5 ene. Preguntar por la navegación del lun 4.', precio: 'desde $117 mil la noche', link: "https://www.google.com/travel/search?q=alojamiento%20Villa%20O'Higgins%203%20al%205%20de%20enero%202027&hl=es&gl=CL&curr=CLP", boton: 'buscar' },
+    { id: 'rb-guadal', rutas: ['sin-apuro'], que: 'Cabaña con tinaja en Puerto Guadal', detalle: '5 al 7 ene, dos noches. Preguntar si la tinaja se paga aparte.', precio: 'desde $76 mil la noche', link: 'https://www.google.com/travel/search?q=caba%C3%B1as%20con%20tinaja%20Puerto%20Guadal%205%20al%207%20de%20enero%202027&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
+    { id: 'rb-rafting', rutas: ['sin-apuro'], que: 'Rafting en el Baker · Puerto Bertrand', detalle: 'Mié 30 dic en la tarde. Preguntar en Cabañas Buena Vista.', precio: '≈ $45 mil c/u (confirmar)', link: 'https://www.google.com/search?q=rafting+r%C3%ADo+Baker+Puerto+Bertrand', boton: 'consultar' },
+    { id: 'rb-permiso', rutas: ['dos-paises'], que: 'Permiso para cruzar a Argentina con el auto', detalle: 'Se pide a la arrendadora con días de anticipación (Avis pide 72 h hábiles). Si no lo dan, esta ruta no corre.', precio: '≈ $120 mil (confirmar)', link: 'https://www.chileatiende.gob.cl/fichas/18693', boton: 'ver trámite' },
+    { id: 'rb-chalten', rutas: ['dos-paises'], que: 'Alojamiento en El Chaltén', detalle: '2 al 5 ene, tres noches. En enero se llena.', precio: '≈ $100 mil la noche', link: 'https://www.google.com/travel/search?q=alojamiento%20El%20Chalt%C3%A9n%202%20al%205%20de%20enero%202027&hl=es&gl=CL&curr=CLP', boton: 'buscar' },
     { id: 'rb-barcaza', que: 'Barcaza Chile Chico → Puerto Ibáñez', detalle: 'Vie 8 ene en la mañana. Confirmar que esté andando y reservar el cupo del auto.', precio: 'consultar', link: 'https://www.google.com/search?q=barcaza+Chile+Chico+Puerto+Iba%C3%B1ez+horarios+2027', boton: 'consultar' }
   ],
 
@@ -359,3 +488,12 @@ const DATOS_B = {
     b: ['La Austral entera, sin días eternos y con la vuelta al lago', 'Una semana de descanso de verdad antes de Navidad', 'Menos trámites: nada de shuttles, quetzales ni vuelos internos', 'Año Nuevo en la Patagonia']
   }
 };
+
+// ---------- La ruta que se está mirando ----------
+// La prep y la presentación cambian DATOS_B.rutaId; ruta, dormir y los km del auto salen de esa ruta.
+DATOS_B.rutaId = DATOS_B.rutas[0].id;
+Object.defineProperty(DATOS_B, 'ruta', { get: () => DATOS_B.rutas.find((r) => r.id === DATOS_B.rutaId) || DATOS_B.rutas[0] });
+Object.defineProperty(DATOS_B, 'dormir', { get: () => DATOS_B.ruta.dormir });
+Object.defineProperty(DATOS_B.autos, 'km', { get: () => DATOS_B.ruta.km });
+// Lo que es solo de algunas rutas (actividades, reservas, Año Nuevo)
+const deLaRutaB = (x) => !x.rutas || x.rutas.includes(DATOS_B.rutaId);

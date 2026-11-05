@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=23">
+  <link rel="stylesheet" href="prep.css?v=24">
   <!-- Plan A (Austral + Guatemala) o plan B (playa + Austral larga): se marca antes de pintar para que no parpadee -->
   <script>
     (function () {
@@ -112,6 +112,7 @@
     <a href="#playa" data-solo="b">playa</a>
     <a href="#black-friday" data-solo="b">black friday</a>
     <a href="#austral-larga" data-solo="b">austral larga</a>
+    <a href="#tres-rutas" data-solo="b">tres rutas</a>
     <a href="#presupuesto-b" data-solo="b">presupuesto</a>
     <a href="#datos-b" data-solo="b">datos</a>
     <a href="#compra-b" data-solo="b">junta</a>
@@ -548,18 +549,27 @@
       <div class="sub-cabeza">
         <span class="etiqueta">el auto · 14 días, retiro y devolución en el aeropuerto</span>
         <h3>Arriendo en Balmaceda, en temporada alta</h3>
-        <p class="bajada">Precio total por los 14 días, con cancelación gratis. Se divide a la mitad. El que se elige pasa al presupuesto con su bencina (~2.100 km).</p>
+        <p class="bajada">Precio total por los 14 días, con cancelación gratis. Se divide a la mitad. El que se elige pasa al presupuesto con su bencina (<span data-b-km>~2.100</span> km, según la ruta).</p>
       </div>
       <div class="tarjetas" id="b-lista-autos"></div>
       <p class="nota" data-b-ojo-autos></p>
 
+      <!-- Tres rutas para los mismos 14 días: se elige una y todo lo de abajo la sigue -->
+      <div class="sub-cabeza" id="tres-rutas">
+        <span class="etiqueta">tres rutas · las mismas fechas, distintos gustos</span>
+        <h3>¿Por dónde nos vamos?</h3>
+        <p class="bajada">Las tres salen y vuelven a Balmaceda y pasan el 31 en el Valle Chacabuco. Cambian lo que se maneja, lo que se camina y dónde se duerme. Toca "elegir": el día a día, las noches, las reservas y el presupuesto se arman con esa.</p>
+      </div>
+      <div class="rutas-b" id="b-rutas"></div>
+      <div class="tabla-marco"><table class="tabla rutas-tabla" id="b-rutas-tabla"></table></div>
+
       <div class="sub-cabeza">
-        <span class="etiqueta">la ruta · 15 días, 14 noches</span>
-        <h3>Hasta el fin del camino y la vuelta al lago</h3>
+        <span class="etiqueta">la ruta elegida · 15 días, 14 noches</span>
+        <h3 data-b-ruta-titulo>Hasta el fin del camino</h3>
       </div>
       <div class="tramos-austral" aria-label="Tramos de la Carretera Austral">
         <div class="tramo-a hecho"><span class="etiqueta">2025 ✓</span><strong>Puerto Montt → Cerro Castillo</strong></div>
-        <div class="tramo-a nuevo"><span class="etiqueta">2026 · lo nuevo</span><strong>Cerro Castillo → Villa O'Higgins → Chile Chico</strong></div>
+        <div class="tramo-a nuevo"><span class="etiqueta">2026 · lo nuevo</span><strong data-b-ruta-tramo>Cerro Castillo → Villa O'Higgins → Chile Chico</strong></div>
       </div>
       <div class="explorador" id="b-explorador-austral">
         <div class="explorador-lista">
@@ -603,7 +613,7 @@
         </div>
         <div class="aviso">
           <span class="etiqueta">bencina</span>
-          <p>Hay en Río Tranquilo, Cochrane, Villa O'Higgins y Chile Chico. <strong>En Tortel no hay.</strong> Llenar siempre y llevar un bidón de 20 litros.</p>
+          <p>Hay en Río Tranquilo, Cochrane, Villa O'Higgins y Chile Chico. <strong>En Tortel no hay.</strong> En Argentina, Bajo Caracoles y Gregores a veces se quedan sin. Llenar siempre y llevar un bidón de 20 litros.</p>
         </div>
         <div class="aviso">
           <span class="etiqueta">temporada alta</span>
@@ -716,12 +726,12 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=23"></script>
-  <script src="datos-b.js?v=23"></script>
-  <script src="lugares.js?v=23"></script>
-  <script src="fotos-panoramas.js?v=23"></script>
-  <script src="prep.js?v=23"></script>
-  <script src="plan-b.js?v=23"></script>
-  <script src="visor.js?v=23"></script>
+  <script src="datos.js?v=24"></script>
+  <script src="datos-b.js?v=24"></script>
+  <script src="lugares.js?v=24"></script>
+  <script src="fotos-panoramas.js?v=24"></script>
+  <script src="prep.js?v=24"></script>
+  <script src="plan-b.js?v=24"></script>
+  <script src="visor.js?v=24"></script>
 </body>
 </html>
