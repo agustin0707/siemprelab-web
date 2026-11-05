@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#161616">
   <title>La propuesta · Agencia de Viajes SiempreLab</title>
-  <meta name="description" content="Dos viajes, un verano: la Austral 2.0 y Guatemala.">
+  <meta name="description" content="Dos viajes, un verano: la Austral y lo que viene antes o después.">
   <!-- Vista previa si se manda el link por WhatsApp -->
   <meta property="og:title" content="La propuesta · Agencia SiempreLab">
   <meta property="og:description" content="Dos viajes, un verano.">
@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="propuesta.css?v=4">
+  <link rel="stylesheet" href="propuesta.css?v=5">
 </head>
 <body>
 
@@ -43,12 +43,21 @@
           <div class="pase-cuerpo">
             <div><span>pasajera</span><b>Josefina</b></div>
             <div><span>acompañante</span><b>Agustín</b></div>
-            <div><span>destinos</span><b>BBA · GUA</b></div>
-            <div><span>salida</span><b>13 dic</b></div>
+            <div><span>destinos</span><b id="pase-destinos">BBA · GUA</b></div>
+            <div><span>salida</span><b id="pase-salida">13 dic</b></div>
           </div>
           <div class="pase-talon">
             <span>embarque en</span>
             <b id="cuenta">· · ·</b>
+          </div>
+        </div>
+
+        <!-- Plan A: Austral antes de Navidad y Guatemala después. Plan B: playa antes y Austral larga después -->
+        <div class="eleccion plan-eleccion" data-a>
+          <span class="eleccion-pregunta">¿qué plan vemos?</span>
+          <div class="interruptor" data-decision="plan">
+            <button data-valor="a"><span class="largo">A · austral + guatemala</span><span class="corto">A · sur + guatemala</span></button>
+            <button data-valor="b"><span class="largo">B · playa + austral larga</span><span class="corto">B · playa + sur</span></button>
           </div>
         </div>
 
@@ -65,26 +74,33 @@
         <h2 data-a>Así nos queda diciembre</h2>
         <div class="calendario" id="calendario" data-a></div>
         <p class="detalle-cal" id="detalle-cal" data-a>Toca cada parte de la línea.</p>
-        <div class="cifras" data-a>
-          <div><b id="noches-sur">11</b><span>noches en el sur</span></div>
-          <div><b>14</b><span>noches en Guatemala</span></div>
-          <div><b>1</b><span>día libre antes del internado</span></div>
-        </div>
+        <div class="cifras" id="cifras-verano" data-a></div>
+      </div>
+    </section>
+
+    <!-- ---------- 2b. La playa (solo plan B) ---------- -->
+    <section class="lamina oscura" data-nombre="la playa" data-solo="b">
+      <div class="contenido">
+        <span class="etiqueta" data-a>02 / antes de navidad</span>
+        <h2 data-a>Una semana de playa, barata</h2>
+        <p class="bajada" data-a>Salimos el lunes 14, con el matrimonio ya pasado. La idea: que vuelo, hotel y traslados no pasen de $800 mil cada uno.</p>
+        <div class="opciones-ny cinco" id="opciones-playa" data-a></div>
+        <div class="noche-elegida" id="playa-elegida" data-a></div>
+        <p class="nota-eleccion clara" id="playa-cuando" data-a></p>
       </div>
     </section>
 
     <!-- ---------- 3. Austral 2.0: el mapa ---------- -->
-    <section class="lamina oscura" data-nombre="austral 2.0">
+    <section class="lamina oscura" data-nombre="austral 2.0" data-nombre-b="austral larga">
       <div class="contenido dos-col">
         <div class="col-texto">
-          <span class="etiqueta" data-a>02 / austral 2.0</span>
-          <h2 data-a>Retomamos donde quedamos</h2>
-          <p class="bajada" data-a>El año pasado llegamos hasta Cerro Castillo. Esta vez seguimos hasta donde se acaba el camino.</p>
-          <div class="cifras chicas" data-a>
-            <div><b>~1.450</b><span>km de ruta</span></div>
-            <div><b>6</b><span>pueblos nuevos</span></div>
-            <div><b>1</b><span>barcaza</span></div>
-          </div>
+          <span class="etiqueta" data-a data-solo="a">02 / austral 2.0</span>
+          <span class="etiqueta" data-a data-solo="b">03 / austral larga</span>
+          <h2 data-a data-solo="a">Retomamos donde quedamos</h2>
+          <h2 data-a data-solo="b">Ahora sí, entera</h2>
+          <p class="bajada" data-a data-solo="a">El año pasado llegamos hasta Cerro Castillo. Esta vez seguimos hasta donde se acaba el camino.</p>
+          <p class="bajada" data-a data-solo="b">El año pasado llegamos hasta Cerro Castillo. Esta vez bajamos hasta donde se acaba el camino y volvemos por el otro lado del lago, por Chile Chico.</p>
+          <div class="cifras chicas" id="cifras-austral" data-a></div>
           <div class="leyenda" data-a>
             <span><i class="linea-2025"></i> 2025, ya hecho</span>
             <span><i class="linea-2026"></i> 2026, lo nuevo</span>
@@ -105,7 +121,7 @@
             <span class="etiqueta" data-a>03 / día a día</span>
             <h2 data-a id="titulo-dias">Doce días hacia el sur</h2>
           </div>
-          <div class="eleccion" data-a>
+          <div class="eleccion" data-a data-solo="a">
             <span class="eleccion-pregunta">¿volvemos el 23 o el 24?</span>
             <div class="interruptor" data-decision="vuelta">
               <button data-valor="24">el 24</button>
@@ -179,9 +195,13 @@
         <div class="dos-col arriba">
           <div class="vuelos-au" id="vuelos-au" data-a></div>
           <div class="auto-caja" data-a>
-            <div class="interruptor chico" data-decision="auto">
+            <div class="interruptor chico" data-decision="auto" data-solo="a">
               <button data-valor="sixt-sonet">Kia Sonet</button>
               <button data-valor="salfa-crosstrek">Subaru Crosstrek</button>
+            </div>
+            <div class="interruptor chico" data-decision="autoB" data-solo="b">
+              <button data-valor="b-tucson">Hyundai Tucson</button>
+              <button data-valor="b-virtus">VW Virtus</button>
             </div>
             <div id="auto"></div>
           </div>
@@ -201,7 +221,7 @@
     </section>
 
     <!-- ---------- 9. Guatemala ---------- -->
-    <section class="lamina oscura foto-completa" data-nombre="guatemala">
+    <section class="lamina oscura foto-completa" data-nombre="guatemala" data-solo="a">
       <div class="fondo-fotos" id="gua-fotos"></div>
       <div class="velo lateral"></div>
       <div class="contenido">
@@ -257,7 +277,8 @@
       <div class="contenido">
         <span class="etiqueta" data-a>11 / hoy en la noche</span>
         <h2 data-a>Lo que compramos hoy</h2>
-        <p class="alerta" data-a><b>Antes de pagar:</b> los pasaportes de los dos tienen que vencer después de julio 2027 (6 meses desde que entramos a Guatemala).</p>
+        <p class="alerta" data-a data-solo="a"><b>Antes de pagar:</b> los pasaportes de los dos tienen que vencer después de julio 2027 (6 meses desde que entramos a Guatemala).</p>
+        <p class="alerta" data-a data-solo="b"><b>Lo del sur se compra hoy:</b> los vuelos del 26 y del 9 están caros y quedan pocos autos. La playa puede esperar al Black Friday (vie 27 al lun 30 nov); si no baja, se compra igual el lunes 30.</p>
         <ul class="compras" id="compras" data-a></ul>
         <p class="nota-chica" id="compras-total" data-a></p>
       </div>
@@ -273,7 +294,8 @@
         <ul class="acta" id="acta" data-a></ul>
         <div class="acciones" data-a>
           <button class="boton-grande acento" id="aprobar">aprobado <span>✓</span></button>
-          <a class="boton-grande claro" href="../prep/#compra">abrir la prep para comprar <span>↗</span></a>
+          <a class="boton-grande claro" href="../prep/?plan=a#compra" data-solo="a">abrir la prep para comprar <span>↗</span></a>
+          <a class="boton-grande claro" href="../prep/?plan=b#compra-b" data-solo="b">abrir la prep para comprar <span>↗</span></a>
           <button class="boton-grande claro" id="copiar-acta">copiar el acta</button>
         </div>
         <p class="firma" data-a>taxss agus</p>
@@ -295,9 +317,10 @@
   </div>
 
   <!-- Los datos vienen de la prep: si cambian allá, cambian acá -->
-  <script src="../prep/datos.js?v=20"></script>
-  <script src="../prep/lugares.js?v=20"></script>
-  <script src="../prep/fotos-panoramas.js?v=20"></script>
-  <script src="propuesta.js?v=5"></script>
+  <script src="../prep/datos.js?v=22"></script>
+  <script src="../prep/datos-b.js?v=22"></script>
+  <script src="../prep/lugares.js?v=22"></script>
+  <script src="../prep/fotos-panoramas.js?v=22"></script>
+  <script src="propuesta.js?v=6"></script>
 </body>
 </html>

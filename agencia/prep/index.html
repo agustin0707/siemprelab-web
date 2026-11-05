@@ -10,7 +10,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="prep.css?v=21">
+  <link rel="stylesheet" href="prep.css?v=22">
+  <!-- Plan A (Austral + Guatemala) o plan B (playa + Austral larga): se marca antes de pintar para que no parpadee -->
+  <script>
+    (function () {
+      var p = 'a';
+      try { p = JSON.parse(localStorage.getItem('prep-plan')) || 'a'; } catch (e) { /* sin guardado */ }
+      var q = new URLSearchParams(location.search).get('plan');
+      if (q === 'a' || q === 'b') p = q;
+      document.documentElement.dataset.plan = p === 'b' ? 'b' : 'a';
+    })();
+  </script>
 </head>
 <body>
 
@@ -29,10 +39,19 @@
       <div class="hero-texto">
         <p class="hero-etiqueta"><span class="punto"></span>[ agencia siemprelab ] · junta vie 6 nov</p>
         <h1>Dos viajes.<br>Un viernes para <em>cerrarlos</em>.</h1>
-        <p class="hero-bajada">La Austral la arma Agus y Guatemala la arma la Jo. El viernes 6 en la noche nos presentamos las propuestas y compramos todo.</p>
-        <div class="hero-botones">
+        <div class="selector plan-switch" role="group" aria-label="Qué plan ver">
+          <button type="button" data-plan-elegir="a" aria-pressed="true">plan A · austral + guatemala</button>
+          <button type="button" data-plan-elegir="b" aria-pressed="false">plan B · playa + austral larga</button>
+        </div>
+        <p class="hero-bajada" data-solo="a">La Austral la arma Agus y Guatemala la arma la Jo. El viernes 6 en la noche nos presentamos las propuestas y compramos todo.</p>
+        <p class="hero-bajada" data-solo="b">Primero una semana de playa barata para descansar, y después de Navidad la Austral entera, con Año Nuevo en la Patagonia. El viernes 6 lo comparamos con el plan A y compramos.</p>
+        <div class="hero-botones" data-solo="a">
           <a class="boton acento" href="#austral">ver la austral</a>
           <a class="boton vidrio" href="#armar">armar guatemala</a>
+        </div>
+        <div class="hero-botones" data-solo="b">
+          <a class="boton acento" href="#playa">ver la playa</a>
+          <a class="boton vidrio" href="#austral-larga">ver la austral larga</a>
         </div>
       </div>
 
@@ -45,19 +64,32 @@
         <div class="tablero-columnas" aria-hidden="true">
           <span>vuelo</span><span>destino</span><span>fecha</span><span>estado</span>
         </div>
-        <div class="tablero-fila">
+        <div class="tablero-fila" data-solo="a">
           <span class="t-vuelo">SL 1312</span>
           <span class="t-destino"><b>BBA</b> <span class="t-nombre">Austral 2.0</span></span>
           <span class="t-fecha">13 dic</span>
           <span class="t-estado" id="t-estado-au"></span>
         </div>
-        <div class="tablero-fila">
+        <div class="tablero-fila" data-solo="a">
           <span class="t-vuelo">SL 2612</span>
           <span class="t-destino"><b>GUA</b> <span class="t-nombre">Guatemala</span></span>
           <span class="t-fecha" id="t-fecha-ca"></span>
           <span class="t-estado" id="t-estado-ca"></span>
         </div>
-        <div class="tablero-pie" id="tablero-pie"></div>
+        <div class="tablero-fila" data-solo="b">
+          <span class="t-vuelo">SL 1412</span>
+          <span class="t-destino"><b id="t-b-codigo">FLN</b> <span class="t-nombre" id="t-b-playa">Playa</span></span>
+          <span class="t-fecha">14 dic</span>
+          <span class="t-estado" id="t-b-estado-playa"></span>
+        </div>
+        <div class="tablero-fila" data-solo="b">
+          <span class="t-vuelo">SL 2612</span>
+          <span class="t-destino"><b>BBA</b> <span class="t-nombre">Austral larga</span></span>
+          <span class="t-fecha">26 dic</span>
+          <span class="t-estado" id="t-b-estado-au"></span>
+        </div>
+        <div class="tablero-pie" id="tablero-pie" data-solo="a"></div>
+        <div class="tablero-pie" id="tablero-pie-b" data-solo="b"></div>
       </div>
     </div>
 
@@ -69,27 +101,49 @@
 
   <!-- Navegación entre secciones -->
   <nav class="nav" aria-label="Secciones">
-    <a href="#austral">austral</a>
-    <a href="#vuelos">guatemala</a>
-    <a href="#rutas">rutas</a>
-    <a href="#armar">armar</a>
-    <a href="#presupuesto">presupuesto</a>
-    <a href="#datos">datos</a>
-    <a href="#compra">junta</a>
+    <a href="#comparar">a o b</a>
+    <a href="#austral" data-solo="a">austral</a>
+    <a href="#vuelos" data-solo="a">guatemala</a>
+    <a href="#rutas" data-solo="a">rutas</a>
+    <a href="#armar" data-solo="a">armar</a>
+    <a href="#presupuesto" data-solo="a">presupuesto</a>
+    <a href="#datos" data-solo="a">datos</a>
+    <a href="#compra" data-solo="a">junta</a>
+    <a href="#playa" data-solo="b">playa</a>
+    <a href="#austral-larga" data-solo="b">austral larga</a>
+    <a href="#presupuesto-b" data-solo="b">presupuesto</a>
+    <a href="#datos-b" data-solo="b">datos</a>
+    <a href="#compra-b" data-solo="b">junta</a>
   </nav>
 
   <main>
 
     <!-- ---------- Resumen rápido ---------- -->
-    <dl class="resumen">
+    <dl class="resumen" data-solo="a">
       <div><dt>austral 2.0 · arma agus</dt><dd id="resumen-au">dom 13 → jue 24 dic</dd></div>
       <div><dt>guatemala · arma la jo</dt><dd>vie 25 dic → 9 ene</dd></div>
       <div><dt>junta y compra</dt><dd>viernes 6 de noviembre, en la noche</dd></div>
       <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
     </dl>
+    <dl class="resumen" data-solo="b">
+      <div><dt>playa · antes de navidad</dt><dd id="b-resumen-playa">lun 14 → lun 21 dic</dd></div>
+      <div><dt>austral larga · después</dt><dd>sáb 26 dic → sáb 9 ene</dd></div>
+      <div><dt>junta y compra</dt><dd>viernes 6 de noviembre, en la noche</dd></div>
+      <div><dt>regla</dt><dd>cada uno su pasaje, el resto a la mitad</dd></div>
+    </dl>
+
+    <!-- ---------- A o B: los dos planes lado a lado ---------- -->
+    <section id="comparar" class="seccion">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">00 / a o b · conversado el 4 nov</p>
+        <h2>Dos formas de armar el verano</h2>
+        <p class="bajada">El plan A es el de siempre: la Austral antes de Navidad y Guatemala después. El plan B nació de una llamada: la Austral merece más días y Guatemala se estaba poniendo caro y enredado. Toca un plan para verlo entero.</p>
+      </div>
+      <div class="planes" id="planes"></div>
+    </section>
 
     <!-- ---------- 1. Austral 2.0 (primer viaje) ---------- -->
-    <section id="austral" class="seccion">
+    <section id="austral" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">01 / austral 2.0 · propuesta de agus</p>
         <h2>Santiago ↔ Balmaceda + auto</h2>
@@ -188,7 +242,7 @@
     </section>
 
     <!-- ---------- 2. Vuelos Centroamérica (segundo viaje) ---------- -->
-    <section id="vuelos" class="seccion">
+    <section id="vuelos" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">02 / guatemala · propuesta de la jo</p>
         <h2>Santiago ↔ Guatemala</h2>
@@ -209,7 +263,7 @@
     </section>
 
     <!-- ---------- 3. Rutas 14 días ---------- -->
-    <section id="rutas" class="seccion">
+    <section id="rutas" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">03 / rutas de 14 días · ideas para partir</p>
         <h2>Cuatro formas de hacer Guatemala</h2>
@@ -233,7 +287,7 @@
     </section>
 
     <!-- ---------- 4. Armador de ruta ---------- -->
-    <section id="armar" class="seccion">
+    <section id="armar" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">04 / arma tu ruta</p>
         <h2>El armador de Guatemala</h2>
@@ -284,7 +338,7 @@
     </section>
 
     <!-- ---------- 5. Presupuesto ---------- -->
-    <section id="presupuesto" class="seccion">
+    <section id="presupuesto" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">05 / presupuesto</p>
         <h2>¿Nos alcanza?</h2>
@@ -377,7 +431,7 @@
     </section>
 
     <!-- ---------- 6. Papeles y datos útiles ---------- -->
-    <section id="datos" class="seccion">
+    <section id="datos" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">06 / papeles y datos útiles</p>
         <h2>Antes de pagar, y antes de salir</h2>
@@ -397,7 +451,7 @@
     </section>
 
     <!-- ---------- 7. Junta y compra ---------- -->
-    <section id="compra" class="seccion">
+    <section id="compra" class="seccion" data-solo="a">
       <div class="seccion-cabeza">
         <p class="etiqueta">07 / la junta del viernes 6</p>
         <h2>Presentar, decidir y pagar</h2>
@@ -422,11 +476,218 @@
       <ul class="reservas" id="reservas"></ul>
     </section>
 
+    <!-- =================== Plan B: playa antes de Navidad + Austral larga =================== -->
+
+    <!-- ---------- B1. La playa ---------- -->
+    <section id="playa" class="seccion" data-solo="b">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">01 / la playa · antes de navidad</p>
+        <h2>Una semana de playa, barata</h2>
+        <p class="bajada">Salimos el lunes 14, con el matrimonio ya pasado, y volvemos con días de colchón antes de Navidad. La idea: que vuelo, hotel y traslados no pasen de $800 mil cada uno. Toca otro hotel para cambiarlo y mueve las noches.</p>
+      </div>
+
+      <p class="precios-vivos" data-precios-vivos></p>
+
+      <div class="selector" role="group" aria-label="Noches de playa" id="noches-playa">
+        <button type="button" data-noches-playa="5" aria-pressed="false">5 noches</button>
+        <button type="button" data-noches-playa="6" aria-pressed="false">6 noches</button>
+        <button type="button" data-noches-playa="7" aria-pressed="true">7 noches</button>
+        <button type="button" data-noches-playa="8" aria-pressed="false">8 noches</button>
+      </div>
+
+      <div class="playas" id="lista-playas"></div>
+      <p class="nota" data-playa-descartados></p>
+      <p class="nota">Vuelos ida y vuelta por persona del lun 14 al lun 21 en Google Vuelos; con otras noches cambia el día de vuelta y el precio se puede mover. Hoteles: pieza doble por noche en Google Hoteles para esas fechas. Traslados ≈ estimados.</p>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">¿ahora o en el black friday? · vie 27 al lun 30 nov</span>
+        <h3>Cuándo comprar cada cosa</h3>
+      </div>
+      <div class="cuando-comprar" id="cuando-comprar"></div>
+    </section>
+
+    <!-- ---------- B2. La Austral larga ---------- -->
+    <section id="austral-larga" class="seccion" data-solo="b">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">02 / austral larga · después de navidad</p>
+        <h2>Santiago ↔ Balmaceda, 14 noches</h2>
+        <p class="bajada">Salimos el sábado 26, con la Navidad recién pasada, y volvemos el sábado 9 de enero a mediodía, a tiempo para el internado. Catorce noches alcanzan para todo lo que en diez quedaba apretado: hasta Villa O'Higgins sin días eternos y la vuelta por Chile Chico.</p>
+      </div>
+
+      <p class="precios-vivos" data-precios-vivos></p>
+
+      <div class="tramos-lista">
+        <div>
+          <span class="etiqueta">ida · sáb 26 dic · Santiago → Balmaceda</span>
+          <div class="tarjetas tramos" id="b-lista-idas"></div>
+        </div>
+        <div>
+          <span class="etiqueta">vuelta · sáb 9 ene · Balmaceda → Santiago</span>
+          <div class="tarjetas tramos" id="b-lista-vueltas"></div>
+        </div>
+      </div>
+      <p class="links-cotizar"><a data-b-link-austral target="_blank" rel="noopener">ver Balmaceda en vivo ↗</a> · <a data-b-link-sky target="_blank" rel="noopener">ver en SKY ↗</a> · <span data-b-nota-vuelos></span></p>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">el auto · 14 días, retiro y devolución en el aeropuerto</span>
+        <h3>Arriendo en Balmaceda, en temporada alta</h3>
+        <p class="bajada">Precio total por los 14 días, con cancelación gratis. Se divide a la mitad. El que se elige pasa al presupuesto con su bencina (~2.100 km).</p>
+      </div>
+      <div class="tarjetas" id="b-lista-autos"></div>
+      <p class="nota" data-b-ojo-autos></p>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">la ruta · 15 días, 14 noches</span>
+        <h3>Hasta el fin del camino y la vuelta al lago</h3>
+      </div>
+      <div class="tramos-austral" aria-label="Tramos de la Carretera Austral">
+        <div class="tramo-a hecho"><span class="etiqueta">2025 ✓</span><strong>Puerto Montt → Cerro Castillo</strong></div>
+        <div class="tramo-a nuevo"><span class="etiqueta">2026 · lo nuevo</span><strong>Cerro Castillo → Villa O'Higgins → Chile Chico</strong></div>
+      </div>
+      <div class="explorador" id="b-explorador-austral">
+        <div class="explorador-lista">
+          <p class="resumen-ruta" data-ruta-resumen></p>
+          <ol class="paradas" data-paradas></ol>
+          <p class="extra" data-ruta-extra></p>
+        </div>
+        <div class="explorador-media" data-media></div>
+      </div>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">dónde dormir · casi todo carpa</span>
+        <h3>Noche por noche</h3>
+        <p class="bajada">Pieza doble por noche para los dos, vista para esas fechas cuando se pudo. Camping por persona, se paga en el lugar.</p>
+      </div>
+      <div class="tabla-marco">
+        <table class="tabla" id="b-tabla-dormir">
+          <thead><tr><th>noche</th><th>dónde</th><th>camping</th><th>con techo</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">31 de diciembre · jueves · en la patagonia</span>
+        <h3>¿Dónde recibimos el 2027?</h3>
+      </div>
+      <p class="nota nota-arriba">Tres formas de pasar la noche, cada una con su plan hora a hora. Toca "elegir" en la que más te guste.</p>
+      <div class="anio-nuevo" id="b-anio-nuevo"></div>
+
+      <div class="sub-cabeza">
+        <span class="etiqueta">qué hacer · por persona</span>
+        <h3>Tours, entradas y lo nuevo de esta ruta</h3>
+      </div>
+      <div class="actividades" id="b-lista-actividades"></div>
+
+      <div class="avisos">
+        <div class="aviso">
+          <span class="etiqueta">barcaza yungay ↔ río bravo</span>
+          <p data-b-barcaza></p>
+        </div>
+        <div class="aviso">
+          <span class="etiqueta">bencina</span>
+          <p>Hay en Río Tranquilo, Cochrane, Villa O'Higgins y Chile Chico. <strong>En Tortel no hay.</strong> Llenar siempre y llevar un bidón de 20 litros.</p>
+        </div>
+        <div class="aviso">
+          <span class="etiqueta">temporada alta</span>
+          <p>Enero es cuando más gente va. <strong>Alojamiento, Exploradores y el auto se reservan el mismo viernes.</strong> El equipo de camping es el mismo del plan A.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- B3. Presupuesto del plan B ---------- -->
+    <section id="presupuesto-b" class="seccion" data-solo="b">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">03 / presupuesto · plan b</p>
+        <h2>¿Nos alcanza?</h2>
+        <p class="bajada">Lo mismo que en el plan A: cada uno paga su pasaje y todo lo demás va a la mitad. La raya gris del medidor es el plan A, para comparar.</p>
+      </div>
+
+      <div class="calc-layout">
+        <div class="calc calc-b">
+          <div class="calc-bloque">
+            <h3>Lo elegido <span class="etiqueta">pasajes, hotel y auto</span></h3>
+            <label class="campo"><span>Playa</span><select id="b-calc-playa"></select></label>
+            <label class="campo"><span>Hotel</span><select id="b-calc-hotel"></select></label>
+            <label class="campo"><span>Noches de playa</span><select id="b-calc-noches">
+              <option value="5">5 noches</option><option value="6">6 noches</option><option value="7">7 noches</option><option value="8">8 noches</option>
+            </select></label>
+            <label class="campo"><span>Austral: ida</span><select id="b-calc-ida"></select></label>
+            <label class="campo"><span>Austral: vuelta</span><select id="b-calc-vuelta"></select></label>
+            <label class="campo"><span>Auto (14 días)</span><select id="b-calc-auto"></select></label>
+          </div>
+          <div class="calc-bloque">
+            <h3>En la playa</h3>
+            <dl class="fijos" id="b-fijos-playa"></dl>
+            <div id="b-calc-playa-lineas"></div>
+          </div>
+          <div class="calc-bloque">
+            <h3>En la Austral</h3>
+            <dl class="fijos" id="b-fijos-au"></dl>
+            <div id="b-calc-au"></div>
+          </div>
+        </div>
+
+        <div class="resultado" id="b-resultado" aria-live="polite">
+          <div class="resultado-fila">
+            <div>
+              <span class="etiqueta">por persona</span>
+              <p class="monto" id="b-res-persona">$0</p>
+            </div>
+            <div>
+              <span class="etiqueta">total de los dos</span>
+              <p class="monto chico" id="b-res-total">$0</p>
+            </div>
+          </div>
+          <div class="medidor" aria-hidden="true">
+            <div class="medidor-rango"></div>
+            <div class="medidor-marca otra" id="b-res-marca-a" title="plan A"></div>
+            <div class="medidor-marca" id="b-res-marca"></div>
+          </div>
+          <div class="medidor-leyenda"><span>$0</span><span>$2,6 M</span><span>$3,1 M</span></div>
+          <p class="veredicto" id="b-res-veredicto"></p>
+          <dl class="desglose" id="b-res-desglose"></dl>
+          <button type="button" class="boton-secundario" id="b-calc-reset">volver a los valores iniciales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- B4. Papeles y datos ---------- -->
+    <section id="datos-b" class="seccion" data-solo="b">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">04 / papeles y datos útiles</p>
+        <h2>Antes de pagar, y antes de salir</h2>
+      </div>
+      <div class="papeles" id="b-papeles"></div>
+    </section>
+
+    <!-- ---------- B5. Junta y compra ---------- -->
+    <section id="compra-b" class="seccion" data-solo="b">
+      <div class="seccion-cabeza">
+        <p class="etiqueta">05 / la junta del viernes 6</p>
+        <h2>Elegir el plan y pagar</h2>
+        <p class="bajada">Si gana el plan B, este es el checklist. Se marca acá mismo y queda guardado en este computador.</p>
+      </div>
+      <div class="progreso" aria-hidden="true"><div class="progreso-barra" id="b-progreso-compra"></div></div>
+      <ul class="lista-check marcable" id="b-lista-compra">
+        <li><label><input type="checkbox" data-check-b="plan"> Mirar los dos planes lado a lado y elegir: A o B</label></li>
+        <li><label><input type="checkbox" data-check-b="datos"> Datos de los dos: nombre exacto, carnet o pasaporte, vencimiento y fecha de nacimiento</label></li>
+        <li><label><input type="checkbox" data-check-b="latam"> Comprar Balmaceda en latam.com, ida y vuelta por separado, con el número LATAM Pass de cada uno</label></li>
+        <li><label><input type="checkbox" data-check-b="auto"> Reservar el auto en Balmaceda para el 26 dic (escribir a Sixt y Salfa; si no, Rentcars)</label></li>
+        <li><label><input type="checkbox" data-check-b="reservas"> Reservar lo que se llena en enero: Exploradores, Río Tranquilo, Año Nuevo y O'Higgins</label></li>
+        <li><label><input type="checkbox" data-check-b="playa"> La playa: comprarla ahora o dejar el precio objetivo para el Black Friday</label></li>
+        <li><label><input type="checkbox" data-check-b="foto"> Foto con la pantalla de confirmación</label></li>
+        <li><label><input type="checkbox" data-check-b="transfer"> Transferencia de los pasajes de la Jo: <strong id="b-monto-transfer"></strong></label></li>
+      </ul>
+      <h3 class="reservas-titulo">Todo lo que se reserva, con precio y link</h3>
+      <p class="nota">Los pasajes, el hotel y el auto salen de lo elegido arriba. Con "recotizar" se anota el precio que sale al momento de comprar: ese pasa a mandar en la página y en el presupuesto.</p>
+      <ul class="reservas" id="b-reservas"></ul>
+    </section>
+
   </main>
 
   <footer class="pie">
-    <p>atte. tus agentes: agus (sur) y jo (guatemala)</p>
-    <p class="creditos">Fotos: Wikimedia Commons, licencias CC (crédito en cada foto). Mapas: Google Maps. Precios: Google Vuelos (se actualizan solos), SKY, Copa, Google Hoteles y Kayak. Logos: de cada empresa.</p>
+    <p>atte. tus agentes: agus (sur) y jo (guatemala) · plan B: los dos</p>
+    <p class="creditos">Fotos: Wikimedia Commons, licencias CC (crédito en cada foto). Mapas: Google Maps. Precios: Google Vuelos (se actualizan solos), SKY, Copa, Google Hoteles y Kayak. Fechas del Black Friday: Cámara de Comercio de Santiago. Logos: de cada empresa.</p>
     <p class="microtexto" aria-hidden="true">siemprelab · sl1312 · sl2612 · prep · siemprelab · sl1312 · sl2612 · prep · siemprelab · sl1312 · sl2612 · prep</p>
   </footer>
 
@@ -437,9 +698,11 @@
     <span class="tv-total"><span class="tv-punto" id="tv-punto"></span><span id="tv-total"></span><span class="tv-pp">c/u</span></span>
   </a>
 
-  <script src="datos.js?v=21"></script>
-  <script src="lugares.js?v=21"></script>
-  <script src="fotos-panoramas.js?v=21"></script>
-  <script src="prep.js?v=21"></script>
+  <script src="datos.js?v=22"></script>
+  <script src="datos-b.js?v=22"></script>
+  <script src="lugares.js?v=22"></script>
+  <script src="fotos-panoramas.js?v=22"></script>
+  <script src="prep.js?v=22"></script>
+  <script src="plan-b.js?v=22"></script>
 </body>
 </html>

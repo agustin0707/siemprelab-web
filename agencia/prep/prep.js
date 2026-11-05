@@ -240,6 +240,8 @@ function repintarPrecios() {
   pintarPrecioFlores();
   pintarArmador();
   calcular();
+  // El plan B (plan-b.js) repinta lo suyo
+  document.dispatchEvent(new Event('repintar-precios'));
 }
 
 document.addEventListener('click', (e) => {
@@ -1303,6 +1305,8 @@ function conectarCalculadora() {
 
 // ---------- Barra flotante "tu viaje" ----------
 function pintarTuViaje(persona, estado) {
+  // Con el plan B a la vista, la barra la pinta plan-b.js
+  if (document.documentElement.dataset.plan === 'b') return;
   const ca = DATOS.vuelosCA.find((v) => v.id === opciones.vueloCA);
   const ruta = DATOS.rutas.find((r) => r.id === opciones.ruta);
   const sep = '<span class="sep">·</span>';
@@ -1326,6 +1330,7 @@ function conectarTuViaje() {
   }, { threshold: 0.15 });
   obs.observe($('#presupuesto'));
   obs.observe($('#hero'));
+  if ($('#presupuesto-b')) obs.observe($('#presupuesto-b'));
 }
 
 // ---------- 7. Compra: lo que hay que reservar, con precio y link ----------
@@ -1443,5 +1448,7 @@ fetch('precios.json', { cache: 'no-store' })
     pintarPrecioFlores();
     llenarSelects();
     calcular();
+    // El plan B (plan-b.js) toma los suyos
+    document.dispatchEvent(new CustomEvent('precios-vivos', { detail: pv }));
   })
   .catch(() => { /* sin precios al día */ });

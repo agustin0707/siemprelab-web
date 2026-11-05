@@ -1,7 +1,7 @@
 # Actualiza los precios de los vuelos de la web prep · Agencia de Viajes SiempreLab
 # Consulta Google Vuelos (librería fast-flights) y escribe agencia/prep/precios.json.
 # Lo corre GitHub Actions cada 4 horas (.github/workflows/precios.yml).
-# Los id de VUELOS tienen que ser los mismos de datos.js.
+# Los id de VUELOS tienen que ser los mismos de datos.js y datos-b.js.
 
 import json
 import re
@@ -33,6 +33,18 @@ VUELOS = [
     {'id': 'avianca-26', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GUA', 'fecha': '2026-12-26', 'vuelta': '2027-01-09', 'aerolinea': 'Avianca', 'sale': '16:15'},
     # Vuelo interno Flores → Guatemala el vie 8 (el más barato del día; Avianca sale 07:40, 19:55 o 23:10)
     {'id': 'flores', 'tipo': 'ida', 'o': 'FRS', 'd': 'GUA', 'fecha': '2027-01-08', 'aerolinea': 'Avianca', 'sale': None},
+    # Plan B (datos-b.js): playa ida y vuelta del lun 14 al lun 21 dic
+    {'id': 'playa-fln', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'FLN', 'fecha': '2026-12-14', 'vuelta': '2026-12-21', 'aerolinea': 'JetSMART', 'sale': '16:34'},
+    {'id': 'playa-gig', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'GIG', 'fecha': '2026-12-14', 'vuelta': '2026-12-21', 'aerolinea': 'JetSMART', 'sale': '04:21'},
+    {'id': 'playa-rec', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'REC', 'fecha': '2026-12-14', 'vuelta': '2026-12-21', 'aerolinea': 'LATAM', 'sale': '20:35'},
+    {'id': 'playa-mcz', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'MCZ', 'fecha': '2026-12-14', 'vuelta': '2026-12-21', 'aerolinea': 'LATAM', 'sale': '20:35'},
+    {'id': 'playa-ctg', 'tipo': 'ida-vuelta', 'o': 'SCL', 'd': 'CTG', 'fecha': '2026-12-14', 'vuelta': '2026-12-21', 'aerolinea': 'JetSMART', 'sale': '02:13'},
+    # Plan B: Austral larga por tramo, sáb 26 dic y sáb 9 ene
+    {'id': 'au2-ida-1357', 'tipo': 'ida', 'o': 'SCL', 'd': 'BBA', 'fecha': '2026-12-26', 'aerolinea': 'LATAM', 'sale': '13:57'},
+    {'id': 'au2-ida-1432', 'tipo': 'ida', 'o': 'SCL', 'd': 'BBA', 'fecha': '2026-12-26', 'aerolinea': 'LATAM', 'sale': '14:32'},
+    {'id': 'au2-ida-0529', 'tipo': 'ida', 'o': 'SCL', 'd': 'BBA', 'fecha': '2026-12-26', 'aerolinea': 'LATAM', 'sale': '05:29'},
+    {'id': 'au2-v9-1017', 'tipo': 'ida', 'o': 'BBA', 'd': 'SCL', 'fecha': '2027-01-09', 'aerolinea': 'LATAM', 'sale': '10:17'},
+    {'id': 'au2-v9-0952', 'tipo': 'ida', 'o': 'BBA', 'd': 'SCL', 'fecha': '2027-01-09', 'aerolinea': 'LATAM', 'sale': '09:52'},
 ]
 
 

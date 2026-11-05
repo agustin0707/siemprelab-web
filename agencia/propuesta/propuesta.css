@@ -494,3 +494,34 @@ h2 { font-size: clamp(34px, 5vw, 64px); font-weight: 600; letter-spacing: -0.035
 .plata-cambios li b { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--acento); }
 :focus { outline: none; }
 :focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; border-radius: 8px; }
+
+/* ---------- Plan A / Plan B (4 nov) ---------- */
+/* Láminas y piezas que son de un solo plan */
+html[data-plan="a"] [data-solo="b"],
+html[data-plan="b"] [data-solo="a"] { display: none !important; }
+
+.plan-eleccion { margin: 22px 0 26px; }
+.plan-eleccion .interruptor button { font-family: var(--mono); font-size: 12px; }
+.plan-eleccion .corto { display: none; }
+@media (max-width: 520px) {
+  .plan-eleccion .largo { display: none; }
+  .plan-eleccion .corto { display: inline; }
+}
+
+/* La playa: cinco opciones en una fila */
+.opciones-ny.cinco { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.opciones-ny.cinco .ny { aspect-ratio: 3 / 4; }
+.opciones-ny.cinco .ny-texto b { font-size: 17px; }
+.ny .fuera { color: #f1b39a; }
+
+/* La barcaza del lago en el mapa */
+.mapa .barcaza { fill: none; stroke: var(--acento); stroke-width: 2; stroke-dasharray: 3 5; stroke-linecap: round; }
+
+@media (max-width: 860px) {
+  .opciones-ny.cinco { grid-template-columns: 1fr 1fr; }
+  .opciones-ny.cinco .ny { aspect-ratio: 4 / 3; }
+  .opciones-ny.cinco .ny:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+  .opciones-ny.cinco .ny:not(:first-child) .ny-texto { left: 12px; right: 12px; bottom: 12px; }
+  .opciones-ny.cinco .ny:not(:first-child) .ny-texto b { font-size: 15px; }
+  .plan-eleccion .interruptor button { padding: 8px 12px; font-size: 11px; }
+}

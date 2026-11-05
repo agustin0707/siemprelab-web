@@ -1055,3 +1055,89 @@ img { max-width: 100%; display: block; }
 .noche-horas li::before { content: ''; position: absolute; left: -5px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--blanco); border: 2px solid var(--acento); }
 .noche-horas li span { display: block; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); text-transform: uppercase; letter-spacing: 0.04em; }
 .noche-links { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+
+/* ---------- Plan A / Plan B (4 nov) ---------- */
+/* Cada bloque dice a qué plan pertenece; lo demás es de los dos */
+html:not([data-plan="b"]) [data-solo="b"],
+html[data-plan="b"] [data-solo="a"] { display: none !important; }
+
+/* Interruptor en el hero (fondo oscuro) */
+.plan-switch { background: rgba(255,255,255,0.14); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); margin: 16px 0 0; flex-wrap: wrap; }
+.plan-switch button { color: #fff; }
+.plan-switch button[aria-pressed="true"] { background: #fff; color: var(--negro); }
+@media (max-width: 480px) { .plan-switch button { font-size: 11px; padding: 7px 9px; white-space: normal; text-align: left; } }
+
+/* A o B: los dos planes lado a lado */
+.planes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 14px; }
+.plan {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.plan.activo { border: 2px solid var(--acento); box-shadow: 0 0 0 4px var(--acento-suave); }
+.plan-cabeza { display: flex; gap: 12px; align-items: center; }
+.plan-cabeza strong { display: block; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; }
+.plan-cabeza small { display: block; font-size: 13px; color: var(--suave); }
+.plan-letra {
+  flex: none;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--negro); color: #fff;
+  font-family: 'Space Mono', monospace; font-size: 18px;
+}
+.plan.activo .plan-letra { background: var(--acento); }
+.plan-cal { position: relative; height: 30px; border-radius: 8px; background: #ececec; overflow: hidden; }
+.plan-cal i { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; padding: 0 8px; font-style: normal; overflow: hidden; }
+.plan-cal i span { font-family: 'Space Mono', monospace; font-size: 10px; white-space: nowrap; }
+.plan-cal i.sur { background: var(--negro); color: #fff; }
+.plan-cal i.otro { background: var(--acento); color: #fff; }
+.plan-cal .navidad { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; transform: translateX(-50%); }
+.plan-cal-fechas { position: relative; height: 14px; margin-top: -8px; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--suave); }
+.plan-cal-fechas span { position: absolute; top: 0; }
+.plan-cal-fechas span:first-child { left: 0; }
+.plan-cal-fechas span:nth-child(2) { transform: translateX(-50%); }
+.plan-cal-fechas span:last-child { right: 0; }
+.plan-total { font-size: 32px; font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
+.plan-total small { font-size: 13px; font-weight: 400; color: var(--suave); letter-spacing: 0; }
+.plan-por { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--texto-2); flex: 1; }
+.plan-por li { padding-left: 16px; position: relative; }
+.plan-por li::before { content: '·'; position: absolute; left: 4px; color: var(--acento); font-weight: 700; }
+.plan .boton { align-self: flex-start; }
+.planes-dif { grid-column: 1 / -1; font-size: 15px; color: var(--texto-2); }
+.planes-dif strong { color: var(--negro); font-weight: 500; }
+
+/* B1. Las playas */
+.playas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 18px 14px; margin-top: 8px; }
+.playa .galeria-caja { margin: -18px -18px 0; border-radius: 11px 11px 0 0; overflow: hidden; }
+.playa .sellos { z-index: 2; }
+.playa.fuera { opacity: 0.86; }
+.playa.fuera .playa-barra i { background: var(--justo); }
+.playa-nombre { font-size: 20px; font-weight: 500; letter-spacing: -0.015em; }
+.playa-resumen { font-size: 14px; color: var(--texto-2); }
+.playa-clima { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--suave); }
+.chips.hoteles { flex-direction: column; flex-wrap: nowrap; gap: 5px; margin-bottom: 6px; }
+.chips.hoteles button { font-size: 12px; padding: 6px 11px; border-radius: 8px; text-align: left; display: flex; gap: 8px; align-items: baseline; width: 100%; }
+.chips.hoteles button .mono { font-size: 10px; opacity: 0.7; white-space: nowrap; margin-left: auto; }
+.chips.hoteles button b { font-weight: 500; font-family: 'Space Mono', monospace; font-size: 11px; white-space: nowrap; }
+.playa-cuenta { border-top: 1px solid var(--gris); padding-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.playa-cuenta small { font-size: 12px; color: var(--texto-2); }
+.playa-barra { position: relative; height: 6px; border-radius: 99px; background: #e6e6e6; }
+.playa-barra i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: var(--ok); transition: width 0.35s ease; }
+.playa-barra b { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--negro); transform: translateX(-50%); }
+.playa .acciones { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+.playa-links { display: flex; gap: 12px; }
+.cuando-comprar { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 14px; }
+.cuando-comprar .aviso.fuerte { margin: 0; }
+
+/* B3. Presupuesto: lo que sale de lo elegido */
+.fijos { display: flex; flex-direction: column; gap: 8px; }
+.fijos > div { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid var(--gris); }
+.fijos dt { color: var(--negro); }
+.fijos dd { font-family: 'Space Mono', monospace; font-size: 12px; text-align: right; white-space: nowrap; }
+.fijos dd small { display: block; font-size: 10px; color: var(--suave); }
+.medidor-marca.otra { background: #9a9a9a; width: 3px; }

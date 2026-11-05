@@ -590,5 +590,221 @@ const LUGARES = {
         "pagina": "https://commons.wikimedia.org/wiki/File:Carretera_Austral_-_Leones.JPG"
       }
     ]
+  },
+  // ---------- Plan B (4 nov): playas antes de Navidad y Chile Chico ----------
+  "florianopolis": {
+    "nombre": "Florianópolis",
+    "pais": "Brasil",
+    "mapa": "Florianópolis, Santa Catarina",
+    "zoom": 11,
+    "descripcion": "Una isla con más de 40 playas: Jurerê de agua quieta, Mole y Joaquina para los surfistas, el Campeche turquesa y la Lagoa da Conceição para comer de noche. A 3 h y media en vuelo directo.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Praia_de_Jurer%C3%AA_Internacional.JPG/1280px-Praia_de_Jurer%C3%AA_Internacional.JPG",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Praia_de_Jurer%C3%AA_Internacional.JPG/1920px-Praia_de_Jurer%C3%AA_Internacional.JPG",
+        "credito": "Rafael Bernardino Mattei",
+        "licencia": "CC BY-SA 3.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Praia_de_Jurer%C3%AA_Internacional.JPG"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Praia_Mole_Florian%C3%B3polis.jpg/1280px-Praia_Mole_Florian%C3%B3polis.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/Praia_Mole_Florian%C3%B3polis.jpg/1920px-Praia_Mole_Florian%C3%B3polis.jpg",
+        "credito": "Chamuscajr",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Praia_Mole_Florian%C3%B3polis.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/DanielVianna_Praia_do_Campeche_Florianopolis_SC_%2841528477152%29.jpg/1280px-DanielVianna_Praia_do_Campeche_Florianopolis_SC_%2841528477152%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/DanielVianna_Praia_do_Campeche_Florianopolis_SC_%2841528477152%29.jpg/1920px-DanielVianna_Praia_do_Campeche_Florianopolis_SC_%2841528477152%29.jpg",
+        "credito": "MTur Destinos",
+        "licencia": "Public domain",
+        "pagina": "https://commons.wikimedia.org/wiki/File:DanielVianna_Praia_do_Campeche_Florianopolis_SC_(41528477152).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/ViewLagoadaConceicao-feb2015.JPG/1280px-ViewLagoadaConceicao-feb2015.JPG",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/ViewLagoadaConceicao-feb2015.JPG/1920px-ViewLagoadaConceicao-feb2015.JPG",
+        "credito": "Ezarate",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:ViewLagoadaConceicao-feb2015.JPG"
+      }
+    ]
+  },
+  "buzios": {
+    "nombre": "Búzios",
+    "pais": "Brasil",
+    "mapa": "Armação dos Búzios, Rio de Janeiro",
+    "zoom": 13,
+    "descripcion": "Una península con veinte playas chicas, cada una distinta, a 2 h y media de Río. La Rua das Pedras de noche, Geribá para el día largo y João Fernandes para el snorkel.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Gerib%C3%A1%2C_B%C3%BAzios_-_Fim_de_tarde.jpg/1280px-Gerib%C3%A1%2C_B%C3%BAzios_-_Fim_de_tarde.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Gerib%C3%A1%2C_B%C3%BAzios_-_Fim_de_tarde.jpg/1920px-Gerib%C3%A1%2C_B%C3%BAzios_-_Fim_de_tarde.jpg",
+        "credito": "Professorcarlosgoes",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Gerib%C3%A1,_B%C3%BAzios_-_Fim_de_tarde.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Praia_Brava_em_Arma%C3%A7%C3%A3o_dos_B%C3%BAzios_Rio_de_Janeiro.jpg/1280px-Praia_Brava_em_Arma%C3%A7%C3%A3o_dos_B%C3%BAzios_Rio_de_Janeiro.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Praia_Brava_em_Arma%C3%A7%C3%A3o_dos_B%C3%BAzios_Rio_de_Janeiro.jpg/1920px-Praia_Brava_em_Arma%C3%A7%C3%A3o_dos_B%C3%BAzios_Rio_de_Janeiro.jpg",
+        "credito": "Mabscoito",
+        "licencia": "CC BY-SA 3.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Praia_Brava_em_Arma%C3%A7%C3%A3o_dos_B%C3%BAzios_Rio_de_Janeiro.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Vista_da_Igreja_de_Sant%27Anna_%28Arma%C3%A7%C3%A3o_dos_B%C3%BAzios%29.jpg/1280px-Vista_da_Igreja_de_Sant%27Anna_%28Arma%C3%A7%C3%A3o_dos_B%C3%BAzios%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Vista_da_Igreja_de_Sant%27Anna_%28Arma%C3%A7%C3%A3o_dos_B%C3%BAzios%29.jpg/1920px-Vista_da_Igreja_de_Sant%27Anna_%28Arma%C3%A7%C3%A3o_dos_B%C3%BAzios%29.jpg",
+        "credito": "Arthur Bomfim",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Vista_da_Igreja_de_Sant%27Anna_(Arma%C3%A7%C3%A3o_dos_B%C3%BAzios).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Anoitecer_na_praia_de_Gerib%C3%A1.JPG/1280px-Anoitecer_na_praia_de_Gerib%C3%A1.JPG",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Anoitecer_na_praia_de_Gerib%C3%A1.JPG/1920px-Anoitecer_na_praia_de_Gerib%C3%A1.JPG",
+        "credito": "Pedro Perales Ramalho",
+        "licencia": "CC BY-SA 3.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Anoitecer_na_praia_de_Gerib%C3%A1.JPG"
+      }
+    ]
+  },
+  "porto-de-galinhas": {
+    "nombre": "Porto de Galinhas",
+    "pais": "Brasil",
+    "mapa": "Porto de Galinhas, Ipojuca, Pernambuco",
+    "zoom": 13,
+    "descripcion": "El agua más tibia de todas. Con marea baja se forman piscinas naturales entre los arrecifes y se llega en jangada a ver peces de colores. Muro Alto, al lado, es una laguna de mar quieto.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Piscinas_Naturais_de_Porto_de_Galinhas_-_Pernambuco.jpg/1280px-Piscinas_Naturais_de_Porto_de_Galinhas_-_Pernambuco.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Piscinas_Naturais_de_Porto_de_Galinhas_-_Pernambuco.jpg/1920px-Piscinas_Naturais_de_Porto_de_Galinhas_-_Pernambuco.jpg",
+        "credito": "Beto Quissak",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Piscinas_Naturais_de_Porto_de_Galinhas_-_Pernambuco.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/BRUNO_LIMA_PISCINAS_NATURAIS_DE_PORTO_DE_GALINHAS_IPOJUCA_PE_%2827037766848%29.jpg/1280px-BRUNO_LIMA_PISCINAS_NATURAIS_DE_PORTO_DE_GALINHAS_IPOJUCA_PE_%2827037766848%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ea/BRUNO_LIMA_PISCINAS_NATURAIS_DE_PORTO_DE_GALINHAS_IPOJUCA_PE_%2827037766848%29.jpg/1920px-BRUNO_LIMA_PISCINAS_NATURAIS_DE_PORTO_DE_GALINHAS_IPOJUCA_PE_%2827037766848%29.jpg",
+        "credito": "MTur Destinos",
+        "licencia": "Public domain",
+        "pagina": "https://commons.wikimedia.org/wiki/File:BRUNO_LIMA_PISCINAS_NATURAIS_DE_PORTO_DE_GALINHAS_IPOJUCA_PE_(27037766848).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Praia_de_Muro_Alto_-_Ipojuca%2C_Pernambuco%2C_Brasil.jpg/1280px-Praia_de_Muro_Alto_-_Ipojuca%2C_Pernambuco%2C_Brasil.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Praia_de_Muro_Alto_-_Ipojuca%2C_Pernambuco%2C_Brasil.jpg/1920px-Praia_de_Muro_Alto_-_Ipojuca%2C_Pernambuco%2C_Brasil.jpg",
+        "credito": "Eduardo Marquetti",
+        "licencia": "CC BY-SA 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Praia_de_Muro_Alto_-_Ipojuca,_Pernambuco,_Brasil.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/BRUNO_LIMA_PRAIA_DE_MURO_ALTO_IPOJUCA_PE_%2840908731001%29.jpg/1280px-BRUNO_LIMA_PRAIA_DE_MURO_ALTO_IPOJUCA_PE_%2840908731001%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/BRUNO_LIMA_PRAIA_DE_MURO_ALTO_IPOJUCA_PE_%2840908731001%29.jpg/1920px-BRUNO_LIMA_PRAIA_DE_MURO_ALTO_IPOJUCA_PE_%2840908731001%29.jpg",
+        "credito": "MTur Destinos",
+        "licencia": "Public domain",
+        "pagina": "https://commons.wikimedia.org/wiki/File:BRUNO_LIMA_PRAIA_DE_MURO_ALTO_IPOJUCA_PE_(40908731001).jpg"
+      }
+    ]
+  },
+  "maceio": {
+    "nombre": "Maceió",
+    "pais": "Brasil",
+    "mapa": "Maceió, Alagoas",
+    "zoom": 11,
+    "descripcion": "Playas de agua verde y piscinas naturales en la Pajuçara, y a 2 h el mar de Maragogi, que le dicen el Caribe brasileño. Acá están los todo incluido más conocidos del nordeste.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Maragogi_-_Alagoas_%2816364632559%29.jpg/1280px-Maragogi_-_Alagoas_%2816364632559%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Maragogi_-_Alagoas_%2816364632559%29.jpg/1920px-Maragogi_-_Alagoas_%2816364632559%29.jpg",
+        "credito": "Marinelson Almeida - Traveling through Brazil",
+        "licencia": "CC BY 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Maragogi_-_Alagoas_(16364632559).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Praia_de_Paju%C3%A7ara_-_Macei%C3%B3_-_Alagoas_%2813125463894%29.jpg/1280px-Praia_de_Paju%C3%A7ara_-_Macei%C3%B3_-_Alagoas_%2813125463894%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Praia_de_Paju%C3%A7ara_-_Macei%C3%B3_-_Alagoas_%2813125463894%29.jpg/1920px-Praia_de_Paju%C3%A7ara_-_Macei%C3%B3_-_Alagoas_%2813125463894%29.jpg",
+        "credito": "Marinelson Almeida - Traveling through Brazil",
+        "licencia": "CC BY 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Praia_de_Paju%C3%A7ara_-_Macei%C3%B3_-_Alagoas_(13125463894).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Maragogi_-_Alagoas_-_Brasil._%2816354731032%29.jpg/1280px-Maragogi_-_Alagoas_-_Brasil._%2816354731032%29.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Maragogi_-_Alagoas_-_Brasil._%2816354731032%29.jpg/1920px-Maragogi_-_Alagoas_-_Brasil._%2816354731032%29.jpg",
+        "credito": "Marinelson Almeida - Traveling through Brazil",
+        "licencia": "CC BY 2.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Maragogi_-_Alagoas_-_Brasil._(16354731032).jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3249.JPG/1280px-Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3249.JPG",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3249.JPG/1920px-Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3249.JPG",
+        "credito": "Mariordo (Mario Roberto Durán Ortiz)",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Praia_Paju%C3%A7ara_Macei%C3%B3_04_2015_3249.JPG"
+      }
+    ]
+  },
+  "cartagena": {
+    "nombre": "Cartagena",
+    "pais": "Colombia",
+    "mapa": "Cartagena de Indias, Colombia",
+    "zoom": 13,
+    "descripcion": "La ciudad amurallada de colores, con balcones de flores y atardeceres en la muralla. Las playas lindas están afuera: Islas del Rosario y Barú, en lancha.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/View_of_Cartagena_from_Convento_de_Santa_Cruz_de_la_Popa_02.jpg/1280px-View_of_Cartagena_from_Convento_de_Santa_Cruz_de_la_Popa_02.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/View_of_Cartagena_from_Convento_de_Santa_Cruz_de_la_Popa_02.jpg/1920px-View_of_Cartagena_from_Convento_de_Santa_Cruz_de_la_Popa_02.jpg",
+        "credito": "Bernard Gagnon",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:View_of_Cartagena_from_Convento_de_Santa_Cruz_de_la_Popa_02.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Ciudad_Amurallada_Cartagena_de_Indias.jpg/1280px-Ciudad_Amurallada_Cartagena_de_Indias.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Ciudad_Amurallada_Cartagena_de_Indias.jpg/1920px-Ciudad_Amurallada_Cartagena_de_Indias.jpg",
+        "credito": "Angela bustosc91",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Ciudad_Amurallada_Cartagena_de_Indias.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/La_ciudad_amurallada_de_Cartagena_de_Indias.JPG/1280px-La_ciudad_amurallada_de_Cartagena_de_Indias.JPG",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/La_ciudad_amurallada_de_Cartagena_de_Indias.JPG/1920px-La_ciudad_amurallada_de_Cartagena_de_Indias.JPG",
+        "credito": "Cinematicguy",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:La_ciudad_amurallada_de_Cartagena_de_Indias.JPG"
+      }
+    ]
+  },
+  "chile-chico": {
+    "nombre": "Chile Chico y Jeinimeni",
+    "pais": "Chile · Aysén",
+    "mapa": "Chile Chico, Aysén",
+    "zoom": 10,
+    "descripcion": "El otro lado del General Carrera, el más soleado de Aysén. Se llega por el Paso Las Llaves, un camino tallado en el cerro sobre el lago, y al sur está la Reserva Jeinimeni, con lagunas verdes y la Cueva de las Manos.",
+    "fotos": [
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Lago_Verde_Reserva_Jeinimeni.jpg/1280px-Lago_Verde_Reserva_Jeinimeni.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Lago_Verde_Reserva_Jeinimeni.jpg/1920px-Lago_Verde_Reserva_Jeinimeni.jpg",
+        "credito": "Jclavero92",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Lago_Verde_Reserva_Jeinimeni.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Laguna_Jeinimeni_desde_sendero_silencio_01.jpg/1280px-Laguna_Jeinimeni_desde_sendero_silencio_01.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/65/Laguna_Jeinimeni_desde_sendero_silencio_01.jpg/1920px-Laguna_Jeinimeni_desde_sendero_silencio_01.jpg",
+        "credito": "Prii.isa",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Laguna_Jeinimeni_desde_sendero_silencio_01.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Lago_General_Carrera_-_Chile_Chico.jpg/1280px-Lago_General_Carrera_-_Chile_Chico.jpg",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Lago_General_Carrera_-_Chile_Chico.jpg/1920px-Lago_General_Carrera_-_Chile_Chico.jpg",
+        "credito": "Jpmorenosanchez",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Lago_General_Carrera_-_Chile_Chico.jpg"
+      },
+      {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Lago_General_Carrera_Camino_a_Chile_Chico.JPG/1280px-Lago_General_Carrera_Camino_a_Chile_Chico.JPG",
+        "grande": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Lago_General_Carrera_Camino_a_Chile_Chico.JPG/1920px-Lago_General_Carrera_Camino_a_Chile_Chico.JPG",
+        "credito": "Felipedd",
+        "licencia": "CC BY-SA 4.0",
+        "pagina": "https://commons.wikimedia.org/wiki/File:Lago_General_Carrera_Camino_a_Chile_Chico.JPG"
+      }
+    ]
   }
 };

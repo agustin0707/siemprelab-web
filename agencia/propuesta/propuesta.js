@@ -1,6 +1,7 @@
 // La propuesta · Agencia de Viajes SiempreLab
 // Presentación para el viernes 6 nov: lo que vi y avancé, lámina por lámina.
-// Los datos salen de la prep (datos.js, lugares.js, fotos-panoramas.js y precios.json),
+// Tiene dos planes: A (Austral 2.0 + Guatemala) y B (playa + Austral larga), elegibles en la portada.
+// Los datos salen de la prep (datos.js, datos-b.js, lugares.js, fotos-panoramas.js y precios.json),
 // así que si se recotiza allá, acá se ve igual. Lo que se elige se guarda en este navegador.
 
 // ---------- Utilidades ----------
@@ -24,22 +25,60 @@ const guardado = {
   }
 };
 
-// Lo que vamos decidiendo durante la presentación
+// Lo que vamos decidiendo durante la presentación.
+// El plan parte en el último que se miró en la prep (o en el B, que es la idea nueva); ?plan=a o ?plan=b manda.
+const B = DATOS_B;
+const resumenB = () => guardado.leer('resumen-b', null, 'prep-');
 const decisiones = Object.assign(
-  { vuelta: '24', glaciar: 'hielo', capillas: 'lancha', auto: 'sixt-sonet', techo: [1], anioNuevo: null, ruta: 'guatemala', compradas: {}, aprobado: false },
+  { plan: guardado.leer('plan', 'b', 'prep-') === 'a' ? 'a' : 'b',
+    vuelta: '24', glaciar: 'hielo', capillas: 'lancha', auto: 'sixt-sonet', techo: [1], anioNuevo: null, ruta: 'guatemala', compradas: {}, aprobado: false,
+    playa: (resumenB() || {}).playaId || B.playa.opciones[0].id, autoB: 'b-tucson', techoB: [1, 8], anioNuevoB: null },
   guardado.leer('decisiones', {})
 );
+const planUrl = new URLSearchParams(location.search).get('plan');
+if (planUrl === 'a' || planUrl === 'b') decisiones.plan = planUrl;
+const esB = () => decisiones.plan === 'b';
+document.documentElement.dataset.plan = decisiones.plan;
 const guardarDecisiones = () => guardado.escribir('decisiones', decisiones);
+// Las elecciones que cada plan guarda por separado
+const claveTecho = () => (esB() ? 'techoB' : 'techo');
+const claveNY = () => (esB() ? 'anioNuevoB' : 'anioNuevo');
 
 // Atajos a los datos de la prep
 const AU = DATOS.vuelosAustral;
-const actividad = (id) => [...DATOS.actividadesAustral, ...DATOS.actividadesCA].find((a) => a.id === id);
+const actividad = (id) => [...DATOS.actividadesAustral, ...DATOS.actividadesCA, ...B.actividades].find((a) => a.id === id);
 const reserva = (id) => DATOS.reservas.find((r) => r.id === id);
 const fotosDe = (llave) => (typeof FOTOS_PANORAMAS !== 'undefined' && FOTOS_PANORAMAS[llave]) || (LUGARES[llave] ? LUGARES[llave].fotos : []);
-const idaElegida = () => AU.idas.find((v) => v.recomendado) || AU.idas[0];
-const vueltaElegida = () => AU.vueltas.find((v) => String(v.fecha) === decisiones.vuelta && v.aerolinea === 'LATAM' && v.sale === '15:00') || AU.vueltas.find((v) => String(v.fecha) === decisiones.vuelta);
-const autoElegido = () => DATOS.autos.opciones.find((a) => a.id === decisiones.auto) || DATOS.autos.opciones[0];
-const totalAuto = (a) => precioDe(decisiones.vuelta === '24' ? a.total24 : a.total);
+// En el plan B los vuelos al sur son los que quedaron elegidos en la prep
+const idaElegida = () => (esB()
+  ? B.vuelosAU.idas.find((v) => v.id === (resumenB() || {}).ida) || B.vuelosAU.idas.find((v) => v.recomendado)
+  : AU.idas.find((v) => v.recomendado) || AU.idas[0]);
+const vueltaElegida = () => (esB()
+  ? B.vuelosAU.vueltas.find((v) => v.id === (resumenB() || {}).vuelta) || B.vuelosAU.vueltas.find((v) => v.recomendado)
+  : AU.vueltas.find((v) => String(v.fecha) === decisiones.vuelta && v.aerolinea === 'LATAM' && v.sale === '15:00') || AU.vueltas.find((v) => String(v.fecha) === decisiones.vuelta));
+const autoElegido = () => (esB()
+  ? B.autos.opciones.find((a) => a.id === decisiones.autoB) || B.autos.opciones[0]
+  : DATOS.autos.opciones.find((a) => a.id === decisiones.auto) || DATOS.autos.opciones[0]);
+const totalAuto = (a) => precioDe(esB() ? a.total : decisiones.vuelta === '24' ? a.total24 : a.total);
+
+// La playa del plan B: el hotel y las noches son los de la prep si se eligió la misma playa
+const playaElegida = () => B.playa.opciones.find((o) => o.id === decisiones.playa) || B.playa.opciones[0];
+const nombreCorto = (o) => o.nombre.replace(' todo incluido', '').replace('Caribe en ', '');
+const nochesPlaya = () => (resumenB() && resumenB().noches) || B.playa.noches;
+function hotelPlaya(o) {
+  const r = resumenB();
+  return (r && r.playaId === o.id && o.hoteles.find((h) => h.n === r.hotel)) || o.hoteles[o.base];
+}
+// Por persona: vuelo (con la maleta si es low cost) + la mitad del hotel + traslados. base = lo que entra en el tope.
+function costoPlaya(o, noches = nochesPlaya()) {
+  const h = hotelPlaya(o);
+  const vuelo = o.vuelo.precio + precioDe(o.vuelo.extraMano);
+  const hotel = (h.p * noches) / 2;
+  return { h, vuelo, hotel, traslado: o.traslado.p, base: vuelo + hotel + o.traslado.p, comida: h.todoIncluido ? 0 : o.comida * noches };
+}
+const diaSemana = (d) => ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'][new Date(2026, 11, d).getDay()];
+const linkVueloPlaya = (o) => `https://www.google.com/travel/flights?q=Flights%20from%20SCL%20to%20${o.vuelo.codigo}%20on%202026-12-14%20through%202026-12-${14 + nochesPlaya()}&curr=CLP&hl=es&gl=CL`;
+const busquedaHoteles = (q) => `https://www.google.com/travel/search?q=${encodeURIComponent(q)}&hl=es&gl=CL&curr=CLP`;
 const avianca = () => DATOS.vuelosCA.find((v) => v.id === 'avianca-25') || DATOS.vuelosCA[0];
 
 // Cuenta de un número hacia arriba
@@ -86,15 +125,21 @@ document.addEventListener('click', (e) => {
   decisiones[caja.dataset.decision] = b.dataset.valor;
   guardarDecisiones();
   $$(`.interruptor[data-decision="${caja.dataset.decision}"]`).forEach(pintarInterruptor);
-  repintar();
+  if (caja.dataset.decision === 'plan') aplicarPlan(); else repintar();
 });
 
 // ---------- 1. Portada ----------
+// Primer despegue: el 13 a la Austral (plan A) o el 14 a la playa (plan B)
+const despegue = () => (esB() ? `2026-12-14T${playaElegida().vuelo.ida.slice(0, 5)}:00-03:00` : DATOS.despegue);
+function pintarPase() {
+  $('#pase-destinos').textContent = esB() ? `${playaElegida().vuelo.codigo} · BBA` : 'BBA · GUA';
+  $('#pase-salida').textContent = esB() ? '14 dic' : '13 dic';
+}
 function pintarPortada() {
   const fotos = DATOS.hero.map((h) => LUGARES[h.lugar] && LUGARES[h.lugar].fotos[h.foto]).filter(Boolean);
   fondoRotativo($('#portada-fotos'), $('#portada-credito'), fotos, 5500);
   const cuenta = () => {
-    const ms = new Date(DATOS.despegue) - new Date();
+    const ms = new Date(despegue()) - new Date();
     if (ms <= 0) { $('#cuenta').textContent = '¡ya!'; return; }
     const d = Math.floor(ms / 86400000);
     const h = Math.floor((ms % 86400000) / 3600000);
@@ -102,20 +147,33 @@ function pintarPortada() {
   };
   cuenta();
   setInterval(cuenta, 60000);
+  pintarPase();
 }
 
 // ---------- 2. Calendario del verano ----------
 const INICIO = new Date('2026-12-01T00:00:00-03:00');
 const DIAS_CAL = 42; // 1 dic al 11 ene
 const diaDe = (iso, hora = 0) => (new Date(iso + 'T00:00:00-03:00') - INICIO) / 86400000 + hora / 24;
-// La Austral termina el 23 o el 24 según lo que elijamos
-const tramos = () => [
-  { desde: diaDe('2026-12-04'), hasta: diaDe('2026-12-11'), clase: 'gris', t: 'Brasil', s: 'tú con tu papá', d: '<b>Brasil.</b> Tú con tu papá, vuelves el 10 u 11. Yo ando en mi viaje sorpresa.' },
+// Plan A: la Austral termina el 23 o el 24 según lo que elijamos. Plan B: playa antes y Austral larga después.
+const BRASIL = { desde: diaDe('2026-12-04'), hasta: diaDe('2026-12-11'), clase: 'gris', t: 'Brasil', s: 'tú con tu papá', d: '<b>Brasil.</b> Tú con tu papá, vuelves el 10 u 11. Yo ando en mi viaje sorpresa.' };
+const hora = (hhmm) => Number(hhmm.slice(0, 2)) + Number(hhmm.slice(3, 5)) / 60;
+function tramosB() {
+  const o = playaElegida();
+  const vuelta = 14 + nochesPlaya();
+  const ida = idaElegida(), v = vueltaElegida();
+  return [
+    BRASIL,
+    { desde: diaDe('2026-12-14', hora(o.vuelo.ida)), hasta: diaDe(`2026-12-${vuelta}`, 20), clase: 'negro', t: nombreCorto(o), s: `14 al ${vuelta} dic`, d: `<b>${o.nombre}.</b> Salimos el lunes 14 (el matrimonio ya pasó) y volvemos el ${diaSemana(vuelta)} ${vuelta}, con días de colchón antes de Navidad.` },
+    { desde: diaDe('2026-12-26', hora(ida.sale)), hasta: diaDe('2027-01-09', hora(v.llega)), clase: 'acento', t: 'Austral larga', s: '26 dic al 9 ene', d: `<b>Austral larga.</b> Pasamos Navidad en Santiago y partimos el sábado 26 a las ${ida.sale}. Volvemos el sábado 9 a las ${v.llega}: te quedan el sábado y el domingo antes del internado.` }
+  ];
+}
+const tramos = () => (esB() ? tramosB() : [
+  BRASIL,
   decisiones.vuelta === '24'
     ? { desde: diaDe('2026-12-13', 14.5), hasta: diaDe('2026-12-24', 18.5), clase: 'acento', t: 'Austral 2.0', s: '13 al 24 dic', d: '<b>Austral 2.0.</b> Salimos el domingo 13 después de almuerzo (el matrimonio es la noche antes) y volvemos el 24 para la Nochebuena.' }
     : { desde: diaDe('2026-12-13', 14.5), hasta: diaDe('2026-12-23', 18.7), clase: 'acento', t: 'Austral 2.0', s: '13 al 23 dic', d: '<b>Austral 2.0.</b> Salimos el domingo 13 después de almuerzo (el matrimonio es la noche antes) y volvemos el miércoles 23.' },
   { desde: diaDe('2026-12-25', 16.25), hasta: diaDe('2027-01-10', 1), clase: 'negro', t: 'Guatemala', s: '25 dic al 10 ene', d: '<b>Guatemala.</b> Almorzamos en Navidad y partimos a las 16:15. Volvemos el sábado 9 y llegamos el domingo 10 a la 01:05.' }
-];
+]);
 const HITOS = [
   { dia: diaDe('2026-12-12', 20), t: 'matrimonio', d: '<b>Sábado 12:</b> el matrimonio. Por eso no volamos ese día ni el 13 temprano.' },
   { dia: diaDe('2026-12-24', 21), t: 'nochebuena', d: '<b>24 y 25:</b> Navidad en Santiago, con las familias.' },
@@ -134,8 +192,49 @@ function pintarCalendario() {
       ${tramos().map((t, i) => `<button class="cal-tramo ${t.clase}" data-tramo="${i}" style="left:${pct(t.desde)}%;width:${pct(t.hasta - t.desde)}%;transition-delay:${0.3 + i * 0.25}s"><b>${t.t}</b><small>${t.s}</small></button>`).join('')}
       ${HITOS.map((h, i) => `<button class="cal-hito ${h.clase || ''}" data-hito="${i}" style="left:${pct(h.dia)}%">${h.t}</button>`).join('')}
     </div>`;
-  $('#noches-sur').textContent = decisiones.vuelta === '24' ? 11 : 10;
+  const cifras = esB()
+    ? [[nochesPlaya(), 'noches de playa'], [14, 'noches en el sur'], ['1,5', 'días libres antes del internado']]
+    : [[decisiones.vuelta === '24' ? 11 : 10, 'noches en el sur'], [14, 'noches en Guatemala'], [1, 'día libre antes del internado']];
+  $('#cifras-verano').innerHTML = cifras.map(([n, t]) => `<div><b>${n}</b><span>${t}</span></div>`).join('');
 }
+
+// ---------- 2b. La playa (plan B) ----------
+function pintarPlaya() {
+  const n = nochesPlaya();
+  $('#opciones-playa').innerHTML = B.playa.opciones.map((o) => {
+    const c = costoPlaya(o, n);
+    const f = fotosDe(o.lugar)[0];
+    const si = decisiones.playa === o.id;
+    return `<button class="ny${si ? ' elegida' : ''}" data-playa="${o.id}">
+      ${f ? `<img src="${f.src}" alt="${o.nombre}" loading="lazy">` : ''}
+      <span class="check">${si ? '✓' : ''}</span>
+      <div class="ny-texto"><span class="sello">${o.sello}</span><b>${nombreCorto(o)}</b><span${c.base > B.topePlaya ? ' class="fuera"' : ''}>${milCLP(c.base)} c/u${c.base > B.topePlaya ? ' · se pasa' : ''}</span></div>
+    </button>`;
+  }).join('');
+  const o = playaElegida();
+  const c = costoPlaya(o, n);
+  const dentro = c.base <= B.topePlaya;
+  const filas = [
+    ['vuelo', `${o.vuelo.aerolinea} ${o.vuelo.ida} · ${o.vuelo.escalas} · ${milCLP(c.vuelo)} c/u${precioDe(o.vuelo.extraMano) ? ' con la maleta' : ''}`],
+    ['hotel', `${c.h.n} · ★ ${c.h.r} · ${milCLP(c.h.p)} la noche para los dos`],
+    ['noches', `${n}, del lun 14 al ${diaSemana(14 + n)} ${14 + n} de diciembre`],
+    ['traslado', `${o.traslado.texto} · ${milCLP(c.traslado)} c/u`],
+    ['comida', c.h.todoIncluido ? 'incluida en el hotel, con tragos' : `≈ ${milCLP(o.comida)} al día cada uno`]
+  ];
+  $('#playa-elegida').innerHTML = `
+    <div class="ne-cabeza"><b>${o.nombre} · ${milCLP(c.base)} c/u</b><span>${dentro ? `dentro de los $800 mil: sobran ${milCLP(B.topePlaya - c.base)}` : `se pasa de los $800 mil por ${milCLP(c.base - B.topePlaya)}`}</span></div>
+    <ol class="horas">${filas.map(([h, q], i) => `<li style="animation-delay:${i * 80}ms"><span>${h}</span><p>${q}</p></li>`).join('')}</ol>
+    <p class="ne-pie">${o.resumen}</p>`;
+  const objetivo = Math.round((c.base * 0.85) / 1000) * 1000;
+  $('#playa-cuando').innerHTML = `¿Ahora o en el Black Friday (vie 27 al lun 30 nov)? Si aparece vuelo + hotel bajo <b>${milCLP(objetivo)}</b> c/u, se compra. Si no, se compra igual el lunes 30.`;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-playa]');
+  if (!b) return;
+  decisiones.playa = b.dataset.playa;
+  guardarDecisiones();
+  repintar();
+});
 document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-tramo], [data-hito]');
   if (!t) return;
@@ -145,25 +244,31 @@ document.addEventListener('click', (e) => {
 });
 
 // ---------- 3. Mapa de la Austral ----------
-// Coordenadas reales (lat, lon). viejo: lo que hicimos en 2025.
+// Coordenadas reales (lat, lon). viejo: lo que hicimos en 2025. soloB: solo en la Austral larga; dB: el texto en el plan B.
 const PUNTOS = {
   coyhaique: { lat: -45.57, lon: -72.07, n: 'Coyhaique', viejo: true, lado: 'der' },
-  balmaceda: { lat: -45.92, lon: -71.69, n: 'Balmaceda ✈', lado: 'der', lugar: 'carretera-austral', d: 'Llegamos el 13 a las 16:49, sacamos el auto en el aeropuerto y partimos al sur.' },
+  balmaceda: { lat: -45.92, lon: -71.69, n: 'Balmaceda ✈', lado: 'der', lugar: 'carretera-austral', d: 'Llegamos el 13 a las 16:49, sacamos el auto en el aeropuerto y partimos al sur.', dB: 'Llegamos el 26 a las 16:15, sacamos el auto y partimos al sur. El 9 volamos de vuelta desde acá.' },
   castillo: { lat: -46.12, lon: -72.16, n: 'Cerro Castillo', lado: 'der', lugar: 'cerro-castillo', d: 'Donde terminamos el 2025. Primera noche y de aquí para abajo todo es nuevo.' },
   tranquilo: { lat: -46.62, lon: -72.67, n: 'Río Tranquilo', lado: 'izq', lugar: 'capillas-marmol', d: 'Tres noches: Capillas de Mármol y el Glaciar Exploradores.' },
-  guadal: { lat: -46.84, lon: -72.70, n: 'Puerto Guadal', lado: 'der', lugar: 'general-carrera', d: 'La última noche antes de volver, a la orilla del General Carrera.' },
+  guadal: { lat: -46.84, lon: -72.70, n: 'Puerto Guadal', lado: 'der', lugar: 'general-carrera', d: 'La última noche antes de volver, a la orilla del General Carrera.', dB: 'De acá sale el Paso Las Llaves, el camino colgado sobre el lago hasta Chile Chico.' },
   bertrand: { lat: -47.02, lon: -72.83, n: 'Puerto Bertrand', lado: 'izq', lugar: 'confluencia-baker', d: 'El Baker turquesa y la confluencia con el Nef.' },
-  chacabuco: { lat: -47.13, lon: -72.48, n: 'Parque Patagonia', lado: 'der', lugar: 'parque-patagonia', d: 'Valle Chacabuco: guanacos, Lagunas Altas y camping.' },
+  chacabuco: { lat: -47.13, lon: -72.48, n: 'Parque Patagonia', lado: 'der', lugar: 'parque-patagonia', d: 'Valle Chacabuco: guanacos, Lagunas Altas y camping.', dB: 'Valle Chacabuco: guanacos, Lagunas Altas y Año Nuevo bajo las estrellas.' },
   cochrane: { lat: -47.25, lon: -72.57, n: 'Cochrane', lado: 'der', abajo: true, lugar: 'parque-patagonia', d: 'El último pueblo grande: estanque lleno y súper antes de seguir.' },
   tortel: { lat: -47.80, lon: -73.54, n: 'Caleta Tortel', lado: 'izq', lugar: 'tortel', d: 'El pueblo sin calles: todo por pasarelas sobre el agua.' },
   yungay: { lat: -47.97, lon: -73.39, n: 'Barcaza', lado: 'der', abajo: true, lugar: 'carretera-austral', d: 'Puerto Yungay → Río Bravo: 45 min de barcaza, gratis.' },
-  ohiggins: { lat: -48.47, lon: -72.56, n: "Villa O'Higgins", lado: 'der', lugar: 'villa-ohiggins', d: 'El fin de la Carretera Austral. Dos noches y el glaciar si hay cupo.' }
+  ohiggins: { lat: -48.47, lon: -72.56, n: "Villa O'Higgins", lado: 'der', lugar: 'villa-ohiggins', d: 'El fin de la Carretera Austral. Dos noches y el glaciar si hay cupo.' },
+  chilechico: { lat: -46.54, lon: -71.73, n: 'Chile Chico', lado: 'der', soloB: true, lugar: 'chile-chico', d: 'El pueblo del sol, al otro lado del lago. Dos noches: Jeinimeni y la Piedra Clavada.' },
+  ibanez: { lat: -46.29, lon: -71.94, n: 'Puerto Ibáñez', lado: 'der', soloB: true, lugar: 'general-carrera', d: 'Cruzamos el lago en barcaza desde Chile Chico (2 h, con el auto) y quedamos a una hora de Balmaceda.' }
 };
 // Por dónde va el camino (algunos quiebres para que siga la carretera)
 const CAMINO_2025 = [[-44.9, -72.6], [-45.25, -72.25], 'coyhaique', [-45.75, -72.0], 'castillo'];
 const CAMINO_2026 = ['balmaceda', [-46.0, -71.95], 'castillo', [-46.35, -72.35], [-46.5, -72.62], 'tranquilo', [-46.85, -72.66], 'bertrand', [-47.08, -72.66], 'chacabuco', 'cochrane', [-47.55, -72.85], [-47.75, -73.15], 'yungay', [-48.05, -73.2], [-48.2, -72.95], 'ohiggins'];
 const RAMAL_TORTEL = [[-47.75, -73.15], [-47.78, -73.35], 'tortel'];
 const RAMAL_GUADAL = [[-46.85, -72.66], 'guadal'];
+// Austral larga: la vuelta por el sur del lago, la barcaza y de Ibáñez al aeropuerto
+const LLAVES = ['guadal', [-46.74, -72.45], [-46.63, -72.2], [-46.56, -71.95], 'chilechico'];
+const BARCAZA_LAGO = ['chilechico', [-46.42, -71.86], 'ibanez'];
+const IBANEZ_BALMACEDA = ['ibanez', [-46.1, -71.86], 'balmaceda'];
 
 function pintarMapa() {
   const svg = $('#mapa');
@@ -180,7 +285,7 @@ function pintarMapa() {
     const [, y] = xy(lat, lon0);
     return `<line x1="0" x2="${W}" y1="${y}" y2="${y}"/><text x="4" y="${y - 4}">${-lat}° S</text>`;
   }).join('');
-  const puntos = Object.entries(PUNTOS).map(([id, pt]) => {
+  const puntos = Object.entries(PUNTOS).filter(([, pt]) => esB() || !pt.soloB).map(([id, pt]) => {
     const [x, y] = xy(pt.lat, pt.lon);
     const dx = pt.lado === 'izq' ? -10 : 10;
     return `<g class="punto ${pt.viejo ? 'viejo' : ''}" data-punto="${id}" tabindex="0">
@@ -196,8 +301,11 @@ function pintarMapa() {
     <path class="ruta-2026 dibujar" d="${linea(CAMINO_2026)}"/>
     <path class="ruta-2026 dibujar" d="${linea(RAMAL_TORTEL)}"/>
     <path class="ruta-2026 dibujar" d="${linea(RAMAL_GUADAL)}"/>
+    ${esB() ? `<path class="ruta-2026 dibujar" d="${linea(LLAVES)}"/><path class="barcaza" d="${linea(BARCAZA_LAGO)}"/><path class="ruta-2026 dibujar" d="${linea(IBANEZ_BALMACEDA)}"/>` : ''}
     <text x="${Number(bx) + 8}" y="14" fill="rgba(255,255,255,.45)" font-family="Space Mono" font-size="9">desde Santiago</text>
     ${puntos}`;
+  const cifras = esB() ? [['~2.100', 'km de ruta'], ['8', 'pueblos nuevos'], ['2', 'barcazas']] : [['~1.450', 'km de ruta'], ['6', 'pueblos nuevos'], ['1', 'barcaza']];
+  $('#cifras-austral').innerHTML = cifras.map(([n, t]) => `<div><b>${n}</b><span>${t}</span></div>`).join('');
 }
 function dibujarRuta() {
   $$('#mapa .dibujar').forEach((path, i) => {
@@ -215,28 +323,32 @@ function tocarPunto(id) {
   if (!pt || pt.viejo) return;
   $$('#mapa .punto').forEach((g) => g.classList.toggle('tocado', g.dataset.punto === id));
   const f = fotosDe(pt.lugar)[0];
-  $('#parada-tocada').innerHTML = `${f ? `<img src="${f.src}" alt="${pt.n}">` : ''}<div><b>${pt.n}</b>${pt.d}</div>`;
+  $('#parada-tocada').innerHTML = `${f ? `<img src="${f.src}" alt="${pt.n}">` : ''}<div><b>${pt.n}</b>${(esB() && pt.dB) || pt.d}</div>`;
 }
 document.addEventListener('click', (e) => { const g = e.target.closest('[data-punto]'); if (g) tocarPunto(g.dataset.punto); });
 
 // ---------- 4. Día a día ----------
 function pintarDias() {
   const R = DATOS.rutaAustral;
-  const paradas = [...R.paradas, ...R.finales[decisiones.vuelta]];
-  $('#titulo-dias').textContent = decisiones.vuelta === '24' ? 'Doce días hacia el sur' : 'Once días hacia el sur';
+  const paradas = esB() ? B.ruta.paradas : [...R.paradas, ...R.finales[decisiones.vuelta]];
+  $('#titulo-dias').textContent = esB() ? 'Quince días hacia el sur' : decisiones.vuelta === '24' ? 'Doce días hacia el sur' : 'Once días hacia el sur';
   $('#dias').innerHTML = paradas.map((p, i) => {
     const f = p.lugar ? fotosDe(p.lugar)[0] : null;
-    const esFinal = i >= R.paradas.length;
+    const esFinal = !esB() && i >= R.paradas.length;
     return `<article class="dia${esFinal ? ' nuevo-final' : ''}">
       <div class="dia-foto${f ? '' : ' sin-foto'}">${f ? `<img src="${f.src}" alt="${p.titulo}" loading="lazy">` : '✈'}<span class="num">${p.dias.split(' · ')[0]}</span></div>
       <div class="dia-texto">
         <span class="cuando">${p.dias.split(' · ').slice(1).join(' · ') || p.dias}</span>
         <b>${p.titulo}</b>
         <p>${p.detalle}</p>
-        <span class="manejo">${p.manejo}</span>
+        <span class="manejo">${p.manejo || ''}</span>
       </div>
     </article>`;
   }).join('');
+  if (esB()) {
+    $('#nota-vuelta').textContent = 'Sin días eternos: el tramo más largo es de 5 horas. Ida hasta Villa O\'Higgins y vuelta por el otro lado del lago, por Chile Chico y la barcaza.';
+    return;
+  }
   const v24 = AU.vueltas.find((v) => v.id === 'au-v24-1500');
   const v23 = AU.vueltas.find((v) => v.id === 'au-v23-1500');
   const dif = v23 && v24 ? v23.precio - v24.precio : 0;
@@ -274,13 +386,16 @@ function pintarGlaciar() {
 
 // ---------- 6. Lo que hay en el camino ----------
 function pintarMosaico() {
-  const ids = [decisiones.capillas === 'kayak' ? 'capillas-kayak' : 'capillas-lancha', 'confluencia-baker', 'parque-patagonia', 'tortel', 'ohiggins', 'barcaza'];
+  const capillas = decisiones.capillas === 'kayak' ? 'capillas-kayak' : 'capillas-lancha';
+  const ids = esB()
+    ? [capillas, 'parque-patagonia', 'tortel', 'ohiggins', 'paso-las-llaves', 'jeinimeni']
+    : [capillas, 'confluencia-baker', 'parque-patagonia', 'tortel', 'ohiggins', 'barcaza'];
   $('#mosaico').innerHTML = ids.map((id) => {
     const a = actividad(id);
     if (!a) return '';
-    const f = fotosDe(id)[0] || fotosDe(a.lugar || '')[0];
+    const f = fotosDe(id)[0] || fotosDe(a.lugar || '')[0] || fotosDe([].concat(a.fotos || [])[0] || '')[0];
     // En la foto va solo lo corto; el precio entero queda atrás
-    const precioCorto = { 'confluencia-baker': 'mirador gratis', ohiggins: 'consultar' }[id] || a.precio.split(' · ')[0];
+    const precioCorto = { 'confluencia-baker': 'mirador gratis', ohiggins: 'consultar', jeinimeni: 'entrada CONAF' }[id] || a.precio.split(' · ')[0];
     return `<button class="ficha" type="button">
       <div class="ficha-giro">
         <div class="ficha-cara frente">
@@ -307,7 +422,7 @@ function tramoVuelo(v, de, a, titulo) {
       <div class="tv-cabeza"><span>${titulo} · ${v.dia}</span><span>${v.aerolinea} · ${v.escalas}</span></div>
       <div class="tv-horas"><b>${v.sale}</b><i></i><b>${v.llega}</b></div>
       <div class="tv-codigos"><span>${de}</span><span>${v.dur}</span><span>${a}</span></div>
-      ${v.nota || v.sello ? `<p class="tv-nota">${v.id === 'au-ida-1430' ? 'Almorzamos tranquilos y partimos.' : (v.nota || v.sello)}</p>` : ''}
+      ${v.nota || v.sello ? `<p class="tv-nota">${{ 'au-ida-1430': 'Almorzamos tranquilos y partimos.', 'au2-v9-1017': 'Llegamos a mediodía: te quedan el sábado y el domingo antes del internado.' }[v.id] || v.nota || v.sello}</p>` : ''}
     </div>
     <div class="tv-precio"><span>c/u</span><b>${milCLP(v.precio)}</b></div>
   </div>`;
@@ -316,7 +431,9 @@ function pintarTransporte() {
   $('#vuelos-au').innerHTML = tramoVuelo(idaElegida(), 'SCL', 'BBA', 'ida') + tramoVuelo(vueltaElegida(), 'BBA', 'SCL', 'vuelta') +
     '<p class="nota-maleta">La mochila scout va gratis en bodega con la WorldMember de LATAM (una por titular).</p>';
   const a = autoElegido();
-  const otro = DATOS.autos.opciones.find((x) => x.id === (a.id === 'sixt-sonet' ? 'salfa-crosstrek' : 'sixt-sonet'));
+  const otro = esB()
+    ? B.autos.opciones.find((x) => x.id === (a.id === 'b-tucson' ? 'b-virtus' : 'b-tucson'))
+    : DATOS.autos.opciones.find((x) => x.id === (a.id === 'sixt-sonet' ? 'salfa-crosstrek' : 'sixt-sonet'));
   // Barras comparando los dos autos: más largo = mejor (menos en el precio)
   const dato = (etq, v, w, unidad, mejor) => `<div class="barra-dato${mejor ? ' mejor' : ''}"><span>${etq}</span><i><em style="width:${w}%"></em></i><b>${v}${unidad}</b></div>`;
   const pct = (x, y) => Math.round((x / Math.max(x, y)) * 100);
@@ -331,7 +448,7 @@ function pintarTransporte() {
       ${dato('maletero', a.maletero, pct(a.maletero, otro.maletero), ' L', a.maletero >= otro.maletero)}
       ${dato('precio', milCLP(pA / 2), pct(pO, pA), ' c/u', pA <= pO)}
     </div>
-    <p class="auto-nota">${a.id === 'sixt-sonet'
+    <p class="auto-nota">${esB() ? `${a.nota} Son ${B.autos.dias} días por ${CLP(pA)} entre los dos.` : a.id === 'sixt-sonet'
       ? `Automático, el que menos gasta y con 19 cm de despeje: en diciembre el ripio hasta O'Higgins se hace bien en 4x2. Son ${decisiones.vuelta === '24' ? 11 : 10} días por ${CLP(pA)} entre los dos.`
       : `Tracción integral y más despeje, como la Tracker del año pasado. Pero en verano no hace falta y sale ${milCLP((pA - pO) / 2)} más cada uno.`}</p>`;
 }
@@ -339,13 +456,13 @@ function pintarTransporte() {
 // ---------- 8. Dónde dormimos ----------
 const ICONO_CARPA = '<svg class="icono" viewBox="0 0 34 34"><path d="M3 28 L17 6 L31 28 Z M17 6 L17 28 M12 28 L17 19 L22 28"/></svg>';
 const ICONO_TECHO = '<svg class="icono" viewBox="0 0 34 34"><path d="M5 15 L17 5 L29 15 M8 13 L8 29 L26 29 L26 13 M14 29 L14 20 L20 20 L20 29"/></svg>';
-const nochesDe = (n) => DATOS.dormirAustral.filter((x) => !x.soloSi || String(x.soloSi) === decisiones.vuelta);
+const nochesDe = () => (esB() ? B.dormir : DATOS.dormirAustral.filter((x) => !x.soloSi || String(x.soloSi) === decisiones.vuelta));
 const cuantasNoches = (x) => Number((x.donde.match(/\((\d+) noches\)/) || [0, 1])[1]);
 function pintarNoches() {
   const lista = nochesDe();
   let carpa = 0, techo = 0;
   $('#noches').innerHTML = lista.map((x, i) => {
-    const conTecho = decisiones.techo.includes(i);
+    const conTecho = decisiones[claveTecho()].includes(i);
     const n = cuantasNoches(x);
     if (conTecho) techo += n; else carpa += n;
     const mejor = x.techo && x.techo[0];
@@ -367,7 +484,8 @@ document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-noche]');
   if (!b) return;
   const i = Number(b.dataset.noche);
-  decisiones.techo = decisiones.techo.includes(i) ? decisiones.techo.filter((x) => x !== i) : [...decisiones.techo, i];
+  const techo = decisiones[claveTecho()];
+  decisiones[claveTecho()] = techo.includes(i) ? techo.filter((x) => x !== i) : [...techo, i];
   guardarDecisiones();
   pintarNoches();
 });
@@ -399,17 +517,18 @@ document.addEventListener('click', (e) => {
 
 // ---------- 10. Año Nuevo ----------
 function pintarAnioNuevo() {
-  const ops = DATOS.anioNuevo;
-  $('#opciones-ny').classList.toggle('hay-eleccion', !!decisiones.anioNuevo);
+  const ops = esB() ? B.anioNuevo : DATOS.anioNuevo;
+  const elegida = decisiones[claveNY()];
+  $('#opciones-ny').classList.toggle('hay-eleccion', !!elegida);
   $('#opciones-ny').innerHTML = ops.map((n) => {
     const f = fotosDe(n.fotos[n.id === 'ny-antigua' ? 1 : 0])[n.id === 'ny-acatenango' ? 2 : 0] || fotosDe(n.fotos[0])[0];
-    return `<button class="ny${decisiones.anioNuevo === n.id ? ' elegida' : ''}" data-ny="${n.id}">
+    return `<button class="ny${elegida === n.id ? ' elegida' : ''}" data-ny="${n.id}">
       ${f ? `<img src="${f.src}" alt="${n.titulo}" loading="lazy">` : ''}
-      <span class="check">${decisiones.anioNuevo === n.id ? '✓' : ''}</span>
+      <span class="check">${elegida === n.id ? '✓' : ''}</span>
       <div class="ny-texto"><span class="sello">${n.sello}</span><b>${n.titulo}</b><span>${n.donde}</span></div>
     </button>`;
   }).join('');
-  const n = ops.find((x) => x.id === decisiones.anioNuevo);
+  const n = ops.find((x) => x.id === elegida);
   $('#noche-elegida').innerHTML = n
     ? `<div class="ne-cabeza"><b>Así sería la noche</b><span>${n.precio}</span></div>
        <ol class="horas">${n.noche.map(([h, q], i) => `<li style="animation-delay:${i * 80}ms"><span>${h}</span><p>${q}</p></li>`).join('')}</ol>
@@ -419,7 +538,7 @@ function pintarAnioNuevo() {
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-ny]');
   if (!b) return;
-  decisiones.anioNuevo = decisiones.anioNuevo === b.dataset.ny ? null : b.dataset.ny;
+  decisiones[claveNY()] = decisiones[claveNY()] === b.dataset.ny ? null : b.dataset.ny;
   guardarDecisiones();
   pintarAnioNuevo();
 });
@@ -427,14 +546,61 @@ document.addEventListener('click', (e) => {
 // ---------- 11. La plata ----------
 // Si la prep se abrió en este navegador, usa su último cálculo. Si no, los números del 4 nov.
 const RESPALDO = { persona: 2826167, pasajes: 1125814, austral: 690353, guatemala: 1010000, seguro: 0, auto: 'sixt-sonet', vueltaAU: 'au-v24-1500', visto: '2026-11-04T17:00:00-03:00' };
-const resumenPlata = () => guardado.leer('resumen', null, 'prep-') || RESPALDO;
+const RESPALDO_B = { persona: 2287598, pasajes: 663216, playa: 533233, austral: 1091149, playaId: 'florianopolis', hotel: 'Pousada Casa Campeche', noches: 7, auto: 'b-tucson', ida: 'au2-ida-1357', vuelta: 'au2-v9-1017', visto: '2026-11-05T00:00:00-03:00' };
+const resumenA = () => guardado.leer('resumen', null, 'prep-') || RESPALDO;
+const resumenPlata = () => (esB() ? resumenB() || RESPALDO_B : resumenA());
 const modelo = (a) => a.modelo.replace(' o similar', '');
-const bencina = (a) => Math.round((DATOS.autos.km / a.consumo) * DATOS.autos.litro[a.combustible] / 1000) * 1000;
+const bencina = (a) => Math.round(((esB() ? B.autos.km : DATOS.autos.km) / a.consumo) * DATOS.autos.litro[a.combustible] / 1000) * 1000;
+// Noches con techo que ya cuenta la prep (A: las de Tranquilo; B: Tranquilo y la última en Cerro Castillo)
+const TECHO_PREP = { techo: [1], techoB: [1, 8] };
 
 // Lo que cambia la plata con lo que elegimos en la presentación, contra lo que calculó la prep.
 // La prep guarda con qué auto y qué vuelta sacó la cuenta; lo demás se compara con su presupuesto base.
+// Plan B: la playa y el auto contra lo que eligió la prep
+function cambiosB() {
+  const r = resumenPlata();
+  const lista = [];
+  const oPrep = B.playa.opciones.find((o) => o.id === r.playaId) || B.playa.opciones[0];
+  const oHoy = playaElegida();
+  if (oHoy.id !== oPrep.id) {
+    const cp = costoPlaya(oPrep, r.noches), ch = costoPlaya(oHoy, r.noches);
+    const dVuelo = ch.vuelo - cp.vuelo;
+    const dPlaya = ch.hotel + ch.traslado + ch.comida - (cp.hotel + cp.traslado + cp.comida);
+    lista.push({ t: `${nombreCorto(oHoy)} en vez de ${nombreCorto(oPrep)}`, d: dVuelo + dPlaya, partes: { pasajes: dVuelo, playa: dPlaya }, aprox: true });
+  }
+  const aPrep = B.autos.opciones.find((a) => a.id === r.auto) || B.autos.opciones[0];
+  const aHoy = autoElegido();
+  if (aHoy.id !== aPrep.id) lista.push({ t: `${modelo(aHoy)} en vez del ${modelo(aPrep)}`, d: (precioDe(aHoy.total) + bencina(aHoy) - precioDe(aPrep.total) - bencina(aPrep)) / 2, parte: 'austral' });
+  return lista;
+}
 function cambiosDeHoy() {
   const r = resumenPlata();
+  const lista = esB() ? cambiosB() : cambiosA(r);
+  if (decisiones.glaciar === 'miradores') lista.push({ t: 'Exploradores solo por los miradores', d: -140000, parte: 'austral', aprox: true });
+  if (decisiones.capillas === 'kayak') {
+    const k = actividad('capillas-kayak'), l = actividad('capillas-lancha');
+    const num = (a, def) => Number(((a && a.precio.match(/\$(\d+) mil/)) || [0, def])[1]) * 1000;
+    lista.push({ t: 'Capillas en kayak en vez de lancha', d: num(k, 66) - num(l, 18), parte: 'austral', aprox: true });
+  }
+  // Noches con techo: cada noche distinta a lo de la prep suma o resta la diferencia con el camping
+  const noches = nochesDe();
+  const enPrep = TECHO_PREP[claveTecho()];
+  let dTecho = 0, nTecho = 0;
+  noches.forEach((x, i) => {
+    const ahora = decisiones[claveTecho()].includes(i), antes = enPrep.includes(i);
+    if (ahora === antes) return;
+    const p = x.techo && x.techo[0] ? x.techo[0].p : 50000;
+    const n = cuantasNoches(x);
+    dTecho += (ahora ? 1 : -1) * n * (p - x.camping) / 2;
+    nTecho += (ahora ? 1 : -1) * n;
+  });
+  if (nTecho || Math.abs(dTecho) >= 1000) lista.push({ t: nTecho >= 0 ? `${nTecho} ${nTecho === 1 ? 'noche más' : 'noches más'} con techo` : `${-nTecho} ${nTecho === -1 ? 'noche menos' : 'noches menos'} con techo`, d: dTecho, parte: 'austral', aprox: true });
+  // Año Nuevo en La Casa del Mundo: dos noches de pieza Standard en vez de un hostal en Antigua
+  if (!esB() && decisiones.anioNuevo === 'ny-atitlan') lista.push({ t: 'Año Nuevo en La Casa del Mundo', d: (118 * DATOS.usd - 45000), parte: 'guatemala', aprox: true });
+  return lista;
+}
+// Plan A: la vuelta y el auto contra lo que eligió la prep
+function cambiosA(r) {
   const vPrep = AU.vueltas.find((v) => v.id === r.vueltaAU) || AU.vueltas.find((v) => v.recomendado);
   const diaPrep = String(vPrep.fecha);
   const aPrep = DATOS.autos.opciones.find((a) => a.id === r.auto) || DATOS.autos.opciones.find((a) => a.recomendado);
@@ -449,43 +615,33 @@ function cambiosDeHoy() {
     const n = decisiones.vuelta === '24' ? 1 : -1;
     lista.push({ t: n > 0 ? 'un día más en el sur' : 'un día menos en el sur', d: n * 24000, parte: 'austral', aprox: true });
   }
-  if (decisiones.glaciar === 'miradores') lista.push({ t: 'Exploradores solo por los miradores', d: -140000, parte: 'austral', aprox: true });
-  if (decisiones.capillas === 'kayak') {
-    const k = actividad('capillas-kayak'), l = actividad('capillas-lancha');
-    const num = (a, def) => Number(((a && a.precio.match(/\$(\d+) mil/)) || [0, def])[1]) * 1000;
-    lista.push({ t: 'Capillas en kayak en vez de lancha', d: num(k, 66) - num(l, 18), parte: 'austral', aprox: true });
-  }
-  // Noches con techo: la prep cuenta 3 (las de Tranquilo). Cada noche distinta suma o resta la diferencia con el camping.
-  const noches = nochesDe();
-  let dTecho = 0, nTecho = 0;
-  noches.forEach((x, i) => {
-    const ahora = decisiones.techo.includes(i), antes = i === 1;
-    if (ahora === antes) return;
-    const p = x.techo && x.techo[0] ? x.techo[0].p : 50000;
-    const n = cuantasNoches(x);
-    dTecho += (ahora ? 1 : -1) * n * (p - x.camping) / 2;
-    nTecho += (ahora ? 1 : -1) * n;
-  });
-  if (nTecho || Math.abs(dTecho) >= 1000) lista.push({ t: nTecho >= 0 ? `${nTecho} ${nTecho === 1 ? 'noche más' : 'noches más'} con techo` : `${-nTecho} ${nTecho === -1 ? 'noche menos' : 'noches menos'} con techo`, d: dTecho, parte: 'austral', aprox: true });
-  // Año Nuevo en La Casa del Mundo: dos noches de pieza Standard en vez de un hostal en Antigua
-  if (decisiones.anioNuevo === 'ny-atitlan') lista.push({ t: 'Año Nuevo en La Casa del Mundo', d: (118 * DATOS.usd - 45000), parte: 'guatemala', aprox: true });
   return lista;
 }
 function plataDeHoy() {
   const r = Object.assign({}, resumenPlata());
   const cambios = cambiosDeHoy();
-  cambios.forEach((c) => { r[c.parte] += c.d; r.persona += c.d; });
+  cambios.forEach((c) => {
+    if (c.partes) Object.entries(c.partes).forEach(([k, v]) => { r[k] += v; });
+    else r[c.parte] += c.d;
+    r.persona += c.d;
+  });
   r.cambios = cambios;
   return r;
 }
 function pintarPlata(animar) {
   const r = plataDeHoy();
-  const partes = [
-    { t: 'pasajes', v: r.pasajes, c: 'var(--negro)' },
-    { t: 'en la austral', v: r.austral, c: 'var(--acento)' },
-    { t: 'en guatemala', v: r.guatemala, c: '#9a9a9a' },
-    ...(r.seguro ? [{ t: 'seguro', v: r.seguro, c: '#cfcfcf' }] : [])
-  ];
+  const partes = esB()
+    ? [
+      { t: 'pasajes', v: r.pasajes, c: 'var(--negro)' },
+      { t: 'en la playa', v: r.playa, c: '#9a9a9a' },
+      { t: 'en la austral', v: r.austral, c: 'var(--acento)' }
+    ]
+    : [
+      { t: 'pasajes', v: r.pasajes, c: 'var(--negro)' },
+      { t: 'en la austral', v: r.austral, c: 'var(--acento)' },
+      { t: 'en guatemala', v: r.guatemala, c: '#9a9a9a' },
+      ...(r.seguro ? [{ t: 'seguro', v: r.seguro, c: '#cfcfcf' }] : [])
+    ];
   const el = $('#plata-persona');
   if (animar) contar(el, r.persona, CLP); else el.textContent = CLP(r.persona);
   $('#plata-dos').textContent = `los dos: ${CLP(r.persona * 2)} · cada uno paga su pasaje y el resto va a la mitad`;
@@ -500,6 +656,10 @@ function pintarPlata(animar) {
   if (r.persona < P.min) v = `<b>Holgado.</b> Queda bajo lo que pensábamos: hay espacio para darnos algún gusto.`;
   else if (r.persona <= P.max) v = `<b>Nos alcanza.</b> Queda dentro de lo que conversamos, entre ${M1(P.min)} y ${M1(P.max)} cada uno.`;
   else v = `<b>Un poco arriba</b> de lo que conversamos, por ${milCLP(r.persona - P.max)}. En la prep hay cosas para mover.`;
+  // Contra el otro plan, con lo que dejó calculado la prep
+  const otro = esB() ? resumenA().persona : (resumenB() || RESPALDO_B).persona;
+  const dif = r.persona - otro;
+  if (Math.abs(dif) >= 1000) v += ` El plan ${esB() ? 'A' : 'B'} sale ${milCLP(Math.abs(dif))} ${dif < 0 ? 'más' : 'menos'}.`;
   $('#veredicto').innerHTML = v;
   const signo = (d) => (d >= 0 ? '+' : '−') + milCLP(Math.abs(d));
   $('#plata-cambios').innerHTML = r.cambios.length
@@ -510,7 +670,26 @@ function pintarPlata(animar) {
 }
 
 // ---------- 12. Lo que compramos hoy ----------
+// Plan B: lo del sur primero (es lo que se compra hoy) y la playa, que puede esperar al Black Friday
+function itemsCompraB() {
+  const o = playaElegida(), c = costoPlaya(o), ida = idaElegida(), vuelta = vueltaElegida(), a = autoElegido();
+  const res = (id) => B.reservas.find((r) => r.id === id);
+  const deReserva = (id, que, det) => { const r = res(id); return r ? { id, que: que || r.que, det: det || r.detalle, precio: r.precio, link: r.link } : null; };
+  const ny = B.anioNuevo.find((n) => n.id === decisiones.anioNuevoB);
+  const items = [
+    { id: 'pasajes-au2', que: 'Pasajes a Balmaceda', det: `LATAM ${ida.dia} ${ida.sale} y ${vuelta.dia} ${vuelta.sale} · mochila en bodega gratis con la WorldMember`, precio: `${milCLP(ida.precio + vuelta.precio)} c/u`, link: B.vuelosAU.link },
+    { id: 'auto-b', que: `Auto · ${modelo(a)}`, det: `${a.agencia} · ${B.autos.dias} días · elegir cancelación gratis`, precio: `${CLP(precioDe(a.total))} los dos`, link: B.autos.link },
+    decisiones.glaciar === 'hielo' ? deReserva('rb-exploradores', 'Glaciar Exploradores') : null,
+    deReserva('rb-ohiggins', "Alojamiento en Villa O'Higgins", 'Del 3 al 5 de enero. Hay poco y se llena.'),
+    deReserva('rb-anio-nuevo', 'Año Nuevo', ny ? `Elegimos: ${ny.titulo.toLowerCase()}.` : 'Depende de lo que elijamos.'),
+    deReserva('rb-barcaza', 'Barcaza Chile Chico → Puerto Ibáñez'),
+    { id: 'playa-vuelo', que: `Vuelo a ${nombreCorto(o)}`, det: `${o.vuelo.aerolinea} lun 14 ${o.vuelo.ida.split(' ')[0]} · puede esperar al Black Friday (27 al 30 nov)`, precio: `${milCLP(c.vuelo)} c/u`, link: linkVueloPlaya(o) },
+    { id: 'playa-hotel', que: c.h.n, det: `${nochesPlaya()} noches con cancelación gratis, así podemos esperar el Black Friday`, precio: `${milCLP(c.h.p)} la noche`, link: busquedaHoteles(`${c.h.n} 14 al ${14 + nochesPlaya()} de diciembre 2026`) }
+  ];
+  return items.filter(Boolean);
+}
 function itemsCompra() {
+  if (esB()) return itemsCompraB();
   const ida = idaElegida(), vuelta = vueltaElegida(), a = autoElegido(), v = avianca();
   const ny = decisiones.anioNuevo;
   const items = [
@@ -559,18 +738,22 @@ document.addEventListener('change', (e) => {
 
 // ---------- 13. El acta ----------
 function pintarActa() {
-  const ny = DATOS.anioNuevo.find((x) => x.id === decisiones.anioNuevo);
+  const ny = (esB() ? B.anioNuevo : DATOS.anioNuevo).find((x) => x.id === decisiones[claveNY()]);
   const lista = nochesDe();
-  const techo = lista.reduce((s, x, i) => s + (decisiones.techo.includes(i) ? cuantasNoches(x) : 0), 0);
+  const techo = lista.reduce((s, x, i) => s + (decisiones[claveTecho()].includes(i) ? cuantasNoches(x) : 0), 0);
   const total = lista.reduce((s, x) => s + cuantasNoches(x), 0);
   const items = itemsCompra();
+  const o = playaElegida();
   const filas = [
-    ['vuelta del sur', decisiones.vuelta === '24' ? 'jueves 24, para la Nochebuena' : 'miércoles 23'],
+    ['plan', esB() ? 'B · playa + austral larga' : 'A · austral 2.0 + guatemala'],
+    ...(esB()
+      ? [['playa', `${o.nombre} · ${nochesPlaya()} noches desde el lun 14`], ['hotel', hotelPlaya(o).n], ['el sur', 'sábado 26 dic al sábado 9 ene']]
+      : [['vuelta del sur', decisiones.vuelta === '24' ? 'jueves 24, para la Nochebuena' : 'miércoles 23']]),
     ['glaciar', decisiones.glaciar === 'hielo' ? 'caminando sobre el hielo' : 'solo los miradores'],
     ['capillas de mármol', decisiones.capillas === 'kayak' ? 'en kayak' : 'en lancha'],
     ['auto', autoElegido().modelo.replace(' o similar', '')],
     ['noches', `${total - techo} en carpa · ${techo} con techo`],
-    ['guatemala', 'la armas tú'],
+    ...(esB() ? [] : [['guatemala', 'la armas tú']]),
     ['año nuevo', ny ? ny.titulo : 'por elegir'],
     ['por persona', CLP(plataDeHoy().persona)],
     ['comprado', `${items.filter((x) => decisiones.compradas[x.id]).length} de ${items.length}`]
@@ -630,7 +813,9 @@ $('#reiniciar').addEventListener('click', () => {
 
 // ---------- Repintar lo que depende de las elecciones ----------
 function repintar() {
+  pintarPase();
   pintarCalendario();
+  pintarPlaya();
   pintarDias();
   pintarGlaciar();
   pintarMosaico();
@@ -640,10 +825,34 @@ function repintar() {
   pintarActa();
 }
 // ---------- Navegación entre láminas ----------
-const laminas = $$('.lamina');
+const todas = $$('.lamina');
+let laminas = [];
 let actual = 0;
-laminas.forEach((l) => $$('[data-a]', l).forEach((el, i) => el.style.setProperty('--i', i)));
-$('#avance').innerHTML = laminas.map((l, i) => `<button data-ir="${i}" aria-label="${l.dataset.nombre}" title="${l.dataset.nombre}"></button>`).join('');
+todas.forEach((l) => $$('[data-a]', l).forEach((el, i) => el.style.setProperty('--i', i)));
+// Solo las láminas del plan elegido, numeradas en orden
+function armarLaminas() {
+  laminas = todas.filter((l) => !l.dataset.solo || l.dataset.solo === decisiones.plan);
+  todas.forEach((l) => { if (!laminas.includes(l)) l.classList.remove('activa'); });
+  const nombre = (l) => (esB() && l.dataset.nombreB) || l.dataset.nombre;
+  $('#avance').innerHTML = laminas.map((l, i) => `<button data-ir="${i}" aria-label="${nombre(l)}" title="${nombre(l)}"></button>`).join('');
+  laminas.forEach((l, i) => $$('.etiqueta', l).forEach((e) => {
+    if (/^\d\d \//.test(e.textContent)) e.textContent = e.textContent.replace(/^\d\d/, String(i).padStart(2, '0'));
+  }));
+}
+// Cambiar de plan: se rearma todo y se queda en la misma lámina si existe en el otro plan
+function aplicarPlan() {
+  document.documentElement.dataset.plan = decisiones.plan;
+  // Si se abrió con ?plan=, se saca para que al recargar mande lo elegido
+  if (location.search) history.replaceState(null, '', location.pathname + location.hash);
+  const antes = laminas[actual];
+  armarLaminas();
+  pintarMapa();
+  pintarAnioNuevo();
+  pintarPlata(false);
+  repintar();
+  actual = 0;
+  ir(Math.max(0, laminas.indexOf(antes)));
+}
 
 // Lo que pasa al entrar a cada lámina
 const alEntrar = {
@@ -719,6 +928,7 @@ pintarGuatemala();
 pintarAnioNuevo();
 pintarPlata(false);
 repintar();
+armarLaminas();
 ir(Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1));
 
 // Precios al día de la prep (los mismos que actualiza GitHub dos veces al día)
@@ -726,7 +936,7 @@ fetch('../prep/precios.json', { cache: 'no-store' })
   .then((r) => (r.ok ? r.json() : null))
   .then((pv) => {
     if (!pv || !pv.vuelos) return;
-    [...DATOS.vuelosCA, ...AU.idas, ...AU.vueltas, DATOS.vueloFlores].forEach((v) => {
+    [...DATOS.vuelosCA, ...AU.idas, ...AU.vueltas, DATOS.vueloFlores, ...B.playa.opciones.map((o) => o.vuelo), ...B.vuelosAU.idas, ...B.vuelosAU.vueltas].forEach((v) => {
       const x = pv.vuelos[v.id];
       if (x && x.precio) v.precio = x.precio;
     });
